@@ -1,0 +1,90 @@
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
+
+.exclusive-section {
+  display: flex;
+  width: 76%;
+  height: 500px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.exclusive-card {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.bg-text-wrapper {
+  position: absolute;
+  top: 40%;
+  text-align: center;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-label { 
+  display: block;
+  font-size: 1.2rem; 
+  letter-spacing: 8px; 
+  color: #ccc; 
+  text-transform: uppercase;
+}
+
+.bg-year { 
+  font-size: 15rem; 
+  font-weight: 900; 
+  color: rgba(0, 0, 0, 0.03); 
+}
+
+/* Default card background colors */
+.exclusive-card--woman { background-color: #f4f4f4; }
+.exclusive-card--man { background-color: #e8e4e1; }
+
+.exclusive-img {
+  height: 100%;
+  z-index: 1;
+  object-fit: contain;
+  transition: transform 0.5s ease;
+}
+
+/* Optional: Slight image zoom when hovering the card */
+.exclusive-card:hover .exclusive-img {
+  transform: scale(1.03);
+}
+
+/* --- BUTTON STYLING --- */
+.exclusive-btn {
+  position: absolute;
+  bottom: 40px;
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 15px 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 2;
+  /* Smooth transition for background and text color */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button Hover State matching your reference image */
+.exclusive-btn:hover {
+  background-color: #1a1a1a; /* Dark charcoal/black color */
+  color: white; /* Switches text to white so it remains readable */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .exclusive-section { flex-direction: column; height: auto; width: 100%; }
+  .exclusive-card { height: 400px; }
+  .bg-year { font-size: 8rem; }
+}

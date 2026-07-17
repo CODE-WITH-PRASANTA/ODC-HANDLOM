@@ -1,0 +1,453 @@
+/* ==========================================
+   RESET & SYSTEM STYLES
+   ========================================== */
+.NewArrivals {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  padding: 40px 0;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.NewArrivals * {
+  box-sizing: border-box;
+}
+
+.NewArrivals__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.NewArrivals__heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #111111;
+}
+
+/* ==========================================
+   PRODUCT GRID & CARDS
+   ========================================== */
+.NewArrivals__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.NewArrivals__card {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.NewArrivals__card:hover {
+  transform: translateY(-4px);
+}
+
+.NewArrivals__imageWrapper {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.NewArrivals__imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.NewArrivals__info {
+  padding: 12px 4px;
+}
+
+.NewArrivals__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1a1a1a;
+}
+
+.NewArrivals__desc {
+  font-size: 0.8rem;
+  color: #767676;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.NewArrivals__priceRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.NewArrivals__price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.NewArrivals__oldPrice {
+  font-size: 0.85rem;
+  text-decoration: line-line-through;
+  text-decoration: line-through;
+  color: #9c9c9c;
+}
+
+/* ==========================================
+   POPUP MODAL OVERLAY
+   ========================================== */
+.NewArrivals__modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.NewArrivals__modalContent {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.NewArrivals__modalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ffffff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+
+.NewArrivals__modalClose:hover {
+  background-color: #f3f4f6;
+}
+
+.NewArrivals__modalBody {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Modal Left - Image Section */
+.NewArrivals__modalImgCol {
+  flex: 1.1;
+  max-height: 520px;
+  background-color: #f7f7f7;
+}
+
+.NewArrivals__modalImgCol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Modal Right - details Section */
+.NewArrivals__modalDetailsCol {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.NewArrivals__modalTitle {
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #111111;
+}
+
+.NewArrivals__modalDesc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #666666;
+  margin: 0 0 20px 0;
+}
+
+.NewArrivals__modalPriceRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.NewArrivals__modalPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.NewArrivals__modalOldPrice {
+  font-size: 1.2rem;
+  text-decoration: line-through;
+  color: #aaaaaa;
+}
+
+.NewArrivals__modalOptionSection {
+  margin-bottom: 20px;
+}
+
+.NewArrivals__optionHeading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #111111;
+}
+
+/* Size Selection Styles */
+.NewArrivals__sizeSelector {
+  display: flex;
+  gap: 10px;
+}
+
+.NewArrivals__sizeBtn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  min-width: 45px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.NewArrivals__sizeBtn:hover {
+  border-color: #111111;
+}
+
+.NewArrivals__sizeBtn.active {
+  border-color: #111111;
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* Color Selection Styles */
+.NewArrivals__colorSelector {
+  display: flex;
+  gap: 12px;
+}
+
+.NewArrivals__colorBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.NewArrivals__colorBtn:hover {
+  transform: scale(1.1);
+}
+
+.NewArrivals__colorBtn.active::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid #111111;
+  border-radius: 6px;
+}
+
+/* Quantity Adjuster & Main Action Buttons */
+.NewArrivals__actionRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.NewArrivals__quantityBlock {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.NewArrivals__quantityBlock button {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 45px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555555;
+  transition: background-color 0.15s;
+}
+
+.NewArrivals__quantityBlock button:hover {
+  background-color: #f9fafb;
+}
+
+.NewArrivals__quantityValue {
+  padding: 0 16px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  user-select: none;
+}
+
+.NewArrivals__addToCartBtn {
+  flex: 1;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.NewArrivals__addToCartBtn:hover {
+  background-color: #333333;
+}
+
+.NewArrivals__viewDetailsBtn {
+  width: 100%;
+  background-color: #242424;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.NewArrivals__viewDetailsBtn:hover {
+  background-color: #404040;
+}
+
+/* ==========================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================== */
+
+/* Large Screens Down to Tablets */
+@media (max-width: 1200px) {
+  .NewArrivals__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .NewArrivals__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .NewArrivals__modalContent {
+    max-width: 720px;
+  }
+  
+  .NewArrivals__modalDetailsCol {
+    padding: 24px;
+  }
+}
+
+/* Portrait Tablet / Large Phone Breakpoint */
+@media (max-width: 768px) {
+  .NewArrivals__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .NewArrivals__modalBody {
+    flex-direction: column;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .NewArrivals__modalImgCol {
+    max-height: 320px;
+  }
+
+  .NewArrivals__modalDetailsCol {
+    padding: 24px 20px;
+  }
+
+  .NewArrivals__modalContent {
+    max-width: 480px;
+  }
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+  .NewArrivals__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .NewArrivals__heading {
+    font-size: 1.5rem;
+  }
+
+  .NewArrivals__modalContent {
+    width: 100%;
+    margin: 10px;
+  }
+
+  .NewArrivals__modalTitle {
+    font-size: 1.4rem;
+  }
+
+  .NewArrivals__actionRow {
+    flex-direction: column;
+  }
+
+  .NewArrivals__quantityBlock {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .NewArrivals__addToCartBtn {
+    padding: 12px 0;
+  }
+}
