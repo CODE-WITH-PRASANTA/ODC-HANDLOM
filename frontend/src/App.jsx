@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // 1. Imported Routes and Route
 import FeaturedProduct from './Components/FeaturedProduct/FeaturedProduct';
-// import FeaturedBanner from './Components/FeaturedBanner/FeaturedBanner';
+import TopBrand from './Components/TopBrand/TopBrand';
 
 const App = () => {
   return (
@@ -9,7 +9,7 @@ const App = () => {
       {/* 2. Wrap your Routes inside a <Routes> container */}
       <Routes>
         <Route path="/FeaturedProduct" element={<FeaturedProduct />} />
-         {/* <Route path="/FeaturedBanner" element={<FeaturedBanner/>} /> */}
+        <Route path="/TopBrand" element={<TopBrand/>} />
         
      
 
