@@ -1,6 +1,9 @@
 import React from 'react';
 import './TopBrand.css';
 
+// Import your local banner asset using the relative path from this file
+import topBrandBanner from '../../assets/topbrandbanner.webp';
+
 const TopBrand = () => {
   // 16 professional brand card items matching your reference designs
   const brands = [
@@ -31,7 +34,7 @@ const TopBrand = () => {
       <div className="top-brand-grid">
         {brands.map((brand) => (
           <div key={brand.id} className="brand-card">
-            {/* Smooth Zooming Background Image */}
+            {/* Smooth Zooming & Clockwise Rotating Background Image */}
             <div
               className="brand-bg-image"
               style={{ backgroundImage: `url(${brand.bgImage})` }}
@@ -40,7 +43,7 @@ const TopBrand = () => {
             {/* Overlay that darkens/changes to black smoothly on hover */}
             <div className="brand-overlay" />
 
-            {/* Brand Logo with clockwise animation */}
+            {/* Brand Logo remains constant */}
             <div className="brand-content">
               <div className="brand-logo-wrapper">
                 {brand.isRoundLogo ? (
@@ -60,7 +63,17 @@ const TopBrand = () => {
           </div>
         ))}
       </div>
-    </div>
+
+      {/* Modern Promotional Banner Container utilizing your local webp image */}
+      <div className="promo-banner">
+        <div 
+          className="promo-banner-image" 
+          style={{ backgroundImage: `url(${topBrandBanner})` }}
+        />
+      
+          </div>
+        </div>
+      
   );
 };
 
