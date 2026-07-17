@@ -1,0 +1,233 @@
+:root {
+  --navbar-bg: #ffffff;
+  --navbar-text-main: #1f2937;
+  --navbar-text-hover: #000000;
+  --navbar-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --navbar-height: 80px;
+}
+
+.navbar-container {
+  width: 100%;
+  height: var(--navbar-height);
+  background-color: var(--navbar-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: var(--navbar-font-family);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-wrapper {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-logo-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar-logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.navbar-links-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 28px;
+}
+
+.navbar-link-item {
+  display: flex;
+  align-items: center;
+}
+
+/* Enhanced Smooth Hover Style for Nav Links */
+.navbar-link-anchor {
+  text-decoration: none;
+  color: var(--navbar-text-main);
+  font-size: 15px;
+  font-weight: 500;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 6px 0;
+  transition: color 0.3s ease;
+}
+
+/* Fix layout shifting when font weights change on hover */
+.navbar-link-anchor::before {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  height: 0;
+  visibility: hidden;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  font-weight: 600;
+}
+
+/* Smooth line expanding from the center underneath titles */
+.navbar-link-anchor::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--navbar-text-hover);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.navbar-link-anchor:hover {
+  color: var(--navbar-text-hover);
+  font-weight: 600;
+}
+
+.navbar-link-anchor:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Actions Styling */
+.navbar-actions-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.navbar-action-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--navbar-text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+/* Subtle bounce rotation on icon hovers */
+.navbar-action-btn:hover {
+  color: var(--navbar-text-hover);
+  transform: translateY(-1px);
+}
+
+.navbar-icon-svg {
+  width: 22px;
+  height: 22px;
+}
+
+.navbar-signin-link {
+  text-decoration: none;
+  color: var(--navbar-text-main);
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.25s ease;
+}
+
+.navbar-signin-link:hover {
+  color: var(--navbar-text-hover);
+}
+
+.navbar-cart-btn {
+  position: relative;
+}
+
+.navbar-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background-color: #111827;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Hamburger Elements */
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+
+.navbar-hamburger-bar {
+  width: 100%;
+  height: 2px;
+  background-color: var(--navbar-text-main);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .navbar-links-list {
+    gap: 16px;
+  }
+  .navbar-link-anchor {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .navbar-hamburger {
+    display: flex;
+  }
+
+  .navbar-links-list {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    background-color: #ffffff;
+    flex-direction: column;
+    padding: 100px 24px 24px 24px;
+    gap: 24px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    transition: left 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+  }
+
+  .navbar-links-list-mobile-open {
+    left: 0;
+  }
+
+  .navbar-hamburger-active .navbar-hamburger-bar:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+  }
+
+  .navbar-hamburger-active .navbar-hamburger-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-hamburger-active .navbar-hamburger-bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -6px);
+  }
+}
