@@ -1,0 +1,172 @@
+/* Styling variables aligned with the reference frame design */
+:root {
+  --footer-bg: #ffffff;
+  --footer-title-color: #1f2937;
+  --footer-link-color: #4b5563;
+  --footer-link-hover: #000000;
+  --footer-border-color: #f3f4f6;
+  --footer-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.footer-container {
+  width: 100%;
+  background-color: var(--footer-bg);
+  font-family: var(--footer-font-family);
+  padding-top: 60px;
+  box-sizing: border-box;
+}
+
+/* Grid layout matching standard desktop column distribution proportions */
+.footer-links-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px 60px 24px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 32px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-column-title {
+  color: var(--footer-title-color);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.2px;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-link-item {
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
+
+.footer-anchor-link {
+  text-decoration: none;
+  color: var(--footer-link-color);
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-anchor-link:hover {
+  color: var(--footer-link-hover);
+  transform: translateX(2px);
+}
+
+.footer-text-info {
+  color: var(--footer-link-color);
+  cursor: default;
+}
+
+/* Social Icon Width Alignment styling */
+.footer-social-icon {
+  font-size: 16px;
+  width: 20px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Bottom Copyright and Payment Area */
+.footer-bottom-bar {
+  width: 100%;
+  border-top: 1px solid var(--footer-border-color);
+  padding: 28px 0;
+}
+
+.footer-bottom-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-copyright-text {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.footer-copyright-text strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.footer-payment-gateways {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-payment-logo {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(10%) contrast(90%);
+  opacity: 0.85;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.footer-payment-logo:hover {
+  opacity: 1;
+  filter: none;
+}
+
+/* Responsive Adaptive Viewports Media Queries */
+@media (max-width: 1200px) {
+  .footer-links-grid {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-links-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-bottom-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    padding-top: 40px;
+  }
+  
+  .footer-links-grid {
+    grid-template-columns: 1fr;
+    row-gap: 32px;
+    padding-bottom: 40px;
+  }
+  
+  .footer-column-title {
+    margin-bottom: 16px;
+  }
+  
+  .footer-payment-gateways {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+}

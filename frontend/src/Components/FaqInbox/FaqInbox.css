@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.FaqInbox {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  padding: 60px 24px;
+}
+
+.FaqInbox-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+/* Accordion Section Styling */
+.FaqInbox-accordion-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.FaqInbox-card {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  overflow: hidden;
+  transition: all 0.25s ease-in-out;
+}
+
+.FaqInbox-card:hover {
+  background-color: #f6f6f6;
+  border-color: #eaeaea;
+}
+
+.FaqInbox-card-open {
+  background-color: #fbfbfb;
+  border-color: #e5e5e5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.FaqInbox-card-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 24px 30px;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  transition: padding 0.25s ease-in-out;
+}
+
+.FaqInbox-question {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.4;
+}
+
+.FaqInbox-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #222222;
+  font-size: 1.35rem;
+  margin-left: 20px;
+  flex-shrink: 0;
+}
+
+.FaqInbox-icon {
+  stroke-width: 2.5px;
+}
+
+/* Collapse/Expand Grid Transition */
+.FaqInbox-card-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-in-out;
+}
+
+.FaqInbox-card-content-show {
+  grid-template-rows: 1fr;
+}
+
+.FaqInbox-answer {
+  overflow: hidden;
+}
+
+.FaqInbox-answer p {
+  padding: 0 30px 24px 30px;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555555;
+  line-height: 1.6;
+}
+
+/* Newsletter Section Styling */
+.FaqInbox-newsletter-section {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 60px 48px;
+  margin-top: 20px;
+}
+
+.FaqInbox-newsletter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.FaqInbox-newsletter-info {
+  flex: 1;
+}
+
+.FaqInbox-newsletter-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.FaqInbox-newsletter-subtitle {
+  font-size: 1rem;
+  color: #666666;
+  margin: 0;
+}
+
+/* Form Styles */
+.FaqInbox-form {
+  flex: 1;
+  max-width: 550px;
+  width: 100%;
+}
+
+.FaqInbox-input-group {
+  display: flex;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 6px;
+  transition: border-color 0.25s ease;
+}
+
+.FaqInbox-input-group:focus-within {
+  border-color: #111111;
+}
+
+.FaqInbox-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-family: 'Montserrat', sans-serif;
+  color: #222222;
+  background: transparent;
+}
+
+.FaqInbox-input::placeholder {
+  color: #999999;
+  opacity: 1;
+}
+
+.FaqInbox-submit-btn {
+  background-color: #222222;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0 32px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.FaqInbox-submit-btn:hover {
+  background-color: #000000;
+}
+
+/* Tablet Media Query */
+@media (max-width: 992px) {
+  .FaqInbox-newsletter-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+  }
+
+  .FaqInbox-form {
+    max-width: 100%;
+  }
+}
+
+/* Mobile Media Query */
+@media (max-width: 600px) {
+  .FaqInbox {
+    padding: 30px 16px;
+  }
+
+  .FaqInbox-card-trigger {
+    padding: 20px 20px;
+  }
+
+  .FaqInbox-question {
+    font-size: 0.95rem;
+  }
+
+  .FaqInbox-answer p {
+    padding: 0 20px 20px 20px;
+    font-size: 0.9rem;
+  }
+
+  .FaqInbox-newsletter-section {
+    padding: 40px 24px;
+  }
+
+  .FaqInbox-newsletter-title {
+    font-size: 1.5rem;
+  }
+
+  .FaqInbox-newsletter-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .FaqInbox-input-group {
+    flex-direction: column;
+    gap: 12px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .FaqInbox-input {
+    background-color: #ffffff;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .FaqInbox-input:focus {
+    border-color: #111111;
+  }
+
+  .FaqInbox-submit-btn {
+    padding: 16px;
+    width: 100%;
+    border-radius: 8px;
+  }
+}

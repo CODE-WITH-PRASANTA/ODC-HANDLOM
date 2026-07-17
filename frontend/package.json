@@ -12,6 +12,10 @@
   "dependencies": {
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+<<<<<<< HEAD
+=======
+    "react-icons": "^5.7.0",
+>>>>>>> bdc33b57bdfadcf828a93e6614079354302aaa97
     "react-router-dom": "^7.18.1"
   },
   "devDependencies": {

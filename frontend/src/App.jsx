@@ -1,13 +1,43 @@
+<<<<<<< HEAD
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home/Home';
+=======
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Navbar from "./Components/Navbar/Navbar";
+import Footer from "./Components/Footer/Footer";
+
+import FeaturedProduct from "./Components/FeaturedProduct/FeaturedProduct";
+import TopBrand from "./Components/TopBrand/TopBrand";
+import SignIn from "./Components/SignIn/SignIn";
+
+import TermandCondition from "./Pages/TermandCondition/TermandCondition";
+import MainFaq from "./Pages/MainFaq/MainFaq";
+>>>>>>> bdc33b57bdfadcf828a93e6614079354302aaa97
 
 const App = () => {
   return (
     <BrowserRouter>
+<<<<<<< HEAD
       <Routes>
         <Route path="/home" element={<Home />} />
       </Routes>
+=======
+      <Navbar />
+
+      <Routes>
+        <Route path="/FeaturedProduct" element={<FeaturedProduct />} />
+        <Route path="/TopBrand" element={<TopBrand />} />
+        <Route path="/SignIn" element={<SignIn />} />
+
+        <Route path="/term" element={<TermandCondition />} />
+        <Route path="/faq" element={<MainFaq />} />
+      </Routes>
+
+      <Footer />
+>>>>>>> bdc33b57bdfadcf828a93e6614079354302aaa97
     </BrowserRouter>
   );
 };
