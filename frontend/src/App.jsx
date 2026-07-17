@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // 1. Imported Routes and Route
 import FeaturedProduct from './Components/FeaturedProduct/FeaturedProduct';
 import TopBrand from './Components/TopBrand/TopBrand';
+import SignIn from './Components/SignIn/SignIn';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Routes>
         <Route path="/FeaturedProduct" element={<FeaturedProduct />} />
         <Route path="/TopBrand" element={<TopBrand/>} />
+        <Route path="/SignIn" element={<SignIn/>} />
         
      
 
