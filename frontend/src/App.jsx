@@ -3,6 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'; // 1. Imported 
 import FeaturedProduct from './Components/FeaturedProduct/FeaturedProduct';
 import TopBrand from './Components/TopBrand/TopBrand';
 import SignIn from './Components/SignIn/SignIn';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar/Navbar";
+import Footer from "./Components/Footer/Footer";
+
+
+// Pages
+
 
 const App = () => {
   return (
@@ -16,6 +24,16 @@ const App = () => {
      
 
       </Routes>
+      {/* Navbar will be visible on all pages */}
+      <Navbar />
+
+      <Routes>
+      
+
+      
+       
+      </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };
