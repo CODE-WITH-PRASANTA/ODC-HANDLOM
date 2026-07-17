@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home/Home';
-=======
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -15,16 +13,13 @@ import SignIn from "./Components/SignIn/SignIn";
 
 import TermandCondition from "./Pages/TermandCondition/TermandCondition";
 import MainFaq from "./Pages/MainFaq/MainFaq";
->>>>>>> bdc33b57bdfadcf828a93e6614079354302aaa97
 
 const App = () => {
   return (
     <BrowserRouter>
-<<<<<<< HEAD
       <Routes>
         <Route path="/home" element={<Home />} />
       </Routes>
-=======
       <Navbar />
 
       <Routes>
@@ -37,7 +32,6 @@ const App = () => {
       </Routes>
 
       <Footer />
->>>>>>> bdc33b57bdfadcf828a93e6614079354302aaa97
     </BrowserRouter>
   );
 };
