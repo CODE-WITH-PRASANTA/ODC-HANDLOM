@@ -11,8 +11,7 @@ import TermandCondition from "./Pages/TermandCondition/TermandCondition";
 import MainFaq from "./Pages/MainFaq/MainFaq";
 
 // Feature Components
-import FeaturedProduct from "./Components/FeaturedProduct/FeaturedProduct";
-import TopBrand from "./Components/TopBrand/TopBrand";
+
 import SignIn from "./Components/SignIn/SignIn";
 
 const App = () => {
@@ -27,8 +26,8 @@ const App = () => {
         
         {/* Main Routes */}
         <Route path="/home" element={<Home />} />
-        <Route path="/FeaturedProduct" element={<FeaturedProduct />} />
-        <Route path="/TopBrand" element={<TopBrand />} />
+      
+      
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/term" element={<TermandCondition />} />
         <Route path="/faq" element={<MainFaq />} />

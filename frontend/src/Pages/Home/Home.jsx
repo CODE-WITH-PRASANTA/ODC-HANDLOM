@@ -5,6 +5,8 @@ import NewArrivals from '../../Components/NewArrivals/NewArrivals'
 import Hero from '../../Components/Hero/Hero'
 import FlashSale from '../../Components/FlashSale/FlashSale'
 import Collection from '../../Components/Collection/Collection'
+import FeaturedProduct from '../../Components/FeaturedProduct/FeaturedProduct'
+import TopBrand from '../../Components/TopBrand/TopBrand'
 
 
 
@@ -15,13 +17,18 @@ import Collection from '../../Components/Collection/Collection'
 const Home = () => {
   return (
     <div>
-      <SellingProducts/>
-      <ExclusiveSection/>
-      <NewArrivals/>
+     
       
     <Hero/>
     <FlashSale/>
     <Collection/>
+
+    <FeaturedProduct />
+    <TopBrand />
+
+     <SellingProducts/>
+      <ExclusiveSection/>
+      <NewArrivals/>
     
       
     </div>
