@@ -1,0 +1,153 @@
+/* Container & Layout */
+.Testimonials {
+  padding: 100px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.Testimonials-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.Testimonials-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.Testimonials-subtitle {
+  color: #666;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+/* Avatar Grouping */
+.Testimonials-members {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 50px;
+  min-height: 350px; /* Space for the active card */
+}
+
+.Testimonials-avatar-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Avatar Sizing & Styling */
+.Testimonials-avatar {
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+}
+
+.Testimonials-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.Testimonials-avatar.small { width: 50px; height: 50px; }
+.Testimonials-avatar.medium { width: 70px; height: 70px; }
+.Testimonials-avatar.large { width: 90px; height: 90px; }
+.Testimonials-avatar.biggest { width: 110px; height: 110px; }
+
+.Testimonials-avatar.active {
+  transform: scale(1.1);
+  border-color: #007bff;
+}
+
+/* The Active Card */
+.Testimonials-card {
+  position: absolute;
+  top: -320px; /* Float card above the avatars */
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  width: 280px;
+  z-index: 10;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.Testimonials-user-image img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.Testimonials-role {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.Testimonials-stars {
+  color: #f39c12;
+  margin: 10px 0;
+}
+
+/* Call to Action Button */
+.Testimonials-btn {
+  background-color: #0e0f0f;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s;
+}
+
+.Testimonials-btn:hover {
+  background-color: #418b8b;
+}/* Avatar Grouping - Updated for Overlap */
+.Testimonials-members {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Removed gap, added negative margin to create overlap */
+  margin: 40px 0;
+  min-height: 200px; 
+}
+
+/* Avatar Sizing & Styling - Updated for Larger Scale */
+.Testimonials-avatar {
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff; /* Thicker border for better contrast */
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Softer, larger shadow */
+  margin-right: -15px; /* Creates the overlap effect */
+  z-index: 1;
+}
+
+/* Adjusted Sizes to be larger as per reference */
+.Testimonials-avatar.small { width: 70px; height: 70px; }
+.Testimonials-avatar.medium { width: 90px; height: 90px; }
+.Testimonials-avatar.large { width: 120px; height: 120px; }
+.Testimonials-avatar.biggest { width: 160px; height: 160px; z-index: 2; }
+
+.Testimonials-avatar.active {
+  transform: scale(1.1);
+  border-color: #418b8b; /* Matching your button hover color */
+  z-index: 3;
+}

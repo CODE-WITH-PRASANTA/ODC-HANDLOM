@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SellingProducts.css";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiX } from "react-icons/fi";
 
 import product1 from "../../assets/p1.webp";
 import product2 from "../../assets/p2.webp";
@@ -79,54 +79,151 @@ const products = [
 ];
 
 const SellingProducts = () => {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("S");
+  const [selectedColor, setSelectedColor] = useState(0);
+
+  const handleOpenModal = (product) => {
+    setSelectedProduct(product);
+    setQuantity(1); // Reset quantity on open
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
+
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
+
   return (
     <section className="SellingProducts">
-
       <div className="SellingProducts__header">
-
         <h2>On Selling Products</h2>
-
         <a href="/" className="SellingProducts__viewAll">
           See All Product
           <FiArrowRight />
         </a>
-
       </div>
 
       <div className="SellingProducts__grid">
         {products.map((item, index) => (
-          <div className="SellingProducts__card" key={index}>
-
+          <div
+            className="SellingProducts__card"
+            key={index}
+            onClick={() => handleOpenModal(item)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="SellingProducts__img">
               <img src={item.image} alt={item.title} />
             </div>
 
             <div className="SellingProducts__info">
-
               <h3>{item.title}</h3>
-
               <p>{item.desc}</p>
-
               <div className="SellingProducts__price">
-
-                <span className="SellingProducts__newPrice">
-                  {item.price}
-                </span>
-
+                <span className="SellingProducts__newPrice">{item.price}</span>
                 {item.oldPrice && (
                   <span className="SellingProducts__oldPrice">
                     {item.oldPrice}
                   </span>
                 )}
-
               </div>
-
             </div>
-
           </div>
         ))}
       </div>
 
+      {/* Modal Popup */}
+      {selectedProduct && (
+        <div className="SellingProducts__modalOverlay" onClick={handleCloseModal}>
+          <div
+            className="SellingProducts__modalContent"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="SellingProducts__closeBtn" onClick={handleCloseModal}>
+              <FiX />
+            </button>
+
+            <div className="SellingProducts__modalBody">
+              <div className="SellingProducts__modalImg">
+                <img src={selectedProduct.image} alt={selectedProduct.title} />
+              </div>
+
+              <div className="SellingProducts__modalDetails">
+                <h2>{selectedProduct.title}</h2>
+                <p>{selectedProduct.desc}</p>
+
+                <div className="SellingProducts__modalPrice">
+                  <span className="SellingProducts__modalNewPrice">
+                    {selectedProduct.price}
+                  </span>
+                  {selectedProduct.oldPrice && (
+                    <span className="SellingProducts__modalOldPrice">
+                      {selectedProduct.oldPrice}
+                    </span>
+                  )}
+                </div>
+
+                <div className="SellingProducts__optionGroup">
+                  <h4>Size</h4>
+                  <div className="SellingProducts__sizes">
+                    {["S", "M", "L", "XL"].map((size) => (
+                      <button
+                        key={size}
+                        className={`SellingProducts__sizeBtn ${
+                          selectedSize === size ? "active" : ""
+                        }`}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="SellingProducts__optionGroup">
+                  <h4>Color</h4>
+                  <div className="SellingProducts__colors">
+                    {["#e65c00", "#ff99cc", "#8000ff", "#e62e3d"].map(
+                      (color, cIndex) => (
+                        <span
+                          key={cIndex}
+                          className={`SellingProducts__colorDot ${
+                            selectedColor === cIndex ? "active" : ""
+                          }`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setSelectedColor(cIndex)}
+                        />
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <div className="SellingProducts__actionRow">
+                  <div className="SellingProducts__quantitySelector">
+                    <button onClick={handleDecrease}>-</button>
+                    <span>{quantity}</span>
+                    <button onClick={handleIncrease}>+</button>
+                  </div>
+                  <button className="SellingProducts__addToCartBtn">
+                    Add To Cart
+                  </button>
+                </div>
+
+                <button className="SellingProducts__viewDetailsBtn">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

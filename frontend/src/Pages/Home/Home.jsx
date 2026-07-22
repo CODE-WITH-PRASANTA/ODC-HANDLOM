@@ -5,6 +5,10 @@ import NewArrivals from '../../Components/NewArrivals/NewArrivals'
 import Hero from '../../Components/Hero/Hero'
 import FlashSale from '../../Components/FlashSale/FlashSale'
 import Collection from '../../Components/Collection/Collection'
+import ChawkBazarApp from '../../Components/ChawkBazarApp/ChawkBazarApp'
+import Testimonials from '../../Components/Testimonials/Testimonials'
+import NewsletterGallery from '../../Components/NewsletterGallery/NewsletterGallery'
+
 
 
 
@@ -17,11 +21,17 @@ const Home = () => {
     <div>
       <SellingProducts/>
       <ExclusiveSection/>
-      <NewArrivals/>
+       <NewArrivals/>
+       <ChawkBazarApp/>
+       <Testimonials/>
+       <NewsletterGallery/>
+      
       
     <Hero/>
     <FlashSale/>
     <Collection/>
+    
+    
     
       
     </div>
