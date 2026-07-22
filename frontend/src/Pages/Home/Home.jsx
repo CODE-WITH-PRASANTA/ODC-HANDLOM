@@ -9,6 +9,8 @@ import ChawkBazarApp from '../../Components/ChawkBazarApp/ChawkBazarApp'
 import Testimonials from '../../Components/Testimonials/Testimonials'
 import NewsletterGallery from '../../Components/NewsletterGallery/NewsletterGallery'
 
+import FeaturedProduct from '../../Components/FeaturedProduct/FeaturedProduct'
+import TopBrand from '../../Components/TopBrand/TopBrand'
 
 
 
@@ -19,17 +21,23 @@ import NewsletterGallery from '../../Components/NewsletterGallery/NewsletterGall
 const Home = () => {
   return (
     <div>
+      
+      
+     
+    <Hero/>
+    <Collection/>
+
+    <FeaturedProduct />
+    <TopBrand />
+
+     
       <SellingProducts/>
       <ExclusiveSection/>
        <NewArrivals/>
        <ChawkBazarApp/>
        <Testimonials/>
-       <NewsletterGallery/>
+      <NewsletterGallery/>
       
-      
-    <Hero/>
-    <FlashSale/>
-    <Collection/>
     
     
     
