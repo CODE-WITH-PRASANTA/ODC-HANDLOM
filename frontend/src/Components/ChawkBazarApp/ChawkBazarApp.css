@@ -1,0 +1,215 @@
+.ChawkBazarApp {
+  width: 100%;
+  padding: 80px 20px;
+  background: #fff;
+}
+
+.ChawkBazarApp-container {
+  max-width: 1450px;
+  margin: auto;
+  background: #f8f8f8;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  padding: 80px;
+}
+
+.ChawkBazarApp-left {
+  width: 55%;
+}
+
+.ChawkBazarApp-subtitle {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 25px;
+}
+
+.ChawkBazarApp-title {
+  font-size: 64px;
+  font-weight: 300;
+  line-height: 1.25;
+  color: #222;
+  margin-bottom: 55px;
+}
+
+.ChawkBazarApp-title strong {
+  font-weight: 700;
+}
+
+.ChawkBazarApp-buttons {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.ChawkBazarApp-storeBtn {
+  width: 220px;
+  height: 72px;
+  background: #222;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 15px 18px;
+  transition: .35s;
+}
+
+.ChawkBazarApp-storeBtn:hover {
+  background: #000;
+  transform: translateY(-5px);
+}
+
+.ChawkBazarApp-icon {
+  font-size: 36px;
+  margin-right: 15px;
+}
+
+.ChawkBazarApp-text span {
+  display: block;
+  font-size: 13px;
+  color: #ddd;
+}
+
+.ChawkBazarApp-text h5 {
+  margin-top: 2px;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.ChawkBazarApp-right {
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ChawkBazarApp-right img {
+  width: 470px;
+  max-width: 100%;
+  transition: .4s;
+}
+
+.ChawkBazarApp-right img:hover {
+  transform: scale(1.04);
+}
+
+/*============ Laptop ============*/
+
+@media(max-width:1300px){
+
+.ChawkBazarApp-container{
+padding:70px 60px;
+}
+
+.ChawkBazarApp-title{
+font-size:55px;
+}
+
+}
+
+/*============ Tablet ============*/
+
+@media(max-width:991px){
+
+.ChawkBazarApp-container{
+flex-direction:column;
+text-align:center;
+padding:60px 40px;
+}
+
+.ChawkBazarApp-left{
+width:100%;
+}
+
+.ChawkBazarApp-right{
+width:100%;
+margin-top:50px;
+}
+
+.ChawkBazarApp-buttons{
+justify-content:center;
+}
+
+.ChawkBazarApp-title{
+font-size:46px;
+}
+
+.ChawkBazarApp-right img{
+width:360px;
+}
+
+}
+
+/*============ Mobile ============*/
+
+@media(max-width:768px){
+
+.ChawkBazarApp{
+padding:50px 15px;
+}
+
+.ChawkBazarApp-container{
+padding:45px 25px;
+}
+
+.ChawkBazarApp-subtitle{
+font-size:20px;
+}
+
+.ChawkBazarApp-title{
+font-size:38px;
+margin-bottom:35px;
+}
+
+.ChawkBazarApp-storeBtn{
+width:190px;
+height:64px;
+}
+
+.ChawkBazarApp-icon{
+font-size:30px;
+}
+
+.ChawkBazarApp-text h5{
+font-size:23px;
+}
+
+.ChawkBazarApp-right img{
+width:300px;
+}
+
+}
+
+/*============ Small Mobile ============*/
+
+@media(max-width:480px){
+
+.ChawkBazarApp-container{
+padding:35px 18px;
+}
+
+.ChawkBazarApp-title{
+font-size:30px;
+line-height:1.4;
+}
+
+.ChawkBazarApp-buttons{
+flex-direction:column;
+align-items:center;
+}
+
+.ChawkBazarApp-storeBtn{
+width:100%;
+max-width:260px;
+}
+
+.ChawkBazarApp-right img{
+width:250px;
+}
+
+}
