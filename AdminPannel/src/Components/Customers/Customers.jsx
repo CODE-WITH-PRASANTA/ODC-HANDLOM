@@ -24,7 +24,7 @@ import {
   CreditCard,
   Briefcase
 } from 'lucide-react';
- 
+
 const CUSTOMERS_DATA = [
   {
     id: '#CUS12548',
