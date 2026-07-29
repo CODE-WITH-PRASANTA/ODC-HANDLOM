@@ -1,0 +1,293 @@
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+ 
+.dashboard-overview-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
+  padding: 20px;
+  background-color: #f7f8fa;
+  min-height: 40vh;
+}
+
+/* Responsive grid layouts */
+@media (min-width: 768px) {
+  .dashboard-overview-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sales-overview-card {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-overview-container {
+    grid-template-columns: 1.2fr 1fr 1fr;
+  }
+  .sales-overview-card {
+    grid-column: span 1;
+  }
+}
+
+/* Card General Styling */
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* --- Sales Overview Card --- */
+.select-wrapper {
+  position: relative;
+}
+
+.timeframe-select {
+  appearance: none;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 28px 6px 12px;
+  font-size: 13px;
+  color: #333333;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 9px;
+}
+
+.timeframe-select:hover {
+  border-color: #cbd5e1;
+}
+
+.legend-and-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-sales {
+  background-color: #8b0000;
+}
+
+.dot-orders {
+  background-color: #e28843;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px;
+}
+
+.hamburger-btn span {
+  width: 14px;
+  height: 2px;
+  background-color: #333;
+}
+
+.line-chart-wrapper {
+  margin-top: auto;
+}
+
+/* --- User Status Card --- */
+.user-status-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+@media (max-width: 480px) {
+  .user-status-content {
+    flex-direction: column;
+  }
+}
+
+.donut-chart-wrapper {
+  position: relative;
+  width: 55%;
+  min-width: 180px;
+}
+
+.donut-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.total-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.total-label {
+  font-size: 12px;
+  color: #718096;
+}
+
+.status-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 45%;
+}
+
+.status-legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-name {
+  font-size: 13px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.status-count {
+  font-size: 12px;
+  color: #718096;
+}
+
+/* --- Top Sellers / Products Card --- */
+.view-all-btn {
+  background-color: #fff9f5;
+  border: 1px solid #fbd5c0;
+  color: #8c4a27;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+  background-color: #fbece3;
+}
+
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-rank-img {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.product-img {
+  width: 44px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-details {
+  flex-grow: 1;
+}
+
+.product-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.product-category {
+  font-size: 12px;
+  color: #a0aec0;
+}
+
+.product-sales-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a202c;
+}
