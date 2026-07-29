@@ -13,6 +13,7 @@ import MainFaq from "./Pages/MainFaq/MainFaq";
 // Feature Components
 
 import SignIn from "./Components/SignIn/SignIn";
+import Order from './Pages/Order/Order';
 
 const App = () => {
   return (
@@ -31,6 +32,8 @@ const App = () => {
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/term" element={<TermandCondition />} />
         <Route path="/faq" element={<MainFaq />} />
+        <Route path="/order" element={<Order />} />
+        
       </Routes>
 
       {/* Footer stays at the bottom of all pages */}
