@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 import { 
   FiUpload, FiDownload, FiPlus, FiSearch, FiFilter, 
   FiMoreVertical, FiChevronLeft, FiChevronRight, FiX, 
@@ -25,6 +26,7 @@ const initialRefundsData = [
 ];
 
 const RefundsDashboard = () => {
+  const navigate = useNavigate(); // 2. Initialize navigate hook
   const [refunds, setRefunds] = useState(initialRefundsData);
   const [selectedRefund, setSelectedRefund] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -186,7 +188,7 @@ const RefundsDashboard = () => {
 
       {toastMessage && <div className="toast-notification">{toastMessage}</div>}
 
-      {/* Advanced Filters Modal with Cross Icon */}
+      {/* Advanced Filters Modal */}
       {isFilterModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsFilterModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -233,27 +235,9 @@ const RefundsDashboard = () => {
           <button className="btn btn-outline" onClick={handleImportClick}>
             <FiDownload /> Import
           </button>
-          <button className="btn btn-primary" onClick={() => {
-            const newRefundItem = {
-              id: `#RFD${Math.floor(10000 + Math.random() * 90000)}`,
-              orderId: `#ODC${Math.floor(10000 + Math.random() * 90000)}`,
-              customer: 'New Manual Customer',
-              email: 'manual@gmail.com',
-              phone: '+91 99999 88888',
-              avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces',
-              amount: '₹ 1,500.00',
-              rawAmount: 1500,
-              paymentMethod: 'UPI (Paytm)',
-              status: 'Pending',
-              requestedOn: 'May 26, 2025 05:00 PM',
-              processedOn: '-',
-              reason: 'Manual entry',
-              notes: 'Created via New Refund button.',
-              type: 'UPI'
-            };
-            setRefunds([newRefundItem, ...refunds]);
-            showToast('New Refund record created successfully!');
-          }}>
+          
+          {/* 3. Updated onClick event to navigate to /newfund */}
+          <button className="btn btn-primary" onClick={() => navigate('/newfund')}>
             <FiPlus /> New Refund
           </button>
         </div>
@@ -330,7 +314,6 @@ const RefundsDashboard = () => {
             <option value="Wallet">Wallet</option>
           </select>
           
-          {/* Functional Date Range Picker */}
           <div className="date-picker-wrapper">
             <FiCalendar className="date-icon" />
             <input 

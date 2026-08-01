@@ -37,7 +37,7 @@ const menuSections = [
   {
     title: 'PRODUCTS',
     items: [
-      { label: 'Products', path: '/products/all-products', icon: ShoppingBag },
+      { label: 'Products', path: '/addnewproduct', icon: ShoppingBag },
       { label: 'Categories', path: '/products/categories', icon: ListTree },
       { label: 'Collections', path: '/products/collections', icon: Gem },
       { label: 'Brands', path: '/products/brands', icon: Tag },
@@ -47,10 +47,10 @@ const menuSections = [
   {
     title: 'SALES',
     items: [
-      { label: 'Orders', path: '/sales/orders', icon: Package },
+      { label: 'Orders', path: '/order', icon: Package },
       { label: 'Customers', path: '/sales/customers', icon: Users },
       { label: 'Coupons', path: '/sales/coupons', icon: Ticket },
-      { label: 'Refunds', path: '/sales/refunds', icon: RotateCcw },
+      { label: 'Refunds', path: '/refund', icon: RotateCcw },
       { label: 'Payments', path: '/sales/payments', icon: Wallet },
     ]
   },
