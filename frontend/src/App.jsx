@@ -98,6 +98,18 @@ const App = () => {
         />
 
 
+        {/* Redirect empty path to home */}
+        <Route path="/" element={<Navigate to="/home" />} />
+        
+        {/* Main Routes */}
+        <Route path="/home" element={<Home />} />
+      
+      
+        <Route path="/SignIn" element={<SignIn />} />
+        <Route path="/term" element={<TermandCondition />} />
+        <Route path="/faq" element={<MainFaq />} />
+        
+        
       </Routes>
 
 
