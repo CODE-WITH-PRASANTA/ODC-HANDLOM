@@ -49,27 +49,53 @@ const Breadcrumb = () => {
   );
 };
 
+// Breakpoint kept in one place so JS and the "1024px" logic never drift
+// out of sync with the CSS media queries in Sidebar.css / MainLayout.css.
+const DESKTOP_BREAKPOINT = 1024;
+
 const MainLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    typeof window !== 'undefined' ? window.innerWidth >= DESKTOP_BREAKPOINT : true
+  );
   const [mobileSidebar, setMobileSidebar] = useState(false);
 
-  // Handle responsive resizing directly
+  // Handle responsive resizing, debounced so it doesn't fire on every pixel
   useEffect(() => {
+    let resizeTimer;
+
     const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setSidebarOpen(false);
-      } else {
-        setSidebarOpen(true);
-        setMobileSidebar(false);
-      }
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (window.innerWidth < DESKTOP_BREAKPOINT) {
+          setSidebarOpen(false);
+          // don't force-close mobileSidebar here — only the user's own
+          // toggle/overlay click/nav click should close an open drawer
+        } else {
+          setSidebarOpen(true);
+          setMobileSidebar(false);
+        }
+      }, 120);
     };
+
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
+  // Lock body scroll while the mobile drawer is open, otherwise the page
+  // behind it scrolls too and the overlay looks broken.
+  useEffect(() => {
+    document.body.style.overflow = mobileSidebar ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileSidebar]);
+
   const toggleSidebar = () => {
-    if (window.innerWidth < 1024) {
+    if (window.innerWidth < DESKTOP_BREAKPOINT) {
       setMobileSidebar((prev) => !prev);
     } else {
       setSidebarOpen((prev) => !prev);
@@ -78,10 +104,10 @@ const MainLayout = () => {
 
   return (
     <div className="MainLayout">
-      <Sidebar 
-        sidebarOpen={sidebarOpen} 
-        mobileSidebar={mobileSidebar} 
-        setMobileSidebar={setMobileSidebar} 
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        mobileSidebar={mobileSidebar}
+        setMobileSidebar={setMobileSidebar}
       />
       <div className={`MainContent-wrapper ${sidebarOpen ? 'expanded' : 'collapsed'}`}>
         <Topbar toggleSidebar={toggleSidebar} />

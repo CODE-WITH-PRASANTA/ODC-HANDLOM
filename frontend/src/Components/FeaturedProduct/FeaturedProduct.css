@@ -1,19 +1,41 @@
 /* ==========================================================================
+   DESIGN TOKENS
+   A quiet boutique-travel palette: warm stone shell, deep ink cards on
+   hover, brass accent for price/discount — built to sit with the site's
+   travel & accessories imagery rather than a generic storefront look.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Manrope:wght@400;500;600;700&display=swap');
+
+.fp-container {
+  --fp-stone: #EFEDE6;
+  --fp-card: #FFFFFF;
+  --fp-ink: #14171A;
+  --fp-ink-soft: #4A4E52;
+  --fp-line: #E2DFD5;
+  --fp-gold: #B98B2E;
+  --fp-gold-soft: #E8D9B5;
+  --fp-cream: #FBFAF7;
+
+  --fp-font-display: 'Newsreader', Georgia, serif;
+  --fp-font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ==========================================================================
    1. BASE STYLES (Mobile Defaults)
    ========================================================================== */
 
-/* Base Container Styles */
 .fp-container {
-  background-color: #fcfcfc;
+  background-color: var(--fp-stone);
   min-height: 100vh;
-  padding: 40px 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #222;
+  padding: 56px 16px;
+  font-family: var(--fp-font-body);
+  color: var(--fp-ink);
   box-sizing: border-box;
 }
 
-.fp-container *, 
-.fp-container *::before, 
+.fp-container *,
+.fp-container *::before,
 .fp-container *::after {
   box-sizing: border-box;
 }
@@ -23,64 +45,118 @@
   margin: 0 auto;
 }
 
-.fp-section-title {
-  font-size: 28px;
-  font-weight: 700;
+.fp-section-heading {
   margin-bottom: 32px;
-  color: #1a1a1a;
+}
+
+.fp-section-eyebrow {
+  display: block;
+  font-family: var(--fp-font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fp-gold);
+  margin-bottom: 8px;
+}
+
+.fp-section-title {
+  font-family: var(--fp-font-display);
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fp-ink);
+  margin: 0;
 }
 
 /* Grid Layouts */
 .fp-grid-main {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 .fp-grid-sub {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 /* Universal Card Layout */
 .fp-card {
   position: relative;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  background-color: var(--fp-card);
+  border: 1px solid var(--fp-line);
+  border-radius: 10px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
   overflow: hidden;
-  transition: box-shadow 0.3s ease;
+  transition: background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.5s ease,
+              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s ease;
 }
 
+/* Signature interaction: the card "flips" from paper to ink on hover,
+   the photo lifts, and price/eyebrow copy pick up the brass accent. */
 .fp-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: var(--fp-ink);
+  border-color: var(--fp-ink);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 40px -20px rgba(20, 23, 26, 0.45);
+}
+
+.fp-card:hover .fp-product-name,
+.fp-card:hover .fp-current-price {
+  color: var(--fp-cream);
+}
+
+.fp-card:hover .fp-product-category {
+  color: #A9ADB2;
+}
+
+.fp-card:hover .fp-original-price {
+  color: #7A7E82;
 }
 
 .fp-card-large {
-  min-height: 550px;
+  min-height: 560px;
 }
 
 .fp-card-small {
-  min-height: 310px;
+  min-height: 320px;
 }
 
-/* Discount Badge */
+/* Discount Badge — folded ribbon corner rather than a generic pill */
 .fp-badge {
   position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 84px;
+  height: 84px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fp-badge-text {
+  position: absolute;
   top: 16px;
-  left: 16px;
-  background-color: #1e1e1e;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 10px;
-  z-index: 2;
+  left: -30px;
+  width: 130px;
+  transform: rotate(-45deg);
+  background-color: var(--fp-gold);
+  color: var(--fp-ink);
+  font-family: var(--fp-font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 4px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Image Wrapping Box */
@@ -108,32 +184,42 @@
   max-height: 300px;
 }
 
-/* Flower blooming effect on hover */
 .fp-card:hover .flower-hover {
-  transform: scale(1.12) rotate(1.5deg);
+  transform: scale(1.1) rotate(1.2deg);
 }
 
-/* Custom Floating Text Tooltip on Hover */
-.fp-tooltip {
+/* Quick View — replaces the old passive tooltip with a real, tappable
+   affordance that appears on hover/focus and works on touch too. */
+.fp-quick-view {
   position: absolute;
-  right: 16px;
-  bottom: 12px;
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  padding: 4px 12px;
-  font-size: 11px;
-  font-weight: 500;
-  color: #444444;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  left: 50%;
+  bottom: 8px;
+  transform: translate(-50%, 12px);
+  background-color: var(--fp-cream);
+  color: var(--fp-ink);
+  border: none;
+  padding: 10px 22px;
+  font-family: var(--fp-font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  cursor: pointer;
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease-out;
   z-index: 5;
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
-.fp-card:hover .fp-tooltip {
+.fp-card:hover .fp-quick-view,
+.fp-card:focus-within .fp-quick-view {
   opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.fp-quick-view:hover {
+  background-color: var(--fp-gold);
 }
 
 /* Meta Data Structure */
@@ -142,7 +228,7 @@
   justify-content: space-between;
   align-items: flex-end;
   padding-top: 16px;
-  border-top: 1px solid transparent;
+  gap: 12px;
 }
 
 .fp-meta-left {
@@ -150,16 +236,19 @@
 }
 
 .fp-product-name {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111111;
+  font-family: var(--fp-font-display);
+  font-size: 21px;
+  font-weight: 500;
+  color: var(--fp-ink);
   margin: 0;
+  transition: color 0.4s ease;
 }
 
 .fp-product-category {
-  font-size: 16px;
-  color: #777777;
-  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #8A8D8F;
+  margin: 5px 0 0 0;
+  transition: color 0.4s ease;
 }
 
 .text-truncate {
@@ -174,35 +263,45 @@
 }
 
 .fp-original-price {
-  font-size: 14px;
-  color: #131111;
+  font-size: 13px;
+  color: #A6A9A6;
   text-decoration: line-through;
   margin: 0;
+  transition: color 0.4s ease;
 }
 
 .fp-current-price {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111111;
+  font-family: var(--fp-font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fp-ink);
   margin: 2px 0 0 0;
+  transition: color 0.4s ease;
 }
 
 /* --- QUICK VIEW MODAL BASE (Mobile Defaults) --- */
 .fp-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background-color: rgba(20, 23, 26, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 16px;
+  animation: fp-fade-in 0.25s ease;
+}
+
+@keyframes fp-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .fp-modal-content {
-  background-color: #ffffff;
-  border-radius: 6px;
+  background-color: var(--fp-cream);
+  border-radius: 12px;
   width: 100%;
   max-width: 850px;
   position: relative;
@@ -210,7 +309,13 @@
   flex-direction: column;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 30px 60px -15px rgba(20, 23, 26, 0.4);
+  animation: fp-modal-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fp-modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .fp-modal-close {
@@ -218,29 +323,30 @@
   top: 16px;
   right: 16px;
   z-index: 1010;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  color: #444444;
+  border: 1px solid var(--fp-line);
+  background-color: var(--fp-cream);
+  color: var(--fp-ink);
   font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
 }
 
 .fp-modal-close:hover {
-  background-color: #f5f5f5;
-  transform: scale(1.05);
+  background-color: var(--fp-ink);
+  color: var(--fp-cream);
+  transform: scale(1.06);
 }
 
 .fp-modal-image-panel {
   width: 100%;
-  background-color: #e9e9e9;
+  background-color: var(--fp-stone);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,7 +358,7 @@
   max-height: 320px;
   max-width: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 14px 20px rgba(20, 23, 26, 0.15));
 }
 
 .fp-modal-details-panel {
@@ -267,17 +373,31 @@
   margin-bottom: 24px;
 }
 
-.fp-details-title {
-  font-size: 24px;
+.fp-details-badge {
+  display: inline-block;
+  background-color: var(--fp-gold-soft);
+  color: #6B5115;
+  font-size: 11px;
   font-weight: 700;
-  color: #111111;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.fp-details-title {
+  font-family: var(--fp-font-display);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--fp-ink);
   margin: 0 0 12px 0;
 }
 
 .fp-details-description {
   font-size: 14px;
-  color: #555555;
-  line-height: 1.6;
+  color: var(--fp-ink-soft);
+  line-height: 1.65;
   margin: 0 0 24px 0;
 }
 
@@ -289,27 +409,30 @@
 }
 
 .fp-details-price {
-  font-size: 24px;
-  font-weight: 700;
-  color: #111111;
+  font-family: var(--fp-font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--fp-ink);
 }
 
 .fp-details-old-price {
   font-size: 16px;
-  color: #b0b0b0;
+  color: #A6A9A6;
   text-decoration: line-through;
 }
 
-/* Swatches & Options styling */
+/* Swatches & Options */
 .fp-options-section {
   margin-bottom: 24px;
 }
 
 .fp-options-label {
   display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #444444;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--fp-ink-soft);
   margin-bottom: 10px;
 }
 
@@ -320,31 +443,31 @@
 }
 
 .fp-size-button {
-  min-width: 40px;
-  height: 40px;
+  min-width: 42px;
+  height: 42px;
   padding: 0 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-  background-color: #ffffff;
-  color: #555555;
+  border-radius: 6px;
+  border: 1px solid var(--fp-line);
+  background-color: var(--fp-cream);
+  color: var(--fp-ink-soft);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .fp-size-button:hover {
-  border-color: #000000;
-  color: #000000;
+  border-color: var(--fp-ink);
+  color: var(--fp-ink);
 }
 
 .fp-size-button.active {
-  border-color: #000000;
-  color: #000000;
-  box-shadow: inset 0 0 0 1px #f8f6f6;
+  border-color: var(--fp-ink);
+  background-color: var(--fp-ink);
+  color: var(--fp-cream);
 }
 
 .fp-color-container {
@@ -355,11 +478,11 @@
 .fp-color-dot {
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .fp-color-dot:hover {
@@ -368,7 +491,7 @@
 
 .fp-color-dot.active {
   transform: scale(1.05);
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #555555;
+  box-shadow: 0 0 0 2px var(--fp-cream), 0 0 0 4px var(--fp-ink);
 }
 
 /* Actions Panel */
@@ -387,15 +510,15 @@
 .fp-counter {
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
-  border-radius: 2px;
+  border: 1px solid var(--fp-line);
+  border-radius: 6px;
   height: 48px;
-  background-color: #ffffff;
+  background-color: var(--fp-cream);
 }
 
 .fp-counter-btn {
   padding: 0 16px;
-  color: #0a0101;
+  color: var(--fp-ink);
   font-size: 14px;
   font-weight: 700;
   border: none;
@@ -409,15 +532,15 @@
 }
 
 .fp-counter-btn:hover {
-  color: #f9f4f4;
-  background-color: #0b0b0b;
+  color: var(--fp-cream);
+  background-color: var(--fp-ink);
 }
 
 .fp-counter-value {
   padding: 0 16px;
   font-size: 14px;
   font-weight: 600;
-  color: #111111;
+  color: var(--fp-ink);
   min-width: 48px;
   text-align: center;
 }
@@ -425,52 +548,55 @@
 .fp-btn-primary {
   flex: 1;
   height: 48px;
-  background-color: #1e1e1e;
-  color: #ffffff;
+  background-color: var(--fp-ink);
+  color: var(--fp-cream);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   border: none;
-  border-radius: 2px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .fp-btn-primary:hover {
-  background-color: #000000;
+  background-color: var(--fp-gold);
+  color: var(--fp-ink);
 }
 
 .fp-btn-secondary {
   width: 100%;
   height: 48px;
-  background-color: #262626;
-  color: #ffffff;
+  background-color: transparent;
+  color: var(--fp-ink);
   font-size: 14px;
-  font-weight: 600;
-  border: none;
-  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--fp-line);
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .fp-btn-secondary:hover {
-  background-color: #000000;
+  border-color: var(--fp-ink);
+  background-color: var(--fp-ink);
+  color: var(--fp-cream);
 }
 
 /* Promo Banner */
 .promo-container {
   width: 100%;
-  margin-top: 65px;
-  box-sizing: border-box;
+  margin-top: 64px;
 }
 
 .promo-wrapper-full {
   width: 100%;
-  max-width: 100%; 
-  border-radius: 4px;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 12px 30px -12px rgba(20, 23, 26, 0.15);
 }
 
 .promo-full-img {
@@ -478,24 +604,29 @@
   height: auto;
   display: block;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .promo-wrapper-full:hover .promo-full-img {
-  transform: scale(1.01); 
+  transform: scale(1.03);
 }
 
-
 /* ==========================================================================
-   2. SERIAL RESPONSIVE BREAKPOINTS (Mobile-First Order)
+   2. RESPONSIVE BREAKPOINTS (Mobile-First)
    ========================================================================== */
 
-/* --- Tablets & Small Desktops (768px and up) --- */
+@media (min-width: 640px) {
+  .fp-section-title {
+    font-size: 38px;
+  }
+}
+
+/* Tablets & Small Desktops */
 @media (min-width: 768px) {
   .fp-grid-sub {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .fp-card-large {
     min-height: 640px;
   }
@@ -516,9 +647,34 @@
   }
 }
 
-/* --- Larger Desktops (1024px and up) --- */
+/* Larger Desktops */
 @media (min-width: 1024px) {
   .fp-grid-main {
     grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .fp-grid-sub {
+    gap: 24px;
+  }
+}
+
+/* Extra-large screens: keep cards from stretching too wide */
+@media (min-width: 1600px) {
+  .fp-wrapper {
+    max-width: 1520px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .fp-card,
+  .fp-product-image,
+  .fp-quick-view,
+  .promo-full-img,
+  .fp-modal-content,
+  .fp-modal-overlay {
+    animation: none !important;
+    transition: none !important;
   }
 }

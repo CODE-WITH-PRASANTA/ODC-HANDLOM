@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./NewArrivals.css";
-import { FiX, FiPlus, FiMinus } from "react-icons/fi";
+import { FiX, FiPlus, FiMinus, FiShoppingBag, FiEye, FiCheck, FiHeart } from "react-icons/fi";
 
 const productsData = [
   {
@@ -9,6 +9,7 @@ const productsData = [
     desc: "Fendi began life in 1925 as a fur and leather speciality store in Rome.",
     price: 18.59,
     oldPrice: 24.00,
+    rating: 4.8,
     image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
     colors: ["#e67e22", "#ff9ff3", "#8e44ad", "#e74c3c"]
@@ -19,6 +20,7 @@ const productsData = [
     desc: "Classic white crewneck t-shirt made from ultra-soft organic cotton.",
     price: 18.59,
     oldPrice: null,
+    rating: 4.6,
     image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80",
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["#ffffff", "#2c3e50", "#7f8c8d"]
@@ -29,6 +31,7 @@ const productsData = [
     desc: "A vibrant dark floral shirt designed for a clean, modern aesthetic fit.",
     price: 18.59,
     oldPrice: 22.50,
+    rating: 4.9,
     image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
     colors: ["#111111", "#27ae60", "#2980b9"]
@@ -39,6 +42,7 @@ const productsData = [
     desc: "Heavyweight woolen texture drape overcoat perfect for winter stylings.",
     price: 18.59,
     oldPrice: 35.00,
+    rating: 5.0,
     image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
     colors: ["#2c3e50", "#d35400", "#7f8c8d"]
@@ -49,6 +53,7 @@ const productsData = [
     desc: "Crafted with premium authentic leather elements and heavy zip finishes.",
     price: 18.59,
     oldPrice: 40.00,
+    rating: 4.7,
     image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
     colors: ["#111111", "#7f8c8d"]
@@ -59,6 +64,7 @@ const productsData = [
     desc: "Flowy, light, and textured printed maxi skirt with side slit adjustments.",
     price: 18.59,
     oldPrice: 25.00,
+    rating: 4.5,
     image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
     colors: ["#f1c40f", "#e67e22", "#16a085"]
@@ -69,6 +75,7 @@ const productsData = [
     desc: "V-neck dark green relaxed midi dress printed with delicate floral arrays.",
     price: 18.59,
     oldPrice: null,
+    rating: 4.8,
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
     colors: ["#27ae60", "#2c3e50", "#8e44ad"]
@@ -79,6 +86,7 @@ const productsData = [
     desc: "Layer up comfortably with our signature vintage tartan oversized flannel shirt.",
     price: 18.59,
     oldPrice: 28.00,
+    rating: 4.6,
     image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&auto=format&fit=crop&q=80",
     sizes: ["M", "L", "XL"],
     colors: ["#d35400", "#2c3e50", "#c0392b"]
@@ -89,6 +97,7 @@ const productsData = [
     desc: "Soft-structured wool-felt fedora designed to accent casual street wear.",
     price: 18.59,
     oldPrice: null,
+    rating: 4.4,
     image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
     sizes: ["One Size"],
     colors: ["#d35400", "#7f8c8d", "#2c3e50"]
@@ -99,6 +108,7 @@ const productsData = [
     desc: "Cotton basic crew neck charcoal t-shirt featuring modern distressed graphics.",
     price: 18.59,
     oldPrice: 21.99,
+    rating: 4.9,
     image: "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
     colors: ["#2c3e50", "#7f8c8d", "#111111"]
@@ -110,6 +120,7 @@ const NewArrivals = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [addedToast, setAddedToast] = useState(false);
 
   const handleOpenModal = (product) => {
     setSelectedProduct(product);
@@ -130,12 +141,27 @@ const NewArrivals = () => {
     }
   };
 
-  return (
-    <section className="NewArrivals">
-      <div className="NewArrivals__container">
-        <h2 className="NewArrivals__heading">New Arrivals</h2>
+  const handleAddToCart = () => {
+    setAddedToast(true);
+    setTimeout(() => {
+      setAddedToast(false);
+      handleCloseModal();
+    }, 1200);
+  };
 
-        {/* Product Grid */}
+  return (
+    <section className="NewArrivals" id="new-arrivals-section">
+      <div className="NewArrivals__container">
+        
+        {/* Header */}
+        <div className="NewArrivals__header">
+          <div className="NewArrivals__titleWrap">
+            <span className="NewArrivals__pill">FRESH COLLECTION</span>
+            <h2 className="NewArrivals__heading">New Arrivals</h2>
+          </div>
+        </div>
+
+        {/* Product Grid (5 Columns Default) */}
         <div className="NewArrivals__grid">
           {productsData.map((product) => (
             <div 
@@ -143,12 +169,23 @@ const NewArrivals = () => {
               key={product.id}
               onClick={() => handleOpenModal(product)}
             >
+              {/* Product Image Wrapper */}
               <div className="NewArrivals__imageWrapper">
-                <img src={product.image} alt={product.title} />
+                <img src={product.image} alt={product.title} loading="lazy" />
+                <div className="NewArrivals__quickOverlay">
+                  <span><FiEye /> Quick View</span>
+                </div>
               </div>
+
+              {/* Product Info */}
               <div className="NewArrivals__info">
+                <div className="NewArrivals__rating">
+                  <span>★</span>
+                  <span>{product.rating}</span>
+                </div>
                 <h3 className="NewArrivals__title">{product.title}</h3>
                 <p className="NewArrivals__desc">{product.desc}</p>
+
                 <div className="NewArrivals__priceRow">
                   <span className="NewArrivals__price">${product.price.toFixed(2)}</span>
                   {product.oldPrice && (
@@ -159,28 +196,37 @@ const NewArrivals = () => {
             </div>
           ))}
         </div>
+
       </div>
 
-      {/* Detail Pop-up Modal */}
+      {/* Lightbox Quick View Modal */}
       {selectedProduct && (
         <div className="NewArrivals__modalOverlay" onClick={handleCloseModal}>
           <div 
             className="NewArrivals__modalContent" 
             onClick={(e) => e.stopPropagation()}
           >
-            <button className="NewArrivals__modalClose" onClick={handleCloseModal}>
+            <button 
+              className="NewArrivals__modalClose" 
+              onClick={handleCloseModal}
+              aria-label="Close modal"
+            >
               <FiX />
             </button>
 
             <div className="NewArrivals__modalBody">
-              {/* Left Column - Product Image */}
+              {/* Left Column - Image */}
               <div className="NewArrivals__modalImgCol">
                 <img src={selectedProduct.image} alt={selectedProduct.title} />
               </div>
 
               {/* Right Column - Details */}
               <div className="NewArrivals__modalDetailsCol">
-                <h2 className="NewArrivals__modalTitle">{selectedProduct.title}</h2>
+                <div className="NewArrivals__modalHeaderInfo">
+                  <span className="NewArrivals__modalRating">★ {selectedProduct.rating} Rating</span>
+                  <h2 className="NewArrivals__modalTitle">{selectedProduct.title}</h2>
+                </div>
+
                 <p className="NewArrivals__modalDesc">{selectedProduct.desc}</p>
                 
                 <div className="NewArrivals__modalPriceRow">
@@ -196,11 +242,12 @@ const NewArrivals = () => {
 
                 {/* Size Options */}
                 <div className="NewArrivals__modalOptionSection">
-                  <h4 className="NewArrivals__optionHeading">Size</h4>
+                  <h4 className="NewArrivals__optionHeading">Select Size</h4>
                   <div className="NewArrivals__sizeSelector">
                     {selectedProduct.sizes.map((size) => (
                       <button
                         key={size}
+                        type="button"
                         className={`NewArrivals__sizeBtn ${selectedSize === size ? "active" : ""}`}
                         onClick={() => setSelectedSize(size)}
                       >
@@ -212,11 +259,12 @@ const NewArrivals = () => {
 
                 {/* Color Options */}
                 <div className="NewArrivals__modalOptionSection">
-                  <h4 className="NewArrivals__optionHeading">Color</h4>
+                  <h4 className="NewArrivals__optionHeading">Select Color</h4>
                   <div className="NewArrivals__colorSelector">
                     {selectedProduct.colors.map((color) => (
                       <button
                         key={color}
+                        type="button"
                         className={`NewArrivals__colorBtn ${selectedColor === color ? "active" : ""}`}
                         style={{ backgroundColor: color }}
                         onClick={() => setSelectedColor(color)}
@@ -226,26 +274,35 @@ const NewArrivals = () => {
                   </div>
                 </div>
 
-                {/* Quantity & Action Buttons */}
+                {/* Quantity & Action Controls */}
                 <div className="NewArrivals__actionRow">
                   <div className="NewArrivals__quantityBlock">
-                    <button onClick={() => handleQuantityChange("dec")}>
+                    <button type="button" onClick={() => handleQuantityChange("dec")}>
                       <FiMinus />
                     </button>
                     <span className="NewArrivals__quantityValue">{quantity}</span>
-                    <button onClick={() => handleQuantityChange("inc")}>
+                    <button type="button" onClick={() => handleQuantityChange("inc")}>
                       <FiPlus />
                     </button>
                   </div>
 
-                  <button className="NewArrivals__addToCartBtn">
-                    Add To Cart
+                  <button 
+                    type="button" 
+                    className={`NewArrivals__addToCartBtn ${addedToast ? 'added' : ''}`}
+                    onClick={handleAddToCart}
+                  >
+                    {addedToast ? (
+                      <>
+                        <FiCheck /> Added To Cart
+                      </>
+                    ) : (
+                      <>
+                        <FiShoppingBag /> Add To Cart • ${(selectedProduct.price * quantity).toFixed(2)}
+                      </>
+                    )}
                   </button>
                 </div>
 
-                <button className="NewArrivals__viewDetailsBtn">
-                  View Details
-                </button>
               </div>
             </div>
           </div>

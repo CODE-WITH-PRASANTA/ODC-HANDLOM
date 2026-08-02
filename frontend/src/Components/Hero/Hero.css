@@ -1,16 +1,16 @@
-/* Base structural resets */
-* {
+/* Base structural resets (scoped, not global, to avoid leaking into the rest of the app) */
+.hero-container,
+.hero-container * {
   box-sizing: border-box;
- 
-  padding: 0;
+  margin: 0;
+ padding-top: 80px;
 }
 
-/* 5-Column Grid Layout - Replicates the exact image width ratios */
+/* 5-Column Grid Layout - replicates the reference image width ratios */
 .hero-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); 
-  gap: 12px;       /* Uniform premium gap separating each element */
-  padding: 0;      /* Full-width screen-to-screen layout */
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(8px, 1.2vw, 14px);
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
@@ -19,55 +19,111 @@
 /* Individual Grid Item Configurations */
 .hero-grid-item {
   position: relative;
-  overflow: hidden; 
+  overflow: hidden;
   cursor: pointer;
-  background-size: cover; 
+  border-radius: 14px;
+  background-color: #ececec; /* soft placeholder while the image decodes */
+  background-image: var(--hero-img);
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: transform 0.3s ease;
-  height: 100%;    /* Allows items to naturally flex to the row height */
+  height: 100%;
+  isolation: isolate;
+
+  /* Staggered fade + rise entrance */
+  opacity: 0;
+  transform: translateY(14px);
+  animation: hero-item-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* Shared height aspect rule for standard single square blocks */
+@keyframes hero-item-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle bottom-to-top scrim so future overlay text/labels stay legible,
+   and doubles as a premium "glass" depth cue even without text. */
+.hero-grid-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.22) 0%,
+    rgba(0, 0, 0, 0) 40%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Subtle zoom on the image itself, decoupled from the card's lift,
+   so the crop breathes without moving the card edges/shadow together. */
+.hero-grid-item {
+  will-change: transform;
+}
+
+.hero-grid-item:hover,
+.hero-grid-item:focus-visible {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow:
+    0 18px 30px -12px rgba(0, 0, 0, 0.28),
+    0 4px 10px -4px rgba(0, 0, 0, 0.12);
+}
+
+.hero-grid-item:hover::before,
+.hero-grid-item:focus-visible::before {
+  opacity: 1;
+}
+
+.hero-grid-item:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+
+/* Shared aspect rule for standard single square blocks */
 .hero-item-square {
   grid-column: span 1;
-  aspect-ratio: 1 / 1.05; /* Slightly elongated look matching reference */
+  aspect-ratio: 1 / 1.05; /* slightly elongated, matching reference */
 }
 
-/* The wider segments (Men's Collection / Backpack) spanning 3 columns out of 5 */
+/* The wider segments spanning 3 of 5 columns */
 .hero-item-wide {
   grid-column: span 3;
 }
 
-/* Card layout micro-movement on mouse interaction */
-.hero-grid-item:hover {
-  transform: translateY(-2px);
-}
-
-/* The Diagonal Flash Element Effect */
+/* Diagonal flash / sheen sweep on hover */
 .hero-flash-hover::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  inset: -50%;
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0) 100%
+    115deg,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 65%
   );
-  transition: transform 0.6s ease-in-out;
-  transform: translate(-100%, -100%);
+  transform: translate(-60%, -60%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
+  z-index: 2;
 }
 
-.hero-flash-hover:hover::after {
-  transform: translate(50%, 50%);
+.hero-flash-hover:hover::after,
+.hero-flash-hover:focus-visible::after {
+  transform: translate(30%, 30%);
 }
 
-/* Smooth Tablet & Desktop Adjustments */
+/* Tablet Adjustments */
 @media (max-width: 1024px) {
   .hero-container {
     grid-template-columns: repeat(4, 1fr);
@@ -82,16 +138,37 @@
   }
 }
 
-/* Responsive Mobile Stacking */
+/* Mobile Stacking */
 @media (max-width: 600px) {
-  .hero-container { 
-    grid-template-columns: 1fr; 
+  .hero-container {
+    grid-template-columns: 1fr;
     gap: 10px;
     padding: 0 10px;
   }
   .hero-item-wide,
-  .hero-item-square { 
-    grid-column: span 1; 
-    aspect-ratio: 1.75 / 1; /* Beautiful wide banner style tailored for mobile touch screens */
+  .hero-item-square {
+    grid-column: span 1;
+    aspect-ratio: 1.75 / 1; /* wide banner style suited to touch screens */
+  }
+  .hero-grid-item:hover,
+  .hero-grid-item:focus-visible {
+    transform: translateY(-2px); /* lighter lift on touch devices */
+  }
+}
+
+/* Respect users who've asked for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-grid-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: box-shadow 0.3s ease;
+  }
+  .hero-grid-item:hover,
+  .hero-grid-item:focus-visible {
+    transform: none;
+  }
+  .hero-flash-hover::after {
+    transition: none;
   }
 }

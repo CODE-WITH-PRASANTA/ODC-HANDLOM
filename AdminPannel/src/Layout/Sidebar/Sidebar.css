@@ -1,6 +1,5 @@
 /* ==========================================================================
-   Sidebar — matched to GDC Handloom reference (cream logo header, maroon
-   gradient body, gold accents, premium plan card)
+   Sidebar — GDC Handloom Premium Theme
    ========================================================================== */
 .Sidebar {
   position: fixed;
@@ -12,7 +11,7 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  transition: width 0.35s ease, transform 0.35s ease;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
@@ -32,16 +31,17 @@
   backdrop-filter: blur(2px);
 }
 
-/* Header / logo card — cream block with rounded bottom corners */
+/* Header / Logo Section */
 .Sidebar-header {
   position: relative;
   background: #FFF9F1;
-  padding: 20px 16px 26px;
+  padding: 20px 16px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 0 0 22px 22px;
   text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .Sidebar-logoMark {
@@ -87,8 +87,8 @@
 .Sidebar-headerDot {
   position: absolute;
   bottom: 6px;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #D9A94E;
 }
@@ -113,7 +113,7 @@
 }
 
 .Sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
@@ -130,17 +130,13 @@
   text-transform: uppercase;
 }
 
-.SidebarSection-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: 12px 8px;
-}
-
 .Sidebar-menu {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
 }
 
 .SidebarItem {
@@ -153,17 +149,17 @@
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   border-radius: 10px;
-  font-size: 0.87rem;
+  font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .SidebarItem-link:hover {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.08);
   color: #FFFFFF;
 }
 
@@ -171,20 +167,21 @@
   background: linear-gradient(90deg, #9C2E1D, #8B2318);
   color: #FFFFFF;
   font-weight: 600;
-  box-shadow: inset -2px 0 0 #D9A94E;
+  box-shadow: inset -3px 0 0 #D9A94E, 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .SidebarItem-icon {
   min-width: 18px;
+  flex-shrink: 0;
 }
 
 /* Premium Plan Card */
 .SidebarPlan {
-  margin: 4px 14px 16px;
+  margin: 8px 14px 16px;
   padding: 14px;
   border-radius: 14px;
-  background: rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(217, 169, 78, 0.4);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(217, 169, 78, 0.35);
 }
 
 .SidebarPlan-top {
@@ -216,15 +213,14 @@
   letter-spacing: 0.4px;
   color: #E9C978;
   background: rgba(217, 169, 78, 0.18);
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: 20px;
-  text-transform: capitalize;
 }
 
 .SidebarPlan-expiry {
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
 }
 
 .SidebarPlan-upgradeBtn {
@@ -237,14 +233,21 @@
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .SidebarPlan-upgradeBtn:hover {
-  filter: brightness(0.96);
+  filter: brightness(1.05);
+  transform: translateY(-1px);
 }
 
-/* Responsive Layout for Mobile/Tablet */
+/* Collapsed state: center icons, hide overflow text cleanly */
+.Sidebar.collapsed .SidebarItem-link {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+/* Mobile & Tablet Adjustments */
 @media (max-width: 1023px) {
   .Sidebar {
     transform: translateX(-100%);

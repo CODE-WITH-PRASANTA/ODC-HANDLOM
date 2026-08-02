@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './FeaturedProduct.css';
 
 // 1. Import your local images from the assets folder
@@ -7,9 +7,9 @@ import featuredCap from '../../assets/featuredcap.webp';
 import featuredShoes from '../../assets/featuredshoes.webp';
 import featuredSpeak from '../../assets/featuredspeak.webp';
 import featuredWatch from '../../assets/featuredwatch.webp';
-import fullBannerImg from '../../assets/promobanner.webp'; // Imported your banner image
+import fullBannerImg from '../../assets/promobanner.webp';
 
-// 2. Updated data array referencing your imported local images
+// 2. Product data referencing your imported local images
 const productsData = [
   {
     id: 1,
@@ -91,126 +91,125 @@ const FeaturedProduct = () => {
     setQuantity(1);
   };
 
+  const closeModal = useCallback(() => setSelectedProduct(null), []);
+
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+  // Close on Escape, and lock background scroll while the modal is open
+  useEffect(() => {
+    if (!selectedProduct) return;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [selectedProduct, closeModal]);
+
+  const renderCard = (product, isLarge) => (
+    <div
+      key={product.id}
+      onClick={() => handleProductClick(product)}
+      className={`fp-card ${isLarge ? 'fp-card-large' : 'fp-card-small'}`}
+    >
+      {product.discount && (
+        <span className="fp-badge">
+          <span className="fp-badge-text">-{product.discount}</span>
+        </span>
+      )}
+
+      <div className="fp-image-box">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="fp-product-image flower-hover"
+          loading="lazy"
+        />
+        <button
+          type="button"
+          className="fp-quick-view"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleProductClick(product);
+          }}
+        >
+          Quick View
+        </button>
+      </div>
+
+      <div className="fp-meta-info">
+        <div className="fp-meta-left">
+          <h3 className={`fp-product-name ${!isLarge ? 'text-truncate' : ''}`}>{product.name}</h3>
+          <p className={`fp-product-category ${!isLarge ? 'text-truncate' : ''}`}>{product.category}</p>
+        </div>
+        <div className="fp-meta-right">
+          {product.originalPrice && (
+            <p className="fp-original-price">${product.originalPrice.toFixed(2)}</p>
+          )}
+          <p className="fp-current-price">${product.price.toFixed(2)}</p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="fp-container">
       <div className="fp-wrapper">
-        <h2 className="fp-section-title">Featured Products</h2>
-
-        <div className="fp-grid-main">
-          
-          {/* Left Column: 50% width containing Nike Bag */}
-          {productsData.filter(p => p.isLarge).map((product) => (
-            <div 
-              key={product.id}
-              onClick={() => handleProductClick(product)}
-              className="fp-card fp-card-large"
-            >
-              {product.discount && (
-                <span className="fp-badge">{product.discount}</span>
-              )}
-
-              <div className="fp-image-box">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="fp-product-image flower-hover" 
-                />
-                <span className="fp-tooltip">{product.name}</span>
-              </div>
-
-              <div className="fp-meta-info">
-                <div className="fp-meta-left">
-                  <h3 className="fp-product-name">{product.name}</h3>
-                  <p className="fp-product-category">{product.category}</p>
-                </div>
-                <div className="fp-meta-right">
-                  {product.originalPrice && (
-                    <p className="fp-original-price">${product.originalPrice.toFixed(2)}</p>
-                  )}
-                  <p className="fp-current-price">${product.price.toFixed(2)}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* Right Column: 50% width containing remaining 4 products */}
-          <div className="fp-grid-sub">
-            {productsData.filter(p => !p.isLarge).map((product) => (
-              <div 
-                key={product.id}
-                onClick={() => handleProductClick(product)}
-                className="fp-card fp-card-small"
-              >
-                {product.discount && (
-                  <span className="fp-badge">{product.discount}</span>
-                )}
-
-                <div className="fp-image-box">
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="fp-product-image flower-hover" 
-                  />
-                  <span className="fp-tooltip">{product.name}</span>
-                </div>
-
-                <div className="fp-meta-info">
-                  <div className="fp-meta-left">
-                    <h3 className="fp-product-name text-truncate">{product.name}</h3>
-                    <p className="fp-product-category text-truncate">{product.category}</p>
-                  </div>
-                  <div className="fp-meta-right">
-                    {product.originalPrice && (
-                      <p className="fp-original-price text-xs">${product.originalPrice.toFixed(2)}</p>
-                    )}
-                    <p className="fp-current-price text-sm">${product.price.toFixed(2)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
+        <div className="fp-section-heading">
+          <span className="fp-section-eyebrow">Curated Edit</span>
+          <h2 className="fp-section-title">Featured Products</h2>
         </div>
 
-        {/* --- PROMOTION BANNER CONTAINER (Placed directly below the product grid) --- */}
+        <div className="fp-grid-main">
+          {/* Left Column: large hero card */}
+          {productsData.filter((p) => p.isLarge).map((product) => renderCard(product, true))}
+
+          {/* Right Column: remaining products */}
+          <div className="fp-grid-sub">
+            {productsData.filter((p) => !p.isLarge).map((product) => renderCard(product, false))}
+          </div>
+        </div>
+
+        {/* --- PROMOTION BANNER --- */}
         <div className="promo-container">
           <div className="promo-wrapper-full">
-            <img 
-              src={fullBannerImg} 
-              alt="Winter Collection Promotion Banner" 
-              className="promo-full-img" 
+            <img
+              src={fullBannerImg}
+              alt="Winter Collection Promotion Banner"
+              className="promo-full-img"
+              loading="lazy"
             />
           </div>
         </div>
-
       </div>
 
-      {/* Modal Quick View & Add to Cart Container */}
+      {/* Modal Quick View & Add to Cart */}
       {selectedProduct && (
-        <div className="fp-modal-overlay">
-          <div className="fp-modal-content">
-            
-            <button 
-              onClick={() => setSelectedProduct(null)}
-              className="fp-modal-close"
-              aria-label="Close modal"
-            >
+        <div
+          className="fp-modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
+        >
+          <div className="fp-modal-content" role="dialog" aria-modal="true" aria-label={selectedProduct.name}>
+            <button onClick={closeModal} className="fp-modal-close" aria-label="Close modal">
               ✕
             </button>
 
             <div className="fp-modal-image-panel">
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name}
-                className="fp-modal-image"
-              />
+              <img src={selectedProduct.image} alt={selectedProduct.name} className="fp-modal-image" />
             </div>
 
             <div className="fp-modal-details-panel">
               <div className="fp-details-top">
+                {selectedProduct.discount && (
+                  <span className="fp-details-badge">Save {selectedProduct.discount}</span>
+                )}
                 <h2 className="fp-details-title">{selectedProduct.name}</h2>
                 <p className="fp-details-description">{selectedProduct.fullDescription}</p>
 
@@ -247,6 +246,7 @@ const FeaturedProduct = () => {
                         onClick={() => setActiveColor(index)}
                         style={{ backgroundColor: color }}
                         className={`fp-color-dot ${activeColor === index ? 'active' : ''}`}
+                        aria-label={`Select color ${index + 1}`}
                       />
                     ))}
                   </div>
@@ -257,9 +257,9 @@ const FeaturedProduct = () => {
               <div className="fp-actions-panel">
                 <div className="fp-quantity-row">
                   <div className="fp-counter">
-                    <button onClick={handleDecrement} className="fp-counter-btn">－</button>
+                    <button onClick={handleDecrement} className="fp-counter-btn" aria-label="Decrease quantity">－</button>
                     <span className="fp-counter-value">{quantity}</span>
-                    <button onClick={handleIncrement} className="fp-counter-btn">＋</button>
+                    <button onClick={handleIncrement} className="fp-counter-btn" aria-label="Increase quantity">＋</button>
                   </div>
 
                   <button className="fp-btn-primary">Add To Cart</button>
@@ -267,9 +267,7 @@ const FeaturedProduct = () => {
 
                 <button className="fp-btn-secondary">View Details</button>
               </div>
-
             </div>
-
           </div>
         </div>
       )}
