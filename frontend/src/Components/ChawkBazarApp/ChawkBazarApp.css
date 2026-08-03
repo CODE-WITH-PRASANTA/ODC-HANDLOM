@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   1. STRUCTURAL BASE & CONTAINER
+   ========================================================================== */
+
+.ChawkBazarApp {
+  width: 100%;
+  padding: 80px 24px;
+  background-color: #ffffff;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+.ChawkBazarApp-container {
+  position: relative;
+  max-width: 1440px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 28px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  padding: 80px 90px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+}
+
+/* Ambient Radial Glow Effect */
+.app-glow-top {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.app-glow-bottom {
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(15, 23, 42, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   2. LEFT COLUMN (TEXT & BUTTONS)
+   ========================================================================== */
+
+.ChawkBazarApp-left {
+  width: 52%;
+  z-index: 2;
+}
+
+.ChawkBazarApp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #16a34a;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.6);
+}
+
+.ChawkBazarApp-subtitle {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #16a34a;
+}
+
+.ChawkBazarApp-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1.18;
+  color: #0f172a;
+  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+}
+
+.ChawkBazarApp-title strong {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ChawkBazarApp-desc {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 520px;
+}
+
+/* App Store Buttons */
+.ChawkBazarApp-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ChawkBazarApp-storeBtn {
+  width: 220px;
+  height: 68px;
+  background-color: #0f172a;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.25);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ChawkBazarApp-storeBtn:hover {
+  background-color: #16a34a;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px -5px rgba(22, 163, 74, 0.35);
+  border-color: #16a34a;
+}
+
+.ChawkBazarApp-icon {
+  font-size: 32px;
+  margin-right: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.ChawkBazarApp-text span {
+  display: block;
+  font-size: 0.725rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.ChawkBazarApp-storeBtn:hover .ChawkBazarApp-text span {
+  color: #dcfce7;
+}
+
+.ChawkBazarApp-text h5 {
+  margin-top: 4px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   3. RIGHT COLUMN (PHONE MOCKUP & FLOATING ANIMATION)
+   ========================================================================== */
+
+.ChawkBazarApp-right {
+  width: 44%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.phone-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  animation: floatPhone 6s ease-in-out infinite;
+}
+
+@keyframes floatPhone {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.ChawkBazarApp-right img {
+  width: 440px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 25px 35px rgba(15, 23, 42, 0.15));
+  transition: transform 0.4s ease;
+}
+
+.ChawkBazarApp-right img:hover {
+  transform: scale(1.03);
+}
+
+/* ==========================================================================
+   4. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* Laptops & Medium Screens (Max 1300px) */
+@media (max-width: 1300px) {
+  .ChawkBazarApp-container {
+    padding: 70px 60px;
+  }
+  .ChawkBazarApp-title {
+    font-size: 3rem;
+  }
+}
+
+/* Tablets (Max 991px) */
+@media (max-width: 991px) {
+  .ChawkBazarApp-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .ChawkBazarApp-left {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ChawkBazarApp-desc {
+    max-width: 600px;
+  }
+
+  .ChawkBazarApp-right {
+    width: 100%;
+    margin-top: 50px;
+  }
+
+  .ChawkBazarApp-buttons {
+    justify-content: center;
+  }
+
+  .ChawkBazarApp-title {
+    font-size: 2.6rem;
+  }
+
+  .ChawkBazarApp-right img {
+    width: 360px;
+  }
+}
+
+/* Mobile Screens (Max 768px) */
+@media (max-width: 768px) {
+  .ChawkBazarApp {
+    padding: 50px 16px;
+  }
+
+  .ChawkBazarApp-container {
+    padding: 45px 24px;
+    border-radius: 20px;
+  }
+
+  .ChawkBazarApp-title {
+    font-size: 2.15rem;
+    margin-bottom: 16px;
+  }
+
+  .ChawkBazarApp-desc {
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+  }
+
+  .ChawkBazarApp-storeBtn {
+    width: 190px;
+    height: 62px;
+    padding: 10px 16px;
+  }
+
+  .ChawkBazarApp-icon {
+    font-size: 26px;
+    margin-right: 10px;
+  }
+
+  .ChawkBazarApp-text h5 {
+    font-size: 1.05rem;
+  }
+
+  .ChawkBazarApp-right img {
+    width: 300px;
+  }
+}
+
+/* Small Mobile Screens (Max 480px) */
+@media (max-width: 480px) {
+  .ChawkBazarApp-container {
+    padding: 35px 18px;
+  }
+
+  .ChawkBazarApp-title {
+    font-size: 1.75rem;
+    line-height: 1.25;
+  }
+
+  .ChawkBazarApp-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ChawkBazarApp-storeBtn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+
+  .ChawkBazarApp-right img {
+    width: 250px;
+  }
+}

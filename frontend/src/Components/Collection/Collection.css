@@ -1,134 +1,209 @@
-/* Container resets and setup */
+/* Full-bleed hero carousel */
 .collection-slider-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 40px 0;
-  background-color: #ffffff;
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 100vw;
+  height: 92vh;
+  min-height: 480px;
+  max-height: 900px;
+  overflow: hidden;
+  background-color: #0b0b0b;
+  outline: none;
 }
 
-/* 
-  Track uses a cubic-bezier transition to produce a snappy, 
-  high-end slide movement instead of a continuous standard scroll.
-*/
 .collection-slider-track {
   display: flex;
+  height: 100%;
   width: 100%;
-  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
-  /* Centers the primary focus card with peek edges visible */
-  padding-left: 12.5vw; 
 }
 
-/* 
-  The primary viewport presentation size matching your design picture perfectly.
-  1 card takes 75% screen real-estate, leaving the surrounding cards peeking in.
-*/
+/* Each slide fills the full viewport width — true full-screen slides,
+   not a peeking multi-card layout. */
 .collection-card-item {
-  flex: 0 0 75vw;
-  width: 75vw;
-  padding: 0 15px;
   position: relative;
-  overflow: hidden; /* Encapsulates flash filter inside boundaries */
-  cursor: pointer;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .collection-card-item img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
-  border-radius: 6px;
   display: block;
+  user-select: none;
+  /* Slow ambient zoom keeps the frame alive without being distracting */
+  animation: collection-kenburns 9s ease-out forwards;
 }
 
-/* --- Scroll Action Navigation Arrow Icons --- */
+@keyframes collection-kenburns {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Bottom scrim + caption */
+.collection-card-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 64px clamp(24px, 6vw, 96px) 56px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.25) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: #fff;
+}
+
+.collection-card-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+
+.collection-card-title {
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+/* Navigation arrows — glass style, sit above the scrim */
 .scroll-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 46px;
-  height: 46px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e2e2e2;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
-  color: #333;
-  font-size: 1.2rem;
+  color: #fff;
+  font-size: 1.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
 .scroll-arrow:hover {
-  background-color: #000000;
-  color: #ffffff;
-  border-color: #000000;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #111;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.scroll-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .arrow-left {
-  left: 3vw;
+  left: clamp(12px, 3vw, 36px);
 }
 
 .arrow-right {
-  right: 3vw;
+  right: clamp(12px, 3vw, 36px);
 }
 
-/* --- Premium Diagonal Flash Animation Layer --- */
-.collection-flash-hover::after {
-  content: "";
+/* Dot indicators */
+.collection-dots {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transition: transform 0.6s ease-in-out;
-  transform: translate(-100%, -100%);
-  pointer-events: none;
-  z-index: 2;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
 }
 
-/* Triggers flash sweep on mouse hover placement */
-.collection-flash-hover:hover::after {
-  transform: translate(50%, 50%);
+.collection-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
-/* Responsive breakdowns for balanced margins across varying viewports */
+.collection-dot:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.collection-dot.is-active {
+  width: 26px;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.collection-dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Tablet */
 @media (max-width: 992px) {
-  .collection-slider-track {
-    padding-left: 7.5vw;
+  .collection-slider-container {
+    height: 70vh;
+    min-height: 420px;
   }
-  .collection-card-item {
-    flex: 0 0 85vw;
-    width: 85vw;
-    padding: 0 10px;
+  .collection-card-overlay {
+    padding: 48px 32px 44px;
   }
   .scroll-arrow {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     font-size: 1rem;
   }
 }
 
+/* Mobile */
 @media (max-width: 576px) {
-  .collection-slider-track {
-    padding-left: 5vw;
+  .collection-slider-container {
+    height: 62vh;
+    min-height: 380px;
   }
-  .collection-card-item {
-    flex: 0 0 90vw;
-    width: 90vw;
-    padding: 0 6px;
+  .collection-card-overlay {
+    padding: 32px 18px 36px;
   }
+  .collection-card-eyebrow {
+    font-size: 0.68rem;
+  }
+  /* Arrows give way to swipe on touch screens — keep the frame clean */
   .scroll-arrow {
-    display: none; /* Auto-scroll hides icons on mobile viewports for clean layout */
+    display: none;
+  }
+  .collection-dots {
+    bottom: 16px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .collection-card-item img {
+    animation: none;
+  }
+  .collection-slider-track {
+    transition: none !important;
+  }
+  .scroll-arrow,
+  .collection-dot {
+    transition: none;
   }
 }

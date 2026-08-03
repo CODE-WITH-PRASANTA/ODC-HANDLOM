@@ -1,12 +1,13 @@
-/* ==========================================
-   RESET & SYSTEM STYLES
-   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* Reset & Container */
 .NewArrivals {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  padding: 40px 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 80px 0;
   background-color: #ffffff;
-  color: #1a1a1a;
+  color: #0f172a;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .NewArrivals * {
@@ -14,44 +15,74 @@
 }
 
 .NewArrivals__container {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
+}
+
+/* Header Styling */
+.NewArrivals__header {
+  margin-bottom: 36px;
+}
+
+.NewArrivals__titleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.NewArrivals__pill {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+  width: fit-content;
 }
 
 .NewArrivals__heading {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #111111;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin: 0;
 }
 
-/* ==========================================
-   PRODUCT GRID & CARDS
-   ========================================== */
+/* Product Grid (5 Columns Default) */
 .NewArrivals__grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 20px;
 }
 
 .NewArrivals__card {
   background: #ffffff;
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
 }
 
 .NewArrivals__card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  border-color: #16a34a;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
 }
 
 .NewArrivals__imageWrapper {
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  background-color: #f3f4f6;
-  border-radius: 6px;
+  background-color: #f8fafc;
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -59,87 +90,138 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.NewArrivals__card:hover .NewArrivals__imageWrapper img {
+  transform: scale(1.08);
+}
+
+.NewArrivals__quickOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.NewArrivals__quickOverlay span {
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transform: translateY(8px);
+  transition: transform 0.3s ease;
+}
+
+.NewArrivals__card:hover .NewArrivals__quickOverlay {
+  opacity: 1;
+}
+
+.NewArrivals__card:hover .NewArrivals__quickOverlay span {
+  transform: translateY(0);
 }
 
 .NewArrivals__info {
-  padding: 12px 4px;
+  padding: 12px 4px 0 4px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.NewArrivals__rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 4px;
 }
 
 .NewArrivals__title {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 4px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #1a1a1a;
+  color: #0f172a;
 }
 
 .NewArrivals__desc {
   font-size: 0.8rem;
-  color: #767676;
-  margin: 0 0 8px 0;
-  white-space: nowrap;
+  color: #64748b;
+  margin: 0 0 10px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  height: 2.7em;
+  line-height: 1.35;
 }
 
 .NewArrivals__priceRow {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
+  margin-top: auto;
 }
 
 .NewArrivals__price {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #111111;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
 }
 
 .NewArrivals__oldPrice {
   font-size: 0.85rem;
-  text-decoration: line-line-through;
   text-decoration: line-through;
-  color: #9c9c9c;
+  color: #94a3b8;
 }
 
-/* ==========================================
-   POPUP MODAL OVERLAY
-   ========================================== */
+/* Lightbox Modal */
 .NewArrivals__modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 2000;
   padding: 20px;
+  animation: modalFade 0.25s ease-out;
+}
+
+@keyframes modalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .NewArrivals__modalContent {
   background-color: #ffffff;
   width: 100%;
-  max-width: 900px;
-  border-radius: 12px;
+  max-width: 820px;
+  border-radius: 20px;
   position: relative;
   overflow: hidden;
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalScale 0.25s ease-out;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes modalScale {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .NewArrivals__modalClose {
@@ -156,13 +238,14 @@
   justify-content: center;
   font-size: 1.25rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   z-index: 10;
-  transition: background-color 0.2s;
+  color: #0f172a;
+  transition: background-color 0.2s ease;
 }
 
 .NewArrivals__modalClose:hover {
-  background-color: #f3f4f6;
+  background-color: #f1f5f9;
 }
 
 .NewArrivals__modalBody {
@@ -170,11 +253,10 @@
   flex-direction: row;
 }
 
-/* Modal Left - Image Section */
 .NewArrivals__modalImgCol {
-  flex: 1.1;
-  max-height: 520px;
-  background-color: #f7f7f7;
+  flex: 1;
+  background-color: #f8fafc;
+  max-height: 480px;
 }
 
 .NewArrivals__modalImgCol img {
@@ -183,271 +265,222 @@
   object-fit: cover;
 }
 
-/* Modal Right - details Section */
 .NewArrivals__modalDetailsCol {
-  flex: 1;
-  padding: 40px;
+  flex: 1.15;
+  padding: 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.NewArrivals__modalTitle {
-  font-size: 1.65rem;
+.NewArrivals__modalRating {
+  font-size: 0.8rem;
   font-weight: 700;
-  margin: 0 0 12px 0;
-  color: #111111;
+  color: #f59e0b;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.NewArrivals__modalTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #0f172a;
 }
 
 .NewArrivals__modalDesc {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   line-height: 1.5;
-  color: #666666;
-  margin: 0 0 20px 0;
+  color: #64748b;
+  margin: 0 0 16px 0;
 }
 
 .NewArrivals__modalPriceRow {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.NewArrivals__modalPrice {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111111;
-}
-
-.NewArrivals__modalOldPrice {
-  font-size: 1.2rem;
-  text-decoration: line-through;
-  color: #aaaaaa;
-}
-
-.NewArrivals__modalOptionSection {
+  align-items: baseline;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.NewArrivals__optionHeading {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0 0 10px 0;
-  color: #111111;
+.NewArrivals__modalPrice {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
 }
 
-/* Size Selection Styles */
+.NewArrivals__modalOldPrice {
+  font-size: 1.1rem;
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.NewArrivals__modalOptionSection {
+  margin-bottom: 16px;
+}
+
+.NewArrivals__optionHeading {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 8px 0;
+  color: #334155;
+}
+
+/* Size Options */
 .NewArrivals__sizeSelector {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .NewArrivals__sizeBtn {
-  background: none;
-  border: 1px solid #e5e7eb;
-  padding: 8px 16px;
-  min-width: 45px;
-  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: #334155;
   transition: all 0.2s ease;
 }
 
-.NewArrivals__sizeBtn:hover {
-  border-color: #111111;
-}
-
-.NewArrivals__sizeBtn.active {
-  border-color: #111111;
-  background-color: #111111;
+.NewArrivals__sizeBtn:hover, .NewArrivals__sizeBtn.active {
+  border-color: #16a34a;
+  background-color: #16a34a;
   color: #ffffff;
 }
 
-/* Color Selection Styles */
+/* Color Options */
 .NewArrivals__colorSelector {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .NewArrivals__colorBtn {
   width: 28px;
   height: 28px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
   cursor: pointer;
-  position: relative;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
-.NewArrivals__colorBtn:hover {
-  transform: scale(1.1);
+.NewArrivals__colorBtn.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px #16a34a;
 }
 
-.NewArrivals__colorBtn.active::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 2px solid #111111;
-  border-radius: 6px;
-}
-
-/* Quantity Adjuster & Main Action Buttons */
+/* Actions Row */
 .NewArrivals__actionRow {
   display: flex;
   gap: 12px;
-  margin-top: 10px;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .NewArrivals__quantityBlock {
   display: flex;
   align-items: center;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  height: 46px;
+  background: #f8fafc;
 }
 
 .NewArrivals__quantityBlock button {
   background: none;
   border: none;
-  width: 40px;
-  height: 45px;
+  width: 36px;
+  height: 100%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555555;
-  transition: background-color 0.15s;
-}
-
-.NewArrivals__quantityBlock button:hover {
-  background-color: #f9fafb;
+  color: #334155;
+  font-weight: 700;
 }
 
 .NewArrivals__quantityValue {
-  padding: 0 16px;
-  font-weight: 600;
+  padding: 0 12px;
+  font-weight: 700;
   font-size: 0.95rem;
   user-select: none;
+  color: #0f172a;
 }
 
 .NewArrivals__addToCartBtn {
   flex: 1;
-  background-color: #1a1a1a;
+  background: linear-gradient(135deg, #16a34a, #15803d);
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  transition: all 0.25s ease;
 }
 
 .NewArrivals__addToCartBtn:hover {
-  background-color: #333333;
+  background: linear-gradient(135deg, #15803d, #166534);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
 }
 
-.NewArrivals__viewDetailsBtn {
-  width: 100%;
-  background-color: #242424;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 0;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.NewArrivals__addToCartBtn.added {
+  background: #0f172a;
+  box-shadow: none;
 }
 
-.NewArrivals__viewDetailsBtn:hover {
-  background-color: #404040;
-}
-
-/* ==========================================
-   RESPONSIVE MEDIA QUERIES
-   ========================================== */
-
-/* Large Screens Down to Tablets */
-@media (max-width: 1200px) {
+/* Responsive Media Queries */
+@media (max-width: 1280px) {
   .NewArrivals__grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 992px) {
   .NewArrivals__grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  
   .NewArrivals__modalContent {
     max-width: 720px;
   }
-  
   .NewArrivals__modalDetailsCol {
     padding: 24px;
   }
 }
 
-/* Portrait Tablet / Large Phone Breakpoint */
 @media (max-width: 768px) {
+  .NewArrivals {
+    padding: 50px 0;
+  }
   .NewArrivals__grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 15px;
   }
-
   .NewArrivals__modalBody {
     flex-direction: column;
-    max-height: 85vh;
-    overflow-y: auto;
   }
-
   .NewArrivals__modalImgCol {
-    max-height: 320px;
+    max-height: 240px;
   }
-
-  .NewArrivals__modalDetailsCol {
-    padding: 24px 20px;
-  }
-
-  .NewArrivals__modalContent {
-    max-width: 480px;
-  }
-}
-
-/* Small Phones */
-@media (max-width: 480px) {
-  .NewArrivals__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .NewArrivals__heading {
-    font-size: 1.5rem;
-  }
-
-  .NewArrivals__modalContent {
-    width: 100%;
-    margin: 10px;
-  }
-
-  .NewArrivals__modalTitle {
-    font-size: 1.4rem;
-  }
-
   .NewArrivals__actionRow {
     flex-direction: column;
   }
-
   .NewArrivals__quantityBlock {
-    justify-content: space-between;
     width: 100%;
+    justify-content: space-between;
   }
+}
 
-  .NewArrivals__addToCartBtn {
-    padding: 12px 0;
+@media (max-width: 480px) {
+  .NewArrivals__grid {
+    grid-template-columns: 1fr;
   }
 }

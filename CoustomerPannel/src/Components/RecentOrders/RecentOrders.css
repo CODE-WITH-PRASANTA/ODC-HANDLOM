@@ -1,0 +1,569 @@
+/* Base Container */
+.RecentOrders-container {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.RecentOrders-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 24px;
+}
+
+/* Header */
+.RecentOrders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.RecentOrders-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.RecentOrders-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.RecentOrders-badge {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.RecentOrders-actions {
+  display: flex;
+  align-items: center;
+}
+
+.RecentOrders-view-all {
+  background: transparent;
+  border: none;
+  color: #4f46e5;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+
+.RecentOrders-view-all:hover {
+  color: #3730a3;
+}
+
+/* Table */
+.RecentOrders-table-wrapper {
+  overflow-x: auto;
+}
+
+.RecentOrders-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.RecentOrders-table th {
+  background-color: #f9fafb;
+  color: #6b7280;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.RecentOrders-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.9rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.RecentOrders-table tr:last-child td {
+  border-bottom: none;
+}
+
+.RecentOrders-product {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.RecentOrders-product-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.RecentOrders-product-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.RecentOrders-order-id {
+  font-family: monospace;
+  color: #6b7280;
+}
+
+.RecentOrders-amount {
+  font-weight: 600;
+  color: #111827;
+}
+
+.RecentOrders-text-right {
+  text-align: right;
+}
+
+.RecentOrders-text-center {
+  text-align: center;
+}
+
+.RecentOrders-py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Action Dropdown Menu */
+.RecentOrders-action-cell {
+  position: relative;
+}
+
+.RecentOrders-btn-menu {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.RecentOrders-btn-menu:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.RecentOrders-dropdown {
+  position: absolute;
+  right: 16px;
+  top: 42px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  min-width: 120px;
+  overflow: hidden;
+}
+
+.RecentOrders-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #374151;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.RecentOrders-dropdown button:hover {
+  background-color: #f3f4f6;
+}
+
+.RecentOrders-dropdown .RecentOrders-delete-opt {
+  color: #dc2626;
+}
+
+.RecentOrders-dropdown .RecentOrders-delete-opt:hover {
+  background-color: #fef2f2;
+}
+
+.RecentOrders-icon {
+  font-size: 0.95rem;
+}
+
+/* Status Badges */
+.RecentOrders-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.RecentOrders-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-delivered {
+  background-color: #ecfdf5;
+  color: #065f46;
+}
+
+.status-delivered .RecentOrders-status-dot {
+  background-color: #10b981;
+}
+
+.status-shipped {
+  background-color: #eff6ff;
+  color: #1e40af;
+}
+
+.status-shipped .RecentOrders-status-dot {
+  background-color: #3b82f6;
+}
+
+.status-processing {
+  background-color: #ffff;
+  color: #92400e;
+}
+
+.status-processing .RecentOrders-status-dot {
+  background-color: #f59e0b;
+}
+
+/* Responsive View Switchers */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .RecentOrders-mobile-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    background: #fff;
+  }
+
+  .RecentOrders-mobile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .RecentOrders-mobile-info {
+    flex: 1;
+  }
+
+  .RecentOrders-mobile-info .RecentOrders-product-name {
+    display: block;
+    font-size: 0.95rem;
+  }
+
+  .RecentOrders-mobile-body {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-top: 1px dashed #f3f4f6;
+    border-bottom: 1px dashed #f3f4f6;
+    margin-bottom: 12px;
+  }
+
+  .RecentOrders-mobile-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  .RecentOrders-mobile-value {
+    font-size: 0.85rem;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .RecentOrders-mobile-footer {
+    display: flex;
+    gap: 8px;
+  }
+
+  .RecentOrders-btn-action {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .RecentOrders-btn-view-m {
+    color: #4f46e5;
+    border-color: #c7d2fe;
+  }
+
+  .RecentOrders-btn-edit-m {
+    color: #374151;
+  }
+
+  .RecentOrders-btn-delete-m {
+    color: #dc2626;
+    border-color: #fecaca;
+  }
+}
+
+/* Modals */
+.RecentOrders-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.RecentOrders-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.RecentOrders-modal-sm {
+  max-width: 400px;
+}
+
+.RecentOrders-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.RecentOrders-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.RecentOrders-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #9ca3af;
+}
+
+.RecentOrders-modal-body {
+  padding: 20px;
+}
+
+.RecentOrders-modal-summary {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.RecentOrders-modal-summary img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.RecentOrders-modal-summary h4 {
+  margin: 0 0 4px 0;
+  color: #111827;
+}
+
+.RecentOrders-modal-order-id {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.RecentOrders-modal-divider {
+  border: 0;
+  border-top: 1px solid #f3f4f6;
+  margin: 16px 0;
+}
+
+.RecentOrders-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.RecentOrders-detail-item label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.RecentOrders-detail-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.RecentOrders-full-col {
+  grid-column: span 2;
+}
+
+.RecentOrders-highlight {
+  color: #4f46e5 !important;
+  font-weight: 700 !important;
+}
+
+/* Forms */
+.RecentOrders-form-group {
+  margin-bottom: 14px;
+}
+
+.RecentOrders-form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.RecentOrders-form-group input,
+.RecentOrders-form-group select,
+.RecentOrders-form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* Footer Buttons */
+.RecentOrders-modal-footer {
+  padding: 12px 20px;
+  background-color: #f9fafb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.RecentOrders-btn-secondary {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.RecentOrders-btn-primary {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.RecentOrders-btn-danger {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* All Orders Drawer Overlay */
+.RecentOrders-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+}
+
+.RecentOrders-drawer {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.RecentOrders-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.RecentOrders-drawer-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.RecentOrders-search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.RecentOrders-filter-select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
