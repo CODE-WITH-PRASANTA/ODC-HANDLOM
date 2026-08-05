@@ -1,0 +1,217 @@
+/* ============================
+   MAIN LAYOUT
+   Sidebar and Topbar are position: fixed (see Sidebar.css / Topbar.css),
+   so they occupy zero space in normal flow. Everything below offsets
+   .MainContent-wrapper / .MainContent manually to match their real
+   dimensions instead of relying on flexbox to "make room" for them.
+============================ */
+
+:root {
+  /* Must match Sidebar.css .expanded / .collapsed widths exactly */
+  --sidebar-expanded: 264px;
+  --sidebar-collapsed: 80px;
+
+  /* Must match Topbar.css height */
+  --topbar-height: 70px;
+
+  --primary: #8b2d14;
+  --border: #ececec;
+  --background: #f7f8fb;
+  --white: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+}
+
+/* Reset */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================
+   LAYOUT
+============================ */
+
+.MainLayout {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  background: var(--background);
+  overflow: hidden; /* page itself never scrolls — only .MainContent does */
+}
+
+/* ============================
+   CONTENT WRAPPER
+   Offset by the sidebar's real current width. Transition duration/easing
+   matches Sidebar's own transition so they animate in lockstep.
+============================ */
+
+.MainContent-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.MainContent-wrapper.expanded {
+  margin-left: var(--sidebar-expanded);
+}
+
+.MainContent-wrapper.collapsed {
+  margin-left: var(--sidebar-collapsed);
+}
+
+/* ============================
+   MAIN CONTENT
+   margin-top clears the fixed Topbar. min-height: 0 is required so this
+   flex child can actually shrink and scroll instead of growing with content.
+============================ */
+
+.MainContent {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--topbar-height);
+  padding: 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.MainContent-outlet {
+  width: 100%;
+  max-width: 100%;
+  flex: 1;
+}
+
+/* ============================
+   BREADCRUMB
+============================ */
+
+.Breadcrumb {
+  margin-bottom: 18px;
+}
+
+.Breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.Breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.Breadcrumb-link {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: var(--muted);
+
+  text-decoration: none;
+
+  transition: .25s;
+}
+
+.Breadcrumb-link:hover {
+  color: var(--primary);
+}
+
+.Breadcrumb-current {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.Breadcrumb-separator {
+  color: #b8b8b8;
+}
+
+/* ============================
+   SCROLLBAR
+============================ */
+
+.MainContent::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.MainContent::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 50px;
+}
+
+.MainContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+
+@media (max-width: 1200px) {
+  .MainContent {
+    padding: 20px;
+  }
+}
+
+/* Must match Sidebar.css's own drawer breakpoint (max-width: 1023px)
+   exactly — not 1024 — otherwise there's a 1px window where JS treats
+   the viewport as desktop (sidebar shown inline, offsetting content)
+   while this rule has already zeroed the margin, or vice versa. */
+@media (max-width: 1023px) {
+  .MainContent-wrapper.expanded,
+  .MainContent-wrapper.collapsed {
+    margin-left: 0;
+  }
+
+  .MainContent {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .MainContent {
+    padding: 16px;
+  }
+
+  .Breadcrumb {
+    margin-bottom: 14px;
+  }
+
+  .Breadcrumb-list {
+    gap: 6px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .MainContent {
+    padding: 14px;
+  }
+
+  .Breadcrumb {
+    display: none;
+  }
+}

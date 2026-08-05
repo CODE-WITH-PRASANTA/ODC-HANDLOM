@@ -1,0 +1,189 @@
+/* ==========================================================
+   Store Dashboard Layout & Container
+   ========================================================== */
+.store-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #333333;
+}
+
+.store-dashboard-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.store-dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* ==========================================================
+   Stats Grid System
+   ========================================================== */
+.store-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* ==========================================================
+   Store Stat Cards
+   ========================================================== */
+.store-stat-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.store-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.store-stat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.store-stat-title-count {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-stat-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.store-stat-count {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 2px 0 0 0;
+}
+
+.store-stat-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.825rem;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.store-stat-up-arrow {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.store-stat-change-text {
+  color: #28a745;
+}
+
+/* ==========================================================
+   Icon Background Themes
+   ========================================================== */
+.store-stat-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-icon-bg {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-brown-bg {
+  background-color: #f7f3ee;
+}
+
+.store-red-bg {
+  background-color: #fdf2f2;
+}
+
+.store-green-bg {
+  background-color: #f0f7f1;
+}
+
+/* ==========================================================
+   Promo Banner Section
+   ========================================================== */
+.store-dashboard-promo {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #7a5c32 0%, #4a3417 100%);
+  overflow: hidden;
+  padding: 36px 32px;
+  box-sizing: border-box;
+  color: #ffffff;
+}
+
+.store-dashboard-promo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.12), transparent);
+  pointer-events: none;
+}
+
+.store-dashboard-promo-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.store-dashboard-promo-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.store-dashboard-analytics-btn {
+  background-color: #ffffff;
+  color: #4a3417;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.store-dashboard-analytics-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.02);
+}
+
+.store-dashboard-analytics-btn:active {
+  transform: scale(0.98);
+}

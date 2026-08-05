@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap');
+
+/* Reset Context */
+.exclusive-section {
+  width: 100%;
+  padding: 60px 0;
+  background-color: #f9fafb;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+.exclusive-container {
+  display: flex;
+  width: 85%;
+  max-width: 1440px;
+  min-height: 520px;
+  margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Base */
+.exclusive-card {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  cursor: pointer;
+  padding-bottom: 2rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Background Color Themes */
+.exclusive-card--woman {
+  background: linear-gradient(180deg, #f8f8f8 0%, #ececec 100%);
+}
+
+.exclusive-card--man {
+  background: linear-gradient(180deg, #f0edea 0%, #e1dcda 100%);
+}
+
+/* Background Large Text Overlay */
+.bg-text-wrapper {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 0;
+  pointer-events: none;
+  width: 100%;
+  user-select: none;
+}
+
+.bg-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 10px;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  margin-bottom: -1rem;
+}
+
+.bg-year {
+  font-size: 16rem;
+  font-weight: 900;
+  line-height: 0.8;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.01) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+/* Image Wrapper & Zoom Behavior */
+.img-wrapper {
+  position: relative;
+  height: 90%;
+  max-height: 480px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1;
+}
+
+.exclusive-img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.12));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.exclusive-card:hover .exclusive-img {
+  transform: scale(1.06) translateY(-8px);
+}
+
+/* Button Styling (Glassmorphism Pill) */
+.exclusive-btn {
+  position: absolute;
+  bottom: 35px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 16px 36px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  border-radius: 40px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 2;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exclusive-btn span {
+  position: relative;
+  z-index: 2;
+}
+
+/* Button Hover Behavior */
+.exclusive-btn:hover {
+  background-color: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(15, 23, 42, 0.3);
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* Laptops & Tablets (Max 1024px) */
+@media (max-width: 1024px) {
+  .exclusive-container {
+    width: 92%;
+    min-height: 460px;
+  }
+  .bg-year {
+    font-size: 12rem;
+  }
+  .exclusive-btn {
+    padding: 14px 28px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Tablets & Mobile Devices (Max 768px) */
+@media (max-width: 768px) {
+  .exclusive-section {
+    padding: 30px 0;
+  }
+  
+  .exclusive-container {
+    flex-direction: column;
+    width: 92%;
+    min-height: auto;
+    border-radius: 20px;
+    gap: 12px;
+  }
+
+  .exclusive-card {
+    height: 380px;
+    padding-bottom: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .bg-text-wrapper {
+    top: 15%;
+  }
+
+  .bg-label {
+    font-size: 0.75rem;
+    letter-spacing: 6px;
+  }
+
+  .bg-year {
+    font-size: 9rem;
+  }
+
+  .exclusive-btn {
+    bottom: 25px;
+    padding: 12px 24px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Small Mobile Screens (Max 480px) */
+@media (max-width: 480px) {
+  .exclusive-card {
+    height: 320px;
+  }
+
+  .bg-year {
+    font-size: 7rem;
+  }
+
+  .exclusive-btn {
+    bottom: 20px;
+    padding: 10px 20px;
+  }
+}

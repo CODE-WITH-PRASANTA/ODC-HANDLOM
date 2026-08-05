@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* Reset Context */
+.NewsletterGallery {
+  width: 100%;
+  padding: 80px 0;
+  background-color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.NewsletterGallery * {
+  box-sizing: border-box;
+}
+
+.NewsletterGallery-container {
+  width: 92%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   1. GALLERY GRID & CARDS
+   ========================================================================== */
+
+.NewsletterGallery-gallery {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 70px;
+}
+
+.NewsletterGallery-imageBox {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 16px;
+  background-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.NewsletterGallery-imageBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.NewsletterGallery-imageBox:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12);
+}
+
+.NewsletterGallery-imageBox:hover img {
+  transform: scale(1.1);
+}
+
+/* Glassmorphism Quick Overlay */
+.NewsletterGallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 40%, rgba(15, 23, 42, 0.65) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.view-btn-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #0f172a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateY(12px);
+  transition: transform 0.35s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.NewsletterGallery-imageBox:hover .NewsletterGallery-overlay {
+  opacity: 1;
+}
+
+.NewsletterGallery-imageBox:hover .view-btn-pill {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   2. NEWSLETTER CONTENT & FORM
+   ========================================================================== */
+
+.NewsletterGallery-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 60px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03);
+}
+
+.NewsletterGallery-left {
+  flex: 1.1;
+}
+
+.newsletter-pill {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.NewsletterGallery-left h2 {
+  font-size: 2.25rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.02em;
+}
+
+.NewsletterGallery-left p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.NewsletterGallery-form {
+  flex: 1;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 6px 6px 6px 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group:focus-within {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+.NewsletterGallery-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding-right: 12px;
+}
+
+.NewsletterGallery-form input::placeholder {
+  color: #94a3b8;
+}
+
+.NewsletterGallery-form button {
+  height: 52px;
+  padding: 0 28px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  white-space: nowrap;
+}
+
+.NewsletterGallery-form button:hover {
+  background: linear-gradient(135deg, #15803d, #166534);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+}
+
+.NewsletterGallery-form button.subscribed {
+  background: #0f172a;
+  box-shadow: none;
+}
+
+.send-icon {
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+.NewsletterGallery-form button:hover .send-icon {
+  transform: translateX(3px) translateY(-2px);
+}
+
+/* ==========================================================================
+   3. LIGHTBOX POPUP MODAL
+   ========================================================================== */
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.NewsletterGallery-lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.NewsletterGallery-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.NewsletterGallery-preview {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: zoomImage 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoomImage {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.NewsletterGallery-preview img {
+  max-width: 85vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-caption {
+  margin-top: 12px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+/* Lightbox Nav Controls */
+.NewsletterGallery-close,
+.NewsletterGallery-prev,
+.NewsletterGallery-next {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  color: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.NewsletterGallery-close {
+  top: 30px;
+  right: 30px;
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+}
+
+.NewsletterGallery-prev,
+.NewsletterGallery-next {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  font-size: 20px;
+}
+
+.NewsletterGallery-prev { left: 30px; }
+.NewsletterGallery-next { right: 30px; }
+
+.NewsletterGallery-close:hover,
+.NewsletterGallery-prev:hover,
+.NewsletterGallery-next:hover {
+  background: #ffffff;
+  color: #16a34a;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.NewsletterGallery-close:hover {
+  transform: rotate(90deg);
+}
+
+/* ==========================================================================
+   4. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .NewsletterGallery-gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .NewsletterGallery-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px;
+    gap: 30px;
+  }
+  .NewsletterGallery-left h2 {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .NewsletterGallery-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .NewsletterGallery-imageBox {
+    height: 220px;
+  }
+  .NewsletterGallery-prev { left: 12px; }
+  .NewsletterGallery-next { right: 12px; }
+  .NewsletterGallery-close { top: 16px; right: 16px; }
+  .NewsletterGallery-prev,
+  .NewsletterGallery-next,
+  .NewsletterGallery-close {
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .NewsletterGallery-gallery {
+    grid-template-columns: 1fr;
+  }
+  .input-group {
+    flex-direction: column;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    gap: 8px;
+  }
+  .NewsletterGallery-form input {
+    width: 100%;
+    height: 48px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0 16px;
+  }
+  .NewsletterGallery-form button {
+    width: 100%;
+    justify-content: center;
+    height: 48px;
+  }
+}

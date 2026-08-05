@@ -1,0 +1,209 @@
+/* Full-bleed hero carousel */
+.collection-slider-container {
+  position: relative;
+  width: 100vw;
+  height: 92vh;
+  min-height: 480px;
+  max-height: 900px;
+  overflow: hidden;
+  background-color: #0b0b0b;
+  outline: none;
+}
+
+.collection-slider-track {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* Each slide fills the full viewport width — true full-screen slides,
+   not a peeking multi-card layout. */
+.collection-card-item {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.collection-card-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  /* Slow ambient zoom keeps the frame alive without being distracting */
+  animation: collection-kenburns 9s ease-out forwards;
+}
+
+@keyframes collection-kenburns {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Bottom scrim + caption */
+.collection-card-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 64px clamp(24px, 6vw, 96px) 56px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.25) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: #fff;
+}
+
+.collection-card-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+
+.collection-card-title {
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+/* Navigation arrows — glass style, sit above the scrim */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.scroll-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #111;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.scroll-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.arrow-left {
+  left: clamp(12px, 3vw, 36px);
+}
+
+.arrow-right {
+  right: clamp(12px, 3vw, 36px);
+}
+
+/* Dot indicators */
+.collection-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.collection-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.collection-dot:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.collection-dot.is-active {
+  width: 26px;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.collection-dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .collection-slider-container {
+    height: 70vh;
+    min-height: 420px;
+  }
+  .collection-card-overlay {
+    padding: 48px 32px 44px;
+  }
+  .scroll-arrow {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .collection-slider-container {
+    height: 62vh;
+    min-height: 380px;
+  }
+  .collection-card-overlay {
+    padding: 32px 18px 36px;
+  }
+  .collection-card-eyebrow {
+    font-size: 0.68rem;
+  }
+  /* Arrows give way to swipe on touch screens — keep the frame clean */
+  .scroll-arrow {
+    display: none;
+  }
+  .collection-dots {
+    bottom: 16px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .collection-card-item img {
+    animation: none;
+  }
+  .collection-slider-track {
+    transition: none !important;
+  }
+  .scroll-arrow,
+  .collection-dot {
+    transition: none;
+  }
+}
