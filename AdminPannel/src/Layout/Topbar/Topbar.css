@@ -1,0 +1,368 @@
+/* ==========================================================================
+   Topbar — matched to GDC Handloom reference (maroon icon accents, pill
+   search bar with trailing search button, role-labelled profile)
+   ========================================================================== */
+.Topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color, #EDE6DA);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 80;
+  transition: left 300ms ease;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .MainContent-wrapper.expanded .Topbar {
+    left: 264px;
+  }
+
+  .MainContent-wrapper.collapsed .Topbar {
+    left: 80px;
+  }
+}
+
+.Topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.Topbar-toggleBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  color: var(--brand-maroon, #8B2318);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.Topbar-toggleBtn:hover {
+  background: #FBF1E7;
+}
+
+/* Search Bar — pill shape, trailing search button */
+.SearchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  background: #F7F1E6;
+  border: 1px solid #EADFC9;
+  border-radius: 999px;
+  padding: 4px 4px 4px 18px;
+  transition: all 0.2s ease;
+}
+
+.SearchBar:focus-within {
+  border-color: var(--brand-maroon, #8B2318);
+  box-shadow: 0 0 0 3px rgba(139, 35, 24, 0.1);
+  background: #FFFFFF;
+}
+
+.SearchBar-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.86rem;
+  color: var(--text-main, #1E293B);
+  padding: 8px 0;
+}
+
+.SearchBar-input::placeholder {
+  color: #A69A85;
+}
+
+.SearchBar-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--brand-maroon, #8B2318);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.SearchBar-btn:hover {
+  background: #6E1B12;
+}
+
+.Topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Circular icon buttons (theme toggle + notifications) */
+.IconBtn {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid #EDE6DA;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--brand-maroon, #8B2318);
+  transition: all 0.2s ease;
+}
+
+.IconBtn:hover {
+  background: #FBF1E7;
+}
+
+.Notification {
+  position: relative;
+}
+
+.Notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #E8541F;
+  color: white;
+  font-size: 0.63rem;
+  font-weight: 700;
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+}
+
+.NotificationItem-popup {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 300px;
+  background: var(--card-bg, #FFFFFF);
+  border-radius: 16px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color, #EDE6DA);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.NotificationItem-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color, #EDE6DA);
+}
+
+.NotificationItem-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main, #1E293B);
+}
+
+.NotificationItem-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.NotificationItem-single {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #F5F0E6;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.NotificationItem-single:hover {
+  background: #FBF7EF;
+}
+
+.NotificationItem-iconWrapper {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.NotificationItem-title {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-main, #1E293B);
+}
+
+.NotificationItem-time {
+  font-size: 0.7rem;
+  color: var(--text-secondary, #8A7B65);
+}
+
+.NotificationItem-footer button {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: var(--brand-maroon, #8B2318);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.NotificationItem-footer button:hover {
+  background: #FBF7EF;
+}
+
+/* Profile */
+.ProfileMenu {
+  position: relative;
+}
+
+.ProfileMenu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 8px 4px 4px;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+.ProfileMenu-trigger:hover {
+  background: #FBF1E7;
+}
+
+.ProfileMenu-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F0E4D2;
+  color: var(--brand-maroon, #8B2318);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ProfileMenu-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.ProfileMenu-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main, #1E293B);
+}
+
+.ProfileMenu-role {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #C23A17;
+}
+
+.ProfileMenu-chevron {
+  color: #A69A85;
+  transition: transform 0.2s;
+}
+
+.ProfileMenu-chevron.open {
+  transform: rotate(180deg);
+}
+
+.ProfileMenu-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 200px;
+  background: var(--card-bg, #FFFFFF);
+  border-radius: 16px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color, #EDE6DA);
+  padding: 8px;
+  z-index: 100;
+}
+
+.ProfileMenu-divider {
+  height: 1px;
+  background: var(--border-color, #EDE6DA);
+  margin: 6px 0;
+}
+
+.ProfileMenu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-main, #1E293B);
+  font-size: 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ProfileMenu-item:hover {
+  background: #FBF7EF;
+}
+
+.ProfileMenu-item.danger {
+  color: #EF4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .SearchBar {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .Topbar {
+    padding: 0 14px;
+    gap: 10px;
+  }
+  .SearchBar {
+    max-width: 140px;
+  }
+  .ProfileMenu-info {
+    display: none;
+  }
+  .ProfileMenu-trigger {
+    padding: 4px;
+  }
+}
+
+@media (max-width: 420px) {
+  .SearchBar {
+    max-width: 100px;
+  }
+}

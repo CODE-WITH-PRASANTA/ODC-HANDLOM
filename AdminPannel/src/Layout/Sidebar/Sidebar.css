@@ -1,0 +1,257 @@
+/* ==========================================================================
+   Sidebar — matched to GDC Handloom reference (cream logo header, maroon
+   gradient body, gold accents, premium plan card)
+   ========================================================================== */
+.Sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #7A2415 0%, #5A180E 45%, #3A0F08 100%);
+  color: #FFFFFF;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.35s ease, transform 0.35s ease;
+  overflow: hidden;
+}
+
+.Sidebar.expanded {
+  width: 264px;
+}
+
+.Sidebar.collapsed {
+  width: 80px;
+}
+
+.Sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+}
+
+/* Header / logo card — cream block with rounded bottom corners */
+.Sidebar-header {
+  position: relative;
+  background: #FFF9F1;
+  padding: 20px 16px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0 0 22px 22px;
+  text-align: center;
+}
+
+.Sidebar-logoMark {
+  margin-bottom: 4px;
+}
+
+.Sidebar-brandText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Sidebar-brandText h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 2px 0 0;
+  background: linear-gradient(180deg, #EA7A2E, #C23A17);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.Sidebar-brandText h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #7A2216;
+  margin: 0;
+}
+
+.Sidebar-brandText span {
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  color: #A6876C;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.Sidebar-headerDot {
+  position: absolute;
+  bottom: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #D9A94E;
+}
+
+.Sidebar-headerDot-left {
+  left: 14px;
+}
+
+.Sidebar-headerDot-right {
+  right: 14px;
+}
+
+/* Navigation Menu */
+.Sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 14px;
+}
+
+.Sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.Sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.SidebarSection {
+  margin-bottom: 12px;
+}
+
+.SidebarSection-title {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #C9A15C;
+  letter-spacing: 1px;
+  padding: 10px 10px 8px;
+  text-transform: uppercase;
+}
+
+.SidebarSection-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 12px 8px;
+}
+
+.Sidebar-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.SidebarItem {
+  position: relative;
+}
+
+.SidebarItem-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 0.87rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.SidebarItem-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+}
+
+.SidebarItem-link.active {
+  background: linear-gradient(90deg, #9C2E1D, #8B2318);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: inset -2px 0 0 #D9A94E;
+}
+
+.SidebarItem-icon {
+  min-width: 18px;
+}
+
+/* Premium Plan Card */
+.SidebarPlan {
+  margin: 4px 14px 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(217, 169, 78, 0.4);
+}
+
+.SidebarPlan-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.SidebarPlan-titleRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.SidebarPlan-icon {
+  color: #D9A94E;
+}
+
+.SidebarPlan-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.SidebarPlan-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #E9C978;
+  background: rgba(217, 169, 78, 0.18);
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.SidebarPlan-expiry {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 10px;
+}
+
+.SidebarPlan-upgradeBtn {
+  width: 100%;
+  border: none;
+  padding: 9px 0;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #F5DFA8, #E9C978);
+  color: #5C2A12;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.SidebarPlan-upgradeBtn:hover {
+  filter: brightness(0.96);
+}
+
+/* Responsive Layout for Mobile/Tablet */
+@media (max-width: 1023px) {
+  .Sidebar {
+    transform: translateX(-100%);
+    width: 264px !important;
+  }
+
+  .Sidebar.mobile-open {
+    transform: translateX(0);
+  }
+}
