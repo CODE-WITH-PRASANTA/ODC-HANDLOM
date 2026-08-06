@@ -249,9 +249,9 @@ const OrdersDashboard = () => {
     setExplicitStatus(o, "Cancelled");
   }
 
-  // Navigate to /createorder route when button clicked
+  // Navigate to /sales/create-order route when button clicked
   function createOrder() {
-    navigate("/createorder");
+    navigate("/sales/create-order");
   }
 
   function exportCSV() {
@@ -334,13 +334,13 @@ const OrdersDashboard = () => {
         <div className="od-header-actions">
           <button className="od-btn" onClick={exportCSV}><Download size={16} /> Export</button>
           <button className="od-btn" onClick={() => { window.print(); notify("Sending order list to printer…"); }}><Printer size={16} /> Print</button>
-         <button
-  className="od-btn od-btn-primary"
-  onClick={() => navigate("/creatorder")}
->
-  <Plus size={16} />
-  Create Order
-</button>
+          <button
+            className="od-btn od-btn-primary"
+            onClick={createOrder}
+          >
+            <Plus size={16} />
+            Create Order
+          </button>
         </div>
       </div>
 
