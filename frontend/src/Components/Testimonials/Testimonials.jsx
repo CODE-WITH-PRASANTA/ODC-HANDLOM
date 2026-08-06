@@ -78,12 +78,22 @@ const users = [
   },
 ];
 
+// Arch sizing: small -> medium -> large -> biggest (center) -> large -> medium -> small
+const sizeClassFor = (index) => {
+  if (index === 0 || index === 6) return "small";
+  if (index === 1 || index === 5) return "medium";
+  if (index === 3) return "biggest";
+  return "large";
+};
+
 const Testimonials = () => {
   const [selectedIndex, setSelectedIndex] = useState(3);
+  const active = users[selectedIndex];
 
   return (
     <section className="Testimonials">
       <div className="Testimonials-container">
+        <span className="Testimonials-eyebrow">Member Services</span>
         <h2 className="Testimonials-title">Talk To A Real Person</h2>
 
         <p className="Testimonials-subtitle">
@@ -93,61 +103,53 @@ const Testimonials = () => {
         </p>
 
         <div className="Testimonials-members">
-          {users.map((user, index) => (
-            <div
-              key={index}
-              className={`Testimonials-avatar-wrapper ${
-                selectedIndex === index ? "active-wrapper" : ""
-              }`}
-            >
-              {/* Card */}
-              {selectedIndex === index && (
-                <div className="Testimonials-card">
-                  <div className="Testimonials-user-image">
-                    <img src={user.image} alt={user.name} />
-                  </div>
+          {/* Active testimonial — a single card, always in normal flow,
+              so it can never drift off-position at any screen size. */}
+          <div className="Testimonials-card" key={selectedIndex}>
+            <span className="Testimonials-quote-mark" aria-hidden="true">
+              &#8220;
+            </span>
 
-                  <h3>{user.name}</h3>
-
-                  <span className="Testimonials-role">{user.role}</span>
-
-                  <div className="Testimonials-stars">
-                    {[...Array(user.rating)].map((_, i) => (
-                      <FaStar key={i} />
-                    ))}
-                  </div>
-
-                  <h4>{user.review}</h4>
-
-                  <p>{user.description}</p>
-                </div>
-              )}
-
-              {/* Avatar */}
-              <div
-                onClick={() => setSelectedIndex(index)}
-                className={`Testimonials-avatar
-                  ${
-                    index === 0 || index === 6
-                      ? "small"
-                      : index === 1 || index === 5
-                      ? "medium"
-                      : index === 3
-                      ? "biggest"
-                      : "large"
-                  }
-                  ${selectedIndex === index ? "active" : ""}
-                `}
-              >
-                <img src={user.image} alt={user.name} />
-              </div>
+            <div className="Testimonials-user-image">
+              <img src={active.image} alt="" />
             </div>
-          ))}
+
+            <h3>{active.name}</h3>
+            <span className="Testimonials-role">{active.role}</span>
+
+            <div className="Testimonials-stars" aria-label={`${active.rating} out of 5 stars`}>
+              {[...Array(active.rating)].map((_, i) => (
+                <FaStar key={i} aria-hidden="true" />
+              ))}
+            </div>
+
+            <h4>{active.review}</h4>
+            <p>{active.description}</p>
+          </div>
+
+          {/* Avatar selector strip */}
+          <div className="Testimonials-avatars-row" role="tablist" aria-label="Choose a testimonial">
+            {users.map((user, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setSelectedIndex(index)}
+                className={`Testimonials-avatar ${sizeClassFor(index)} ${
+                  selectedIndex === index ? "active" : ""
+                }`}
+                role="tab"
+                aria-selected={selectedIndex === index}
+                aria-label={`View testimonial from ${user.name}`}
+              >
+                <img src={user.image} alt="" />
+              </button>
+            ))}
+          </div>
         </div>
 
         <button className="Testimonials-btn">
           Chat With Member Services
-          <HiOutlineChatBubbleOvalLeftEllipsis />
+          <HiOutlineChatBubbleOvalLeftEllipsis aria-hidden="true" />
         </button>
       </div>
     </section>
