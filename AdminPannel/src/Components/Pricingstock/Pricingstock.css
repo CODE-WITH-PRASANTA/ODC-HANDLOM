@@ -1,0 +1,248 @@
+/* Pricingstock.css */
+.pricingstock-wrapper {
+  background-color: #f8fafc;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.pricingstock-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.pricingstock-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pricingstock-header-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.pricingstock-header-icon-box.purple {
+  background-color: #8b5cf6;
+}
+
+.pricingstock-header-icon-box.blue {
+  background-color: #3b82f6;
+}
+
+.pricingstock-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.pricingstock-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.pricingstock-shipping-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.pricingstock-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.pricingstock-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.pricingstock-required {
+  color: #ef4444;
+}
+
+.pricingstock-input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pricingstock-prefix {
+  position: absolute;
+  left: 12px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.pricingstock-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pricingstock-input.pl-prefix {
+  padding-left: 28px;
+}
+
+.pricingstock-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.pricingstock-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pricingstock-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pricingstock-select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.pricingstock-select-arrow {
+  position: absolute;
+  right: 12px;
+  color: #64748b;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+.pricingstock-dimensions-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pricingstock-dim-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pricingstock-sub-label {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+}
+
+.pricingstock-toggles-row {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.pricingstock-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pricingstock-toggle-label-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.pricingstock-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pricingstock-switch {
+  width: 36px;
+  height: 20px;
+  background-color: #cbd5e1;
+  border-radius: 20px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.pricingstock-switch.active {
+  background-color: #10b981;
+}
+
+.pricingstock-switch-handle {
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.pricingstock-switch.active .pricingstock-switch-handle {
+  transform: translateX(16px);
+}
+
+.pricingstock-toggle-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mt-5 {
+  margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .pricingstock-grid-3,
+  .pricingstock-shipping-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

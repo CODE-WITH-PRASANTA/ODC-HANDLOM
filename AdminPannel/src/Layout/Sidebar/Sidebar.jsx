@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   Home,
   ShoppingBag,
+  PlusCircle,
   ListTree,
   Gem,
   Tag,
@@ -36,7 +37,8 @@ const menuSections = [
   {
     title: "PRODUCTS",
     items: [
-      { label: "Products", path: "/products/all-products", icon: ShoppingBag },
+      { label: "All Products", path: "/products/all-products", icon: ShoppingBag },
+      { label: "Add Product", path: "/products/add-new", icon: PlusCircle },
       { label: "Categories", path: "/products/categories", icon: ListTree },
       { label: "Collections", path: "/products/collections", icon: Gem },
       { label: "Brands", path: "/products/brands", icon: Tag },
@@ -47,9 +49,11 @@ const menuSections = [
     title: "SALES",
     items: [
       { label: "Orders", path: "/sales/orders", icon: Package },
+      { label: "Create Order", path: "/sales/create-order", icon: PlusCircle },
       { label: "Customers", path: "/sales/customers", icon: Users },
       { label: "Coupons", path: "/sales/coupons", icon: Ticket },
       { label: "Refunds", path: "/sales/refunds", icon: RotateCcw },
+      { label: "New Refund", path: "/sales/new-refund", icon: PlusCircle },
       { label: "Payments", path: "/sales/payments", icon: Wallet }
     ]
   },
