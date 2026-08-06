@@ -14,242 +14,101 @@ import ChawkBazarApp from "../../Components/ChawkBazarApp/ChawkBazarApp";
 import Testimonials from "../../Components/Testimonials/Testimonials";
 import NewsletterGallery from "../../Components/NewsletterGallery/NewsletterGallery";
 
-
-
 const Home = () => {
-
-
   const location = useLocation();
 
-
-
-
-  // Navbar ID scroll handling
   useEffect(() => {
-
-
-    const sectionId =
-      location.state?.scrollTo;
-
-
+    const sectionId = location.state?.scrollTo;
 
     if (!sectionId) return;
 
-
-
-
     const timer = setTimeout(() => {
+      const section = document.getElementById(sectionId);
 
-
-      const section =
-        document.getElementById(sectionId);
-
-
-
-      if(section){
-
-
+      if (section) {
         const navbarHeight = 85;
-
-
 
         const scrollPosition =
           section.getBoundingClientRect().top +
           window.pageYOffset -
           navbarHeight;
 
-
-
-
         window.scrollTo({
-
           top: scrollPosition,
-
-          behavior:"smooth"
-
+          behavior: "smooth",
         });
-
-
       }
 
-
-
-
       // Remove navigation state
-      window.history.replaceState(
-        {},
-        document.title
-      );
-
-
-
-    },300);
-
-
-
+      window.history.replaceState({}, document.title);
+    }, 300);
 
     return () => clearTimeout(timer);
-
-
-
-  },[location]);
-
-
-
-
+  }, [location]);
 
   return (
-
     <div className="home-container">
-
-
-
       {/* HERO */}
-
       <section id="hero-section">
-
         <Hero />
-
       </section>
-
-
-
-
 
       {/* COLLECTION */}
-
       <section id="collection-section">
-
         <Collection />
-
       </section>
 
-
-
-
-
-      {/* PRODUCTS */}
-
+      {/* FEATURED PRODUCTS */}
       <section id="featured-products-section">
-
         <FeaturedProduct />
-
       </section>
 
-
-
-
-
-      {/* TRENDING */}
-
+      {/* TOP BRANDS */}
       <section id="top-brands-section">
-
         <TopBrand />
-
       </section>
 
-
-      {/*Blog*/}
-
-      <section id="bolg-section">
-
-        <Blog/>
-        
+      {/* BLOG */}
+      <section id="blog-section">
+        <Blog />
       </section>
-
-
-
-
 
       {/* FLASH SALE */}
-
       <section id="flash-sale-section">
-
         <FlashSale />
-
       </section>
 
-
-
-
-
-      {/* ON SELLING */}
-
+      {/* SELLING PRODUCTS */}
       <section id="selling-products-section">
-
         <SellingProducts />
-
       </section>
-
-
-
-
 
       {/* EXCLUSIVE */}
-
       <section id="exclusive-section">
-
         <ExclusiveSection />
-
       </section>
 
-
-
-
-
-      {/* NEW ARRIVAL */}
-
+      {/* NEW ARRIVALS */}
       <section id="new-arrivals-section">
-
         <NewArrivals />
-
       </section>
-
-
-
-
 
       {/* APP */}
-
       <section id="chawkbazar-app-section">
-
         <ChawkBazarApp />
-
       </section>
 
-
-
-
-
-      {/* TESTIMONIAL */}
-
+      {/* TESTIMONIALS */}
       <section id="testimonials-section">
-
         <Testimonials />
-
       </section>
 
-
-
-
-
-      {/* GALLERY */}
-
+      {/* NEWSLETTER GALLERY */}
       <section id="newsletter-gallery-section">
-
         <NewsletterGallery />
-
       </section>
-
-
-
-
     </div>
-
   );
-
 };
-
-
 
 export default Home;

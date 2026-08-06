@@ -1,0 +1,134 @@
+/* SeoSetting.css */
+.seo-setting-wrapper {
+  background-color: #f8fafc;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.seo-setting-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.seo-setting-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.seo-setting-header-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #8b5cf6;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.seo-setting-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.seo-setting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.seo-setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.seo-setting-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.seo-setting-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.seo-setting-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.seo-setting-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.seo-setting-cancel-btn {
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.seo-setting-cancel-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.seo-setting-save-btn {
+  background-color: #991b1b;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(153, 27, 27, 0.2);
+  transition: background-color 0.2s;
+}
+
+.seo-setting-save-btn:hover {
+  background-color: #7f1d1d;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .seo-setting-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
