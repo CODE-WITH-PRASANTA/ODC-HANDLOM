@@ -46,36 +46,26 @@ const menuSections = [
   {
     title: "SALES",
     items: [
-<<<<<<< HEAD
       { label: "Orders", path: "/sales/orders", icon: Package },
       { label: "Customers", path: "/sales/customers", icon: Users },
       { label: "Coupons", path: "/sales/coupons", icon: Ticket },
       { label: "Refunds", path: "/sales/refunds", icon: RotateCcw },
-      { label: "Payments", path: "/sales/payments", icon: Wallet }
-=======
+      { label: "Payments", path: "/sales/payments", icon: Wallet },
       { label: 'Products', path: '/addnewproduct', icon: ShoppingBag },
-      { label: 'Categories', path: '/products/categories', icon: ListTree },
-      { label: 'Collections', path: '/products/collections', icon: Gem },
-      { label: 'Brands', path: '/products/brands', icon: Tag },
-      { label: 'Attributes', path: '/products/attributes', icon: SlidersHorizontal },
->>>>>>> 78831b9b648340c175415fff6ce8bd2034d643a6
     ]
   },
   {
     title: "MARKETING",
     items: [
-<<<<<<< HEAD
       { label: "Banner Sliders", path: "/marketing/banner-sliders", icon: ImageIcon },
       { label: "Flash Sale", path: "/marketing/flash-sale", icon: Zap },
       { label: "Newsletters", path: "/marketing/newsletters", icon: Mail },
-      { label: "Push Notifications", path: "/marketing/push-notifications", icon: Bell }
-=======
+      { label: "Push Notifications", path: "/marketing/push-notifications", icon: Bell },
       { label: 'Orders', path: '/order', icon: Package },
       { label: 'Customers', path: '/sales/customers', icon: Users },
       { label: 'Coupons', path: '/sales/coupons', icon: Ticket },
       { label: 'Refunds', path: '/refund', icon: RotateCcw },
       { label: 'Payments', path: '/sales/payments', icon: Wallet },
->>>>>>> 78831b9b648340c175415fff6ce8bd2034d643a6
     ]
   },
   {
