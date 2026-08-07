@@ -63,20 +63,7 @@ function App() {
           <Route path="sales/payments" element={<Page name="Payments" />} />
 
           {/* 4. Marketing */}
-          <Route path="marketing/banner-sliders" element={<Page name="Banner Sliders" />} />
-          <Route path="marketing/flash-sale" element={<Page name="Flash Sale" />} />
-          <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
-          <Route path="marketing/push-notifications" element={<Page name="Push Notifications" />} />
-
-          {/* 5. Reports */}
-          <Route path="reports/reports" element={<Page name="Reports" />} />
-          <Route path="reports/sales-analytics" element={<Page name="Sales Analytics" />} />
-
-          {/* 6. Settings */}
-          <Route path="settings/store-settings" element={<Page name="Store Settings" />} />
-          <Route path="settings/shipping-methods" element={<Page name="Shipping Methods" />} />
-          <Route path="settings/payment-methods" element={<Page name="Payment Methods" />} />
-          <Route path="settings/users-roles" element={<Page name="Users & Roles" />} />
+         
         </Route>
 
         {/* Fallback 404 route */}
