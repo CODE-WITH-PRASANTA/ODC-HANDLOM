@@ -8,7 +8,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Upload,
-  FileText
+  FileText,
+  X
 } from 'lucide-react';
 import './Brands.css';
 
@@ -75,6 +76,9 @@ const Brands = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Modal Open/Close State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Form State
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -85,9 +89,9 @@ const Brands = () => {
   });
 
   // Calculate Stats Dynamically
-  const totalBrandsCount = 24;
+  const totalBrandsCount = brands.length + 18;
   const activeBrandsCount = brands.filter((b) => b.status).length + 15;
-  const inactiveBrandsCount = 4;
+  const inactiveBrandsCount = brands.filter((b) => !b.status).length + 3;
 
   // Input Change Handler
   const handleInputChange = (e) => {
@@ -105,6 +109,12 @@ const Brands = () => {
       const logoUrl = URL.createObjectURL(file);
       setFormData((prev) => ({ ...prev, logo: logoUrl }));
     }
+  };
+
+  // Open Add Brand Modal
+  const handleOpenAddModal = () => {
+    handleResetForm();
+    setIsModalOpen(true);
   };
 
   // Save / Update Brand
@@ -137,7 +147,7 @@ const Brands = () => {
       setBrands([newBrand, ...brands]);
     }
 
-    handleCancelForm();
+    handleCloseModal();
   };
 
   // Edit Action
@@ -149,6 +159,7 @@ const Brands = () => {
       logo: brand.logo || '',
       status: brand.status
     });
+    setIsModalOpen(true);
   };
 
   // Delete Action
@@ -156,7 +167,7 @@ const Brands = () => {
     if (window.confirm('Are you sure you want to remove this brand?')) {
       setBrands(brands.filter((b) => b.id !== id));
       if (editingId === id) {
-        handleCancelForm();
+        handleCloseModal();
       }
     }
   };
@@ -170,8 +181,8 @@ const Brands = () => {
     );
   };
 
-  // Reset Form
-  const handleCancelForm = () => {
+  // Reset Form Inputs
+  const handleResetForm = () => {
     setEditingId(null);
     setFormData({
       name: '',
@@ -179,6 +190,12 @@ const Brands = () => {
       logo: '',
       status: true
     });
+  };
+
+  // Close Modal Action
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    handleResetForm();
   };
 
   // Filter Logic
@@ -198,7 +215,6 @@ const Brands = () => {
   }, [brands, searchTerm, statusFilter]);
 
   // Pagination Logic
-  const totalEntries = filteredBrands.length;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredBrands.slice(indexOfFirstItem, indexOfLastItem);
@@ -213,13 +229,13 @@ const Brands = () => {
             <p className="brands-subtitle">Manage all product brands.</p>
           </div>
         </div>
-        <button className="btn-add-header" onClick={handleCancelForm}>
+        <button className="btn-add-header" onClick={handleOpenAddModal}>
           <Plus size={16} />
           <span>Add New Brand</span>
         </button>
       </div>
 
-      {/* THREE COLUMN GRID */}
+      {/* TWO COLUMN GRID */}
       <div className="brands-main-grid">
         
         {/* LEFT COLUMN */}
@@ -418,44 +434,63 @@ const Brands = () => {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: FORM */}
-        <div className="card brands-right-col">
-          <h3 className="card-heading">
-            {editingId ? 'Edit Brand' : 'Add New Brand'}
-          </h3>
+      </div>
 
-          <form onSubmit={handleSaveBrand} className="brand-form">
-            <div className="form-group">
-              <label>Brand Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="e.g. Nike"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
+      {/* POPUP MODAL FOR ADD / EDIT BRAND */}
+      {isModalOpen && (
+        <div className="modal-backdrop" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingId ? 'Edit Brand' : 'Add New Brand'}</h3>
+              <button className="btn-close-modal" onClick={handleCloseModal}>
+                <X size={18} />
+              </button>
             </div>
 
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                rows={3}
-                placeholder="Enter description..."
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </div>
+            <form onSubmit={handleSaveBrand} className="brand-form">
+              <div className="form-group">
+                <label>Brand Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. Nike"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <label>Brand Logo</label>
-              <div className="upload-box-wrapper">
-                {formData.logo ? (
-                  <div className="image-preview-container">
-                    <img src={formData.logo} alt="Preview" className="uploaded-preview" />
-                    <label className="reupload-btn">
-                      Change
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  placeholder="Enter tagline or description..."
+                  value={formData.description}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Brand Logo</label>
+                <div className="upload-box-wrapper">
+                  {formData.logo ? (
+                    <div className="image-preview-container">
+                      <img src={formData.logo} alt="Preview" className="uploaded-preview" />
+                      <label className="reupload-btn">
+                        Change Logo
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          hidden
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="upload-area">
+                      <Upload size={22} className="upload-icon" />
+                      <span>Click to Upload Logo</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -463,56 +498,44 @@ const Brands = () => {
                         hidden
                       />
                     </label>
-                  </div>
-                ) : (
-                  <label className="upload-area">
-                    <Upload size={22} className="upload-icon" />
-                    <span>Upload Logo</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group toggle-group">
+                <label>Status</label>
+                <div className="status-inline">
+                  <label className="switch">
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      hidden
+                      type="checkbox"
+                      name="status"
+                      checked={formData.status}
+                      onChange={handleInputChange}
                     />
+                    <span className="slider round"></span>
                   </label>
-                )}
+                  <span className="status-label-text">
+                    {formData.status ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="form-group toggle-group">
-              <label>Status</label>
-              <div className="status-inline">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="status"
-                    checked={formData.status}
-                    onChange={handleInputChange}
-                  />
-                  <span className="slider round"></span>
-                </label>
-                <span className="status-label-text">
-                  {formData.status ? 'Active' : 'Inactive'}
-                </span>
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-save">
+                  {editingId ? 'Update Brand' : 'Save Brand'}
+                </button>
               </div>
-            </div>
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={handleCancelForm}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn-save">
-                {editingId ? 'Update Brand' : 'Save Brand'}
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 };
