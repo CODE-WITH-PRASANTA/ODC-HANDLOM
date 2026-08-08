@@ -1,10 +1,9 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { motion } from "framer-motion";
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   ShoppingBag,
-  PlusCircle,
   ListTree,
   Gem,
   Tag,
@@ -25,74 +24,67 @@ import {
   CreditCard,
   UserCog,
   Sparkles
-} from "lucide-react";
-
-import "./Sidebar.css";
+} from 'lucide-react';
+import './Sidebar.css';
 
 const menuSections = [
   {
     title: null,
-    items: [{ label: "Dashboard", path: "/dashboard", icon: Home }]
-  },
-  {
-    title: "PRODUCTS",
     items: [
-      { label: "All Products", path: "/products/all-products", icon: ShoppingBag },
-      { label: "Add Product", path: "/products/add-new", icon: PlusCircle },
-      { label: "Categories", path: "/products/categories", icon: ListTree },
-      { label: "Collections", path: "/products/collections", icon: Gem },
-      { label: "Brands", path: "/products/brands", icon: Tag },
-      { label: "Attributes", path: "/products/attributes", icon: SlidersHorizontal }
+      { label: 'Dashboard', path: '/dashboard', icon: Home }
     ]
   },
   {
-    title: "SALES",
+    title: 'PRODUCTS',
     items: [
-      { label: "Orders", path: "/sales/orders", icon: Package },
-      { label: "Create Order", path: "/sales/create-order", icon: PlusCircle },
-      { label: "Customers", path: "/sales/customers", icon: Users },
-      { label: "Coupons", path: "/sales/coupons", icon: Ticket },
-      { label: "Refunds", path: "/sales/refunds", icon: RotateCcw },
-      { label: "Payments", path: "/sales/payments", icon: Wallet },
-      { label: 'Products', path: '/addnewproduct', icon: ShoppingBag },
-      { label: "New Refund", path: "/sales/new-refund", icon: PlusCircle },
-      { label: "Payments", path: "/sales/payments", icon: Wallet }
+      { label: 'Products', path: '/products/all-products', icon: ShoppingBag },
+      { label: 'AddNewProduct', path: 'products/add-new', icon: ShoppingBag },
+
+      { label: 'Categories', path: '/products/categories', icon: ListTree },
+      { label: 'Collections', path: '/products/collections', icon: Gem },
+      { label: 'Brands', path: '/products/brands', icon: Tag },
+      { label: 'Attributes', path: '/products/attributes', icon: SlidersHorizontal },
     ]
   },
   {
-    title: "MARKETING",
+    title: 'SALES',
     items: [
-      { label: "Banner Sliders", path: "/marketing/banner-sliders", icon: ImageIcon },
-      { label: "Flash Sale", path: "/marketing/flash-sale", icon: Zap },
-      { label: "Newsletters", path: "/marketing/newsletters", icon: Mail },
-      { label: "Push Notifications", path: "/marketing/push-notifications", icon: Bell },
-      { label: 'Orders', path: '/order', icon: Package },
-      { label: 'Customers', path: '/sales/customers', icon: Users },
+      { label: 'Orders', path: '/sales/orders', icon: Package },
+       { label: 'Customers', path: '/sales/customers', icon: Users },
       { label: 'Coupons', path: '/sales/coupons', icon: Ticket },
-      { label: 'Refunds', path: '/refund', icon: RotateCcw },
+      { label: 'Refunds', path: '/sales/refunds', icon: RotateCcw },
       { label: 'Payments', path: '/sales/payments', icon: Wallet },
-      { label: "Push Notifications", path: "/marketing/push-notifications", icon: Bell }
     ]
   },
   {
-    title: "REPORTS",
+    title: 'MARKETING',
     items: [
-      { label: "Reports", path: "/reports/reports", icon: BarChart3 },
-      { label: "Sales Analytics", path: "/reports/sales-analytics", icon: PieChart }
+      { label: 'Banner Sliders', path: '/marketing/banner-sliders', icon: ImageIcon },
+      { label: 'Flash Sale', path: '/marketing/flash-sale', icon: Zap },
+      { label: 'Newsletters', path: '/marketing/newsletters', icon: Mail },
+      { label: 'Push Notifications', path: '/marketing/push-notifications', icon: Bell },
     ]
   },
   {
-    title: "SETTINGS",
+    title: 'REPORTS',
     items: [
-      { label: "Store Settings", path: "/settings/store-settings", icon: Settings },
-      { label: "Shipping Methods", path: "/settings/shipping-methods", icon: Truck },
-      { label: "Payment Methods", path: "/settings/payment-methods", icon: CreditCard },
-      { label: "Users & Roles", path: "/settings/users-roles", icon: UserCog }
+      { label: 'Reports', path: '/reports/reports', icon: BarChart3 },
+      { label: 'Sales Analytics', path: '/reports/sales-analytics', icon: PieChart },
+    ]
+  },
+  {
+    title: 'SETTINGS',
+    items: [
+      { label: 'Store Settings', path: '/settings/store-settings', icon: Settings },
+      { label: 'Shipping Methods', path: '/settings/shipping-methods', icon: Truck },
+      { label: 'Payment Methods', path: '/settings/payment-methods', icon: CreditCard },
+      { label: 'Users & Roles', path: '/settings/users-roles', icon: UserCog },
     ]
   }
 ];
 
 const Sidebar = ({ sidebarOpen, mobileSidebar, setMobileSidebar }) => {
+  const location = useLocation();
   const showLabels = sidebarOpen || mobileSidebar;
 
   return (
@@ -104,59 +96,68 @@ const Sidebar = ({ sidebarOpen, mobileSidebar, setMobileSidebar }) => {
         />
       )}
 
-      <aside
-        className={`Sidebar ${sidebarOpen ? "expanded" : "collapsed"} ${
-          mobileSidebar ? "mobile-open" : ""
-        }`}
-      >
-        {/* Header / Logo */}
+      <aside className={`Sidebar ${sidebarOpen ? 'expanded' : 'collapsed'} ${mobileSidebar ? 'mobile-open' : ''}`}>
+        {/* Header / Logo card */}
         <div className="Sidebar-header">
           <span className="Sidebar-headerDot Sidebar-headerDot-left" />
           <span className="Sidebar-headerDot Sidebar-headerDot-right" />
-
-          <div className="Sidebar-logoMark">
-            <svg viewBox="0 0 40 40" width="26">
-              <circle cx="20" cy="20" r="16" fill="#C23A17" />
+          <div className="Sidebar-logoMark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" width="26" height="26">
+              <path
+                d="M20 4 C 24 10, 32 12, 32 20 C 32 28, 24 30, 20 36 C 16 30, 8 28, 8 20 C 8 12, 16 10, 20 4 Z"
+                fill="url(#logoGrad)"
+              />
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#EA7A2E" />
+                  <stop offset="100%" stopColor="#C23A17" />
+                </linearGradient>
+              </defs>
             </svg>
           </div>
-
-          {showLabels && (
-            <motion.div
-              className="Sidebar-brandText"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <h1>Odc</h1>
-              <h2>HANDLOOM</h2>
-              <span>HANDMADE WITH HERITAGE</span>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {showLabels && (
+              <motion.div
+                className="Sidebar-brandText"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h1>Gdc</h1>
+                <h2>HANDLOOM</h2>
+                <span>HANDMADE WITH HERITAGE</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Navigation */}
         <nav className="Sidebar-nav">
-          {menuSections.map((section, index) => (
-            <div className="SidebarSection" key={section.title ?? `section-${index}`}>
+          {menuSections.map((section, idx) => (
+            <div key={idx} className="SidebarSection">
               {section.title && showLabels && (
                 <div className="SidebarSection-title">{section.title}</div>
               )}
-
+              {section.title && !showLabels && (
+                <div className="SidebarSection-divider" />
+              )}
               <ul className="Sidebar-menu">
                 {section.items.map((item) => {
                   const Icon = item.icon;
-
+                  const isActive = location.pathname === item.path;
                   return (
                     <li key={item.path} className="SidebarItem">
                       <NavLink
                         to={item.path}
-                        className={({ isActive }) =>
-                          `SidebarItem-link ${isActive ? "active" : ""}`
-                        }
+                        className={`SidebarItem-link ${isActive ? 'active' : ''}`}
+                        title={!showLabels ? item.label : ''}
                         onClick={() => setMobileSidebar(false)}
-                        title={!showLabels ? item.label : undefined}
                       >
-                        <Icon size={18} className="SidebarItem-icon" />
-                        {showLabels && <span>{item.label}</span>}
+                        <Icon className="SidebarItem-icon" size={18} />
+                        {showLabels && (
+                          <span className="SidebarItem-text">{item.label}</span>
+                        )}
                       </NavLink>
                     </li>
                   );
@@ -174,14 +175,10 @@ const Sidebar = ({ sidebarOpen, mobileSidebar, setMobileSidebar }) => {
                 <Sparkles size={14} className="SidebarPlan-icon" />
                 <span className="SidebarPlan-title">Premium Plan</span>
               </div>
-              <span className="SidebarPlan-badge">ACTIVE</span>
+              <span className="SidebarPlan-badge">Active</span>
             </div>
-
-            <p className="SidebarPlan-expiry">Renews on Dec 31, 2026</p>
-
-            <button className="SidebarPlan-upgradeBtn" type="button">
-              Upgrade Plan
-            </button>
+            <p className="SidebarPlan-expiry">Expires on 25 Dec, 2025</p>
+            <button className="SidebarPlan-upgradeBtn">Upgrade Plan</button>
           </div>
         )}
       </aside>
