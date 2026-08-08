@@ -49,8 +49,7 @@ const Breadcrumb = () => {
   );
 };
 
-// Breakpoint kept in one place so JS and the "1024px" logic never drift
-// out of sync with the CSS media queries in Sidebar.css / MainLayout.css.
+// Breakpoint kept in one place so JS logic syncs with Sidebar.css / MainLayout.css
 const DESKTOP_BREAKPOINT = 1024;
 
 const MainLayout = () => {
@@ -68,8 +67,6 @@ const MainLayout = () => {
       resizeTimer = setTimeout(() => {
         if (window.innerWidth < DESKTOP_BREAKPOINT) {
           setSidebarOpen(false);
-          // don't force-close mobileSidebar here — only the user's own
-          // toggle/overlay click/nav click should close an open drawer
         } else {
           setSidebarOpen(true);
           setMobileSidebar(false);
@@ -85,8 +82,7 @@ const MainLayout = () => {
     };
   }, []);
 
-  // Lock body scroll while the mobile drawer is open, otherwise the page
-  // behind it scrolls too and the overlay looks broken.
+  // Lock body scroll while the mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = mobileSidebar ? 'hidden' : '';
     return () => {
