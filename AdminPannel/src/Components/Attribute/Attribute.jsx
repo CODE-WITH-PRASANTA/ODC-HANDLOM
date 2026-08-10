@@ -7,7 +7,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  Lightbulb
+  Lightbulb,
+  X
 } from 'lucide-react';
 import './Attribute.css';
 
@@ -43,6 +44,9 @@ const Attribute = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
+  // Modal Open/Close State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Form / Add / Edit State
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -60,6 +64,12 @@ const Attribute = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  // Open Add Attribute Modal
+  const handleOpenAddModal = () => {
+    handleResetForm();
+    setIsModalOpen(true);
   };
 
   // Create or Update Attribute
@@ -110,7 +120,7 @@ const Attribute = () => {
       setAttributes([...attributes, newAttr]);
     }
 
-    handleCancelForm();
+    handleCloseModal();
   };
 
   const handleEdit = (attr) => {
@@ -122,13 +132,14 @@ const Attribute = () => {
       valuesText: attr.rawValues || '',
       status: attr.status
     });
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to remove this attribute?')) {
       setAttributes(attributes.filter((attr) => attr.id !== id));
       if (editingId === id) {
-        handleCancelForm();
+        handleCloseModal();
       }
     }
   };
@@ -141,7 +152,7 @@ const Attribute = () => {
     );
   };
 
-  const handleCancelForm = () => {
+  const handleResetForm = () => {
     setEditingId(null);
     setFormData({
       name: '',
@@ -150,6 +161,11 @@ const Attribute = () => {
       valuesText: 'Red\nBlue\nBlack\nGreen',
       status: true
     });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    handleResetForm();
   };
 
   // Filter Logic
@@ -179,7 +195,7 @@ const Attribute = () => {
       {/* HEADER BAR */}
       <div className="attr-header">
         <div className="attr-title-area">
-          <div className="attr-badge">1</div>
+          <div className="attr-badge">{attributes.length}</div>
           <div>
             <h1 className="attr-title">Attributes</h1>
             <p className="attr-subtitle">
@@ -187,13 +203,13 @@ const Attribute = () => {
             </p>
           </div>
         </div>
-        <button className="btn-add-header" onClick={handleCancelForm}>
+        <button className="btn-add-header" onClick={handleOpenAddModal}>
           <Plus size={16} />
           <span>Add New Attribute</span>
         </button>
       </div>
 
-      {/* THREE COLUMN / RESPONSIVE GRID LAYOUT */}
+      {/* TWO COLUMN GRID LAYOUT */}
       <div className="attr-main-grid">
         
         {/* LEFT COLUMN: GROUPS & TIPS */}
@@ -373,102 +389,109 @@ const Attribute = () => {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: ADD / EDIT ATTRIBUTE FORM */}
-        <div className="card attr-right-col">
-          <h3 className="card-heading">
-            {editingId ? 'Edit Attribute' : 'Add New Attribute'}
-          </h3>
+      </div>
 
-          <form onSubmit={handleSaveAttribute} className="attribute-form">
-            <div className="form-group">
-              <label>Attribute Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="e.g. Color"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
+      {/* POPUP MODAL FOR ADD / EDIT ATTRIBUTE */}
+      {isModalOpen && (
+        <div className="modal-backdrop" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingId ? 'Edit Attribute' : 'Add New Attribute'}</h3>
+              <button className="btn-close-modal" onClick={handleCloseModal}>
+                <X size={18} />
+              </button>
             </div>
 
-            <div className="form-group">
-              <label>Attribute Group</label>
-              <select
-                name="group"
-                value={formData.group}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Group</option>
-                {groups.map((g) => (
-                  <option key={g.name} value={g.name}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Attribute Type</label>
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleInputChange}
-              >
-                <option value="Dropdown">Dropdown</option>
-                <option value="Text">Text</option>
-                <option value="Multiple Select">Multiple Select</option>
-              </select>
-            </div>
-
-            {formData.type === 'Dropdown' && (
+            <form onSubmit={handleSaveAttribute} className="attribute-form">
               <div className="form-group">
-                <label>Values (Add one per line)</label>
-                <textarea
-                  name="valuesText"
-                  rows={5}
-                  value={formData.valuesText}
+                <label>Attribute Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. Color"
+                  value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Red&#10;Blue&#10;Black&#10;Green"
+                  required
                 />
               </div>
-            )}
 
-            <div className="form-group toggle-group">
-              <label>Status</label>
-              <div className="status-inline">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="status"
-                    checked={formData.status}
-                    onChange={handleInputChange}
-                  />
-                  <span className="slider round"></span>
-                </label>
-                <span className="status-label-text">
-                  {formData.status ? 'Active' : 'Inactive'}
-                </span>
+              <div className="form-group">
+                <label>Attribute Group</label>
+                <select
+                  name="group"
+                  value={formData.group}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Group</option>
+                  {groups.map((g) => (
+                    <option key={g.name} value={g.name}>
+                      {g.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
 
-            <div className="form-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={handleCancelForm}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn-save">
-                {editingId ? 'Update Attribute' : 'Save Attribute'}
-              </button>
-            </div>
-          </form>
+              <div className="form-group">
+                <label>Attribute Type</label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                >
+                  <option value="Dropdown">Dropdown</option>
+                  <option value="Text">Text</option>
+                  <option value="Multiple Select">Multiple Select</option>
+                </select>
+              </div>
+
+              {formData.type === 'Dropdown' && (
+                <div className="form-group">
+                  <label>Values (Add one per line)</label>
+                  <textarea
+                    name="valuesText"
+                    rows={4}
+                    value={formData.valuesText}
+                    onChange={handleInputChange}
+                    placeholder="Red&#10;Blue&#10;Black&#10;Green"
+                  />
+                </div>
+              )}
+
+              <div className="form-group toggle-group">
+                <label>Status</label>
+                <div className="status-inline">
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      name="status"
+                      checked={formData.status}
+                      onChange={handleInputChange}
+                    />
+                    <span className="slider round"></span>
+                  </label>
+                  <span className="status-label-text">
+                    {formData.status ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-save">
+                  {editingId ? 'Update Attribute' : 'Save Attribute'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 };

@@ -9,11 +9,12 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
-  Upload
+  Upload,
+  X
 } from 'lucide-react';
 import './Categories.css';
 
-// Initial Mock Data matching your reference image
+// Initial Mock Data
 const initialCategories = [
   {
     id: 1,
@@ -93,6 +94,9 @@ const Categories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Popup Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Form State (Add / Edit)
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -128,6 +132,12 @@ const Categories = () => {
     }
   };
 
+  // Open Add Category Modal
+  const handleOpenAddModal = () => {
+    handleResetForm();
+    setIsModalOpen(true);
+  };
+
   // Save / Update Category
   const handleSaveCategory = (e) => {
     e.preventDefault();
@@ -137,16 +147,14 @@ const Categories = () => {
     }
 
     if (editingId) {
-      // Edit
+      // Edit Existing
       setCategories(
         categories.map((cat) =>
-          cat.id === editingId
-            ? { ...cat, ...formData }
-            : cat
+          cat.id === editingId ? { ...cat, ...formData } : cat
         )
       );
     } else {
-      // Add
+      // Add New Category
       const newCat = {
         id: Date.now(),
         name: formData.name,
@@ -161,7 +169,7 @@ const Categories = () => {
       setCategories([...categories, newCat]);
     }
 
-    handleCancelForm();
+    handleCloseModal();
   };
 
   // Edit Button Action
@@ -174,6 +182,7 @@ const Categories = () => {
       image: category.image || '',
       status: category.status
     });
+    setIsModalOpen(true);
   };
 
   // Delete Action
@@ -181,7 +190,7 @@ const Categories = () => {
     if (window.confirm('Are you sure you want to remove this category?')) {
       setCategories(categories.filter((cat) => cat.id !== id));
       if (editingId === id) {
-        handleCancelForm();
+        handleCloseModal();
       }
     }
   };
@@ -195,8 +204,8 @@ const Categories = () => {
     );
   };
 
-  // Reset Form
-  const handleCancelForm = () => {
+  // Reset Form Inputs
+  const handleResetForm = () => {
     setEditingId(null);
     setFormData({
       name: '',
@@ -205,6 +214,12 @@ const Categories = () => {
       image: '',
       status: true
     });
+  };
+
+  // Close Modal Action
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    handleResetForm();
   };
 
   // Add Root Category to Tree
@@ -218,7 +233,8 @@ const Categories = () => {
   // Filtered Logic
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
-      const matchesSearch = cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cat.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
@@ -242,25 +258,24 @@ const Categories = () => {
       {/* TOP HEADER BAR */}
       <div className="cat-header">
         <div className="cat-title-area">
-          <div className="cat-badge">2</div>
+          <div className="cat-badge">{categories.length}</div>
           <div>
             <h1 className="cat-title">Categories</h1>
             <p className="cat-subtitle">Organize your products into categories.</p>
           </div>
         </div>
-        <button className="btn-add-header" onClick={handleCancelForm}>
+        <button className="btn-add-header" onClick={handleOpenAddModal}>
           <Plus size={16} />
           <span>Add New Category</span>
         </button>
       </div>
 
-      {/* THREE COLUMN / RESPONSIVE GRID LAYOUT */}
+      {/* TWO COLUMN GRID LAYOUT */}
       <div className="cat-main-grid">
-        
         {/* LEFT COLUMN: CATEGORY TREE */}
         <div className="card cat-left-col">
           <h3 className="card-heading">Category Tree</h3>
-          
+
           <div className="tree-wrapper">
             {categoryTree.map((item, idx) => (
               <div key={item.name} className="tree-group">
@@ -292,9 +307,8 @@ const Categories = () => {
           </button>
         </div>
 
-        {/* CENTER COLUMN: CATEGORIES TABLE */}
+        {/* RIGHT COLUMN: CATEGORIES TABLE */}
         <div className="card cat-center-col">
-          
           {/* SEARCH & FILTER CONTROLS */}
           <div className="table-controls">
             <div className="search-input-wrapper">
@@ -447,65 +461,85 @@ const Categories = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* RIGHT COLUMN: ADD / EDIT CATEGORY FORM */}
-        <div className="card cat-right-col">
-          <h3 className="card-heading">
-            {editingId ? 'Edit Category' : 'Add New Category'}
-          </h3>
-
-          <form onSubmit={handleSaveCategory} className="category-form">
-            {/* Category Name */}
-            <div className="form-group">
-              <label>Category Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="e.g. Men"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
+      {/* POPUP MODAL FOR ADD / EDIT CATEGORY */}
+      {isModalOpen && (
+        <div className="modal-backdrop" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingId ? 'Edit Category' : 'Add New Category'}</h3>
+              <button className="btn-close-modal" onClick={handleCloseModal}>
+                <X size={18} />
+              </button>
             </div>
 
-            {/* Parent Category */}
-            <div className="form-group">
-              <label>Parent Category</label>
-              <select
-                name="parent"
-                value={formData.parent}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Parent</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <form onSubmit={handleSaveCategory} className="category-form">
+              {/* Category Name */}
+              <div className="form-group">
+                <label>Category Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. Men's Fashion"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-            {/* Description */}
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                rows={3}
-                placeholder="Enter description..."
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </div>
+              {/* Parent Category */}
+              <div className="form-group">
+                <label>Parent Category</label>
+                <select
+                  name="parent"
+                  value={formData.parent}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select Parent Category</option>
+                  {categories
+                    .filter((c) => c.id !== editingId)
+                    .map((c) => (
+                      <option key={c.id} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
 
-            {/* Category Image Upload */}
-            <div className="form-group">
-              <label>Category Image</label>
-              <div className="upload-box-wrapper">
-                {formData.image ? (
-                  <div className="image-preview-container">
-                    <img src={formData.image} alt="Preview" className="uploaded-preview" />
-                    <label className="reupload-btn">
-                      Change
+              {/* Description */}
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  placeholder="Enter category description..."
+                  value={formData.description}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              {/* Category Image Upload */}
+              <div className="form-group">
+                <label>Category Image</label>
+                <div className="upload-box-wrapper">
+                  {formData.image ? (
+                    <div className="image-preview-container">
+                      <img src={formData.image} alt="Preview" className="uploaded-preview" />
+                      <label className="reupload-btn">
+                        Change Image
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          hidden
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="upload-area">
+                      <Upload size={22} className="upload-icon" />
+                      <span>Click to Upload Image</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -513,58 +547,46 @@ const Categories = () => {
                         hidden
                       />
                     </label>
-                  </div>
-                ) : (
-                  <label className="upload-area">
-                    <Upload size={22} className="upload-icon" />
-                    <span>Upload Image</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Status Toggle */}
+              <div className="form-group toggle-group">
+                <label>Status</label>
+                <div className="status-inline">
+                  <label className="switch">
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      hidden
+                      type="checkbox"
+                      name="status"
+                      checked={formData.status}
+                      onChange={handleInputChange}
                     />
+                    <span className="slider round"></span>
                   </label>
-                )}
+                  <span className="status-label-text">
+                    {formData.status ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* Status */}
-            <div className="form-group toggle-group">
-              <label>Status</label>
-              <div className="status-inline">
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="status"
-                    checked={formData.status}
-                    onChange={handleInputChange}
-                  />
-                  <span className="slider round"></span>
-                </label>
-                <span className="status-label-text">
-                  {formData.status ? 'Active' : 'Inactive'}
-                </span>
+              {/* Form Actions Buttons */}
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={handleCloseModal}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-save">
+                  {editingId ? 'Update Category' : 'Save Category'}
+                </button>
               </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="form-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={handleCancelForm}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn-save">
-                {editingId ? 'Update Category' : 'Save Category'}
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 };

@@ -19,11 +19,11 @@ import PreviewProduct from "./Components/PreviewProduct/PreviewProduct";
 
 // Sales Components
 import OrdersDashboard from "./Components/OdersDashboard/OdersDashboard";
-import CreateOrder from "./Components/CreateOrder/CreateOrder";
 import RefundsDashboard from "./Components/RefundsDashboard/RefundsDashboard";
 import NewRefund from "./Components/NewRefund/NewRefund";
 import SalesCostumers from "./Components/SalesCostumers/SalesCostumers";
 import SalesOrder from "./Components/SalesOrder/SalesOrder";
+import CreateOrder from "./Components/CreateOrder/CreateOrder"; // <-- IMPORTED HERE
 
 // Marketing Components
 import Banner from "./Components/Banner/Banner";
@@ -42,14 +42,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* STANDALONE ROUTES (Outside Main Layout / No Sidebar & Topbar) */}
-        <Route path="/refund" element={<RefundsDashboard />} />
-        <Route path="/creatorder" element={<CreateOrder />} />
-        <Route path="/addnewproduct" element={<AddNewProduct />} />
-        <Route path="/previewproduct" element={<PreviewProduct />} />
-        <Route path="/newrefund" element={<NewRefund />} />
-        <Route path="/order" element={<OrdersDashboard />} />
-
         {/* MAIN APPLICATION LAYOUT WRAPPER */}
         <Route path="/" element={<MainLayout />}>
           {/* Default Route Redirect */}
@@ -68,8 +60,8 @@ function App() {
           <Route path="products/brands" element={<Brands />} />
 
           {/* 3. Sales & Orders */}
-          <Route path="sales/orders" element={<SalesOrder />} />
-          <Route path="sales/create-order" element={<CreateOrder />} />
+          <Route path="sales/orders" element={<OrdersDashboard />} />
+          <Route path="sales/create-order" element={<CreateOrder />} /> {/* <-- ROUTE ADDED HERE */}
           <Route path="sales/refunds" element={<Refunds />} />
           <Route path="sales/new-refund" element={<NewRefund />} />
           <Route path="sales/customers" element={<SalesCostumers />} />
