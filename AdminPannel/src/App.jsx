@@ -27,6 +27,8 @@ import SalesOrder from "./Components/SalesOrder/SalesOrder";
 
 // Marketing Components
 import Banner from "./Components/Banner/Banner";
+import PushNotifications from "./Components/PushNotifications/PushNotifications";
+import Newsletters from "./Components/Newsletters/Newsletters";
 
 // Placeholder Component for pages without unique views yet
 const Page = ({ name }) => (
@@ -77,8 +79,8 @@ function App() {
           {/* 4. Marketing */}
           <Route path="marketing/banner-sliders" element={<Banner />} />
           <Route path="marketing/flash-sale" element={<Page name="Flash Sale" />} />
-          <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
-          <Route path="marketing/push-notifications" element={<Page name="Push Notifications" />} />
+          <Route path="marketing/newsletters" element={<Newsletters />} />
+          <Route path="marketing/push-notifications" element={<PushNotifications />} />
 
           {/* 5. Reports */}
           <Route path="reports/reports" element={<Page name="Reports" />} />
@@ -89,6 +91,9 @@ function App() {
           <Route path="settings/shipping-methods" element={<Page name="Shipping Methods" />} />
           <Route path="settings/payment-methods" element={<Page name="Payment Methods" />} />
           <Route path="settings/users-roles" element={<Page name="Users & Roles" />} />
+
+          
+
         </Route>
 
         {/* Fallback 404 Route */}
