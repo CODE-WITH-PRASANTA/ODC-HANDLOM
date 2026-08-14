@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import "./NewArrivals.css";
 import { FiX, FiPlus, FiMinus, FiShoppingBag, FiEye, FiCheck, FiHeart } from "react-icons/fi";
 
+// INR में प्रोडक्ट्स का डेटा
 const productsData = [
   {
     id: 1,
     title: "Roadster Women Round Neck",
     desc: "Fendi began life in 1925 as a fur and leather speciality store in Rome.",
-    price: 18.59,
-    oldPrice: 24.00,
+    price: 1499.00,
+    oldPrice: 1999.00,
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
@@ -18,7 +19,7 @@ const productsData = [
     id: 2,
     title: "Roadster Men Solid Tee",
     desc: "Classic white crewneck t-shirt made from ultra-soft organic cotton.",
-    price: 18.59,
+    price: 799.00,
     oldPrice: null,
     rating: 4.6,
     image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80",
@@ -29,8 +30,8 @@ const productsData = [
     id: 3,
     title: "Roadster Floral Printed Shirt",
     desc: "A vibrant dark floral shirt designed for a clean, modern aesthetic fit.",
-    price: 18.59,
-    oldPrice: 22.50,
+    price: 1299.00,
+    oldPrice: 1799.00,
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
@@ -40,8 +41,8 @@ const productsData = [
     id: 4,
     title: "Roadster Trench Woolen Coat",
     desc: "Heavyweight woolen texture drape overcoat perfect for winter stylings.",
-    price: 18.59,
-    oldPrice: 35.00,
+    price: 3499.00,
+    oldPrice: 4999.00,
     rating: 5.0,
     image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
@@ -51,8 +52,8 @@ const productsData = [
     id: 5,
     title: "Roadster Leather Biker Jacket",
     desc: "Crafted with premium authentic leather elements and heavy zip finishes.",
-    price: 18.59,
-    oldPrice: 40.00,
+    price: 4999.00,
+    oldPrice: 6999.00,
     rating: 4.7,
     image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
@@ -62,8 +63,8 @@ const productsData = [
     id: 6,
     title: "Roadster Vintage Boho Skirt",
     desc: "Flowy, light, and textured printed maxi skirt with side slit adjustments.",
-    price: 18.59,
-    oldPrice: 25.00,
+    price: 1599.00,
+    oldPrice: 2199.00,
     rating: 4.5,
     image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L"],
@@ -73,7 +74,7 @@ const productsData = [
     id: 7,
     title: "Roadster Emerald Flow Dress",
     desc: "V-neck dark green relaxed midi dress printed with delicate floral arrays.",
-    price: 18.59,
+    price: 2199.00,
     oldPrice: null,
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop&q=80",
@@ -84,8 +85,8 @@ const productsData = [
     id: 8,
     title: "Roadster Checked Flannel Outer",
     desc: "Layer up comfortably with our signature vintage tartan oversized flannel shirt.",
-    price: 18.59,
-    oldPrice: 28.00,
+    price: 1899.00,
+    oldPrice: 2499.00,
     rating: 4.6,
     image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&auto=format&fit=crop&q=80",
     sizes: ["M", "L", "XL"],
@@ -95,7 +96,7 @@ const productsData = [
     id: 9,
     title: "Roadster Camel Fedora Hat",
     desc: "Soft-structured wool-felt fedora designed to accent casual street wear.",
-    price: 18.59,
+    price: 999.00,
     oldPrice: null,
     rating: 4.4,
     image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
@@ -106,14 +107,22 @@ const productsData = [
     id: 10,
     title: "Roadster Slogan Graphic Tee",
     desc: "Cotton basic crew neck charcoal t-shirt featuring modern distressed graphics.",
-    price: 18.59,
-    oldPrice: 21.99,
+    price: 699.00,
+    oldPrice: 999.00,
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?w=600&auto=format&fit=crop&q=80",
     sizes: ["S", "M", "L", "XL"],
     colors: ["#2c3e50", "#7f8c8d", "#111111"]
   }
 ];
+
+// भारतीय रुपये के फॉर्मेट के लिए हेल्पर फ़ंक्शन
+const formatINR = (amount) => {
+  return "₹" + amount.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
 const NewArrivals = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -187,9 +196,9 @@ const NewArrivals = () => {
                 <p className="NewArrivals__desc">{product.desc}</p>
 
                 <div className="NewArrivals__priceRow">
-                  <span className="NewArrivals__price">${product.price.toFixed(2)}</span>
+                  <span className="NewArrivals__price">{formatINR(product.price)}</span>
                   {product.oldPrice && (
-                    <span className="NewArrivals__oldPrice">${product.oldPrice.toFixed(2)}</span>
+                    <span className="NewArrivals__oldPrice">{formatINR(product.oldPrice)}</span>
                   )}
                 </div>
               </div>
@@ -208,7 +217,7 @@ const NewArrivals = () => {
           >
             <button 
               className="NewArrivals__modalClose" 
-              onClick={handleCloseModal}
+              onClick={handleCloseModal} 
               aria-label="Close modal"
             >
               <FiX />
@@ -231,11 +240,11 @@ const NewArrivals = () => {
                 
                 <div className="NewArrivals__modalPriceRow">
                   <span className="NewArrivals__modalPrice">
-                    ${selectedProduct.price.toFixed(2)}
+                    {formatINR(selectedProduct.price)}
                   </span>
                   {selectedProduct.oldPrice && (
                     <span className="NewArrivals__modalOldPrice">
-                      ${selectedProduct.oldPrice.toFixed(2)}
+                      {formatINR(selectedProduct.oldPrice)}
                     </span>
                   )}
                 </div>
@@ -297,7 +306,7 @@ const NewArrivals = () => {
                       </>
                     ) : (
                       <>
-                        <FiShoppingBag /> Add To Cart • ${(selectedProduct.price * quantity).toFixed(2)}
+                        <FiShoppingBag /> Add To Cart • {formatINR(selectedProduct.price * quantity)}
                       </>
                     )}
                   </button>
