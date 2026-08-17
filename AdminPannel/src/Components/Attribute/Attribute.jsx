@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Search,
   Plus,
@@ -11,17 +11,7 @@ import {
   X
 } from 'lucide-react';
 import './Attribute.css';
-
-// Initial Mock Data matching reference image exactly
-const initialAttributes = [
-  { id: 1, name: 'Color', group: 'General', type: 'Dropdown', values: '6 values', rawValues: 'Red\nBlue\nBlack\nGreen\nWhite\nYellow', status: true },
-  { id: 2, name: 'Size', group: 'Size & Fit', type: 'Dropdown', values: '5 values', rawValues: 'S\nM\nL\nXL\nXXL', status: true },
-  { id: 3, name: 'Material', group: 'Material', type: 'Dropdown', values: '7 values', rawValues: 'Cotton\nPolyester\nLeather\nSilk\nWool\nDenim\nLinen', status: true },
-  { id: 4, name: 'Gender', group: 'General', type: 'Dropdown', values: '3 values', rawValues: 'Men\nWomen\nUnisex', status: true },
-  { id: 5, name: 'Brand', group: 'General', type: 'Dropdown', values: '12 values', rawValues: 'Nike\nAdidas\nPuma\nReebok', status: true },
-  { id: 6, name: 'Weight', group: 'Specifications', type: 'Text', values: '-', rawValues: '', status: true },
-  { id: 7, name: 'Warranty', group: 'Specifications', type: 'Text', values: '-', rawValues: '', status: true }
-];
+import API, { IMG_URL } from "../../api/axios";
 
 const initialGroups = [
   { name: 'General', count: 8 },
@@ -32,7 +22,7 @@ const initialGroups = [
 ];
 
 const Attribute = () => {
-  const [attributes, setAttributes] = useState(initialAttributes);
+  const [attributes, setAttributes] = useState([]);
   const [groups] = useState(initialGroups);
 
   // Filters & Search State
@@ -44,10 +34,8 @@ const Attribute = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
-  // Modal Open/Close State
+  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Form / Add / Edit State
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -57,7 +45,20 @@ const Attribute = () => {
     status: true
   });
 
-  // Handle Form Change
+  // Fetch initial data from backend using centralized API instance
+  useEffect(() => {
+    fetchAttributes();
+  }, []);
+
+  const fetchAttributes = async () => {
+    try {
+      const response = await API.get('/attributes');
+      setAttributes(response.data);
+    } catch (error) {
+      console.error('Error fetching attributes:', error);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -66,65 +67,47 @@ const Attribute = () => {
     }));
   };
 
-  // Open Add Attribute Modal
   const handleOpenAddModal = () => {
     handleResetForm();
     setIsModalOpen(true);
   };
 
-  // Create or Update Attribute
-  const handleSaveAttribute = (e) => {
+  // Save / Update Attribute via API
+  const handleSaveAttribute = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.group) {
       alert('Please fill in Attribute Name and Group.');
       return;
     }
 
-    const valueLines = formData.valuesText
-      .split('\n')
-      .map((v) => v.trim())
-      .filter(Boolean);
-      
-    const formattedValues = formData.type === 'Dropdown' && valueLines.length > 0 
-      ? `${valueLines.length} values` 
-      : '-';
+    const payload = {
+      name: formData.name,
+      group: formData.group,
+      type: formData.type,
+      rawValues: formData.valuesText,
+      status: formData.status
+    };
 
-    if (editingId) {
-      // Edit mode
-      setAttributes(
-        attributes.map((attr) =>
-          attr.id === editingId
-            ? {
-                ...attr,
-                name: formData.name,
-                group: formData.group,
-                type: formData.type,
-                values: formattedValues,
-                rawValues: formData.valuesText,
-                status: formData.status
-              }
-            : attr
-        )
-      );
-    } else {
-      // Add mode
-      const newAttr = {
-        id: Date.now(),
-        name: formData.name,
-        group: formData.group,
-        type: formData.type,
-        values: formattedValues,
-        rawValues: formData.valuesText,
-        status: formData.status
-      };
-      setAttributes([...attributes, newAttr]);
+    try {
+      if (editingId) {
+        // Edit mode API call
+        const response = await API.put(`/attributes/${editingId}`, payload);
+        const updatedAttr = response.data;
+        setAttributes(attributes.map((attr) => (attr._id === editingId ? updatedAttr : attr)));
+      } else {
+        // Add mode API call
+        const response = await API.post('/attributes', payload);
+        const newAttr = response.data;
+        setAttributes([newAttr, ...attributes]);
+      }
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error saving attribute:', error);
     }
-
-    handleCloseModal();
   };
 
   const handleEdit = (attr) => {
-    setEditingId(attr.id);
+    setEditingId(attr._id);
     setFormData({
       name: attr.name,
       group: attr.group,
@@ -135,21 +118,28 @@ const Attribute = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  // Delete Attribute via API
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to remove this attribute?')) {
-      setAttributes(attributes.filter((attr) => attr.id !== id));
-      if (editingId === id) {
-        handleCloseModal();
+      try {
+        await API.delete(`/attributes/${id}`);
+        setAttributes(attributes.filter((attr) => attr._id !== id));
+        if (editingId === id) handleCloseModal();
+      } catch (error) {
+        console.error('Error deleting attribute:', error);
       }
     }
   };
 
-  const handleToggleStatus = (id) => {
-    setAttributes(
-      attributes.map((attr) =>
-        attr.id === id ? { ...attr, status: !attr.status } : attr
-      )
-    );
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const attrToUpdate = attributes.find(a => a._id === id);
+      const response = await API.put(`/attributes/${id}`, { ...attrToUpdate, status: !currentStatus });
+      const updatedAttr = response.data;
+      setAttributes(attributes.map((attr) => (attr._id === id ? updatedAttr : attr)));
+    } catch (error) {
+      console.error('Error toggling status:', error);
+    }
   };
 
   const handleResetForm = () => {
@@ -168,17 +158,12 @@ const Attribute = () => {
     handleResetForm();
   };
 
-  // Filter Logic
+  // Search & Filter Logic
   const filteredAttributes = useMemo(() => {
     return attributes.filter((attr) => {
       const matchesSearch = attr.name.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesDropdownGroup =
-        selectedGroupFilter === 'All Groups' || attr.group === selectedGroupFilter;
-
-      const matchesSidebarGroup =
-        !selectedSidebarGroup || attr.group === selectedSidebarGroup;
-
+      const matchesDropdownGroup = selectedGroupFilter === 'All Groups' || attr.group === selectedGroupFilter;
+      const matchesSidebarGroup = !selectedSidebarGroup || attr.group === selectedSidebarGroup;
       return matchesSearch && matchesDropdownGroup && matchesSidebarGroup;
     });
   }, [attributes, searchTerm, selectedGroupFilter, selectedSidebarGroup]);
@@ -198,9 +183,7 @@ const Attribute = () => {
           <div className="attr-badge">{attributes.length}</div>
           <div>
             <h1 className="attr-title">Attributes</h1>
-            <p className="attr-subtitle">
-              Manage product attributes used for filters and product details.
-            </p>
+            <p className="attr-subtitle">Manage product attributes used for filters and product details.</p>
           </div>
         </div>
         <button className="btn-add-header" onClick={handleOpenAddModal}>
@@ -211,7 +194,6 @@ const Attribute = () => {
 
       {/* TWO COLUMN GRID LAYOUT */}
       <div className="attr-main-grid">
-        
         {/* LEFT COLUMN: GROUPS & TIPS */}
         <div className="attr-left-col">
           <div className="card group-card">
@@ -242,16 +224,13 @@ const Attribute = () => {
               <Lightbulb size={20} className="tips-icon" />
               <h4>Tips</h4>
             </div>
-            <p>
-              Attributes help customers find the right product by refining their search.
-            </p>
+            <p>Attributes help customers find the right product by refining their search.</p>
           </div>
         </div>
 
         {/* CENTER COLUMN: ATTRIBUTES TABLE */}
         <div className="card attr-center-col">
-          
-          {/* CONTROL BAR: SEARCH & DROPDOWN FILTER */}
+          {/* CONTROL BAR */}
           <div className="table-controls">
             <div className="search-input-wrapper">
               <Search size={16} className="search-icon" />
@@ -277,9 +256,7 @@ const Attribute = () => {
               >
                 <option value="All Groups">All Groups</option>
                 {groups.map((g) => (
-                  <option key={g.name} value={g.name}>
-                    {g.name}
-                  </option>
+                  <option key={g.name} value={g.name}>{g.name}</option>
                 ))}
               </select>
 
@@ -306,7 +283,7 @@ const Attribute = () => {
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((attr) => (
-                    <tr key={attr.id}>
+                    <tr key={attr._id}>
                       <td className="font-semibold text-dark">{attr.name}</td>
                       <td>{attr.group}</td>
                       <td>{attr.type}</td>
@@ -316,25 +293,17 @@ const Attribute = () => {
                           <input
                             type="checkbox"
                             checked={attr.status}
-                            onChange={() => handleToggleStatus(attr.id)}
+                            onChange={() => handleToggleStatus(attr._id, attr.status)}
                           />
                           <span className="slider round"></span>
                         </label>
                       </td>
                       <td>
                         <div className="action-buttons-cell">
-                          <button
-                            className="btn-action edit"
-                            onClick={() => handleEdit(attr)}
-                            title="Edit Attribute"
-                          >
+                          <button className="btn-action edit" onClick={() => handleEdit(attr)} title="Edit Attribute">
                             <Edit3 size={15} />
                           </button>
-                          <button
-                            className="btn-action delete"
-                            onClick={() => handleDelete(attr.id)}
-                            title="Remove Attribute"
-                          >
+                          <button className="btn-action delete" onClick={() => handleDelete(attr._id)} title="Remove Attribute">
                             <Trash2 size={15} />
                           </button>
                         </div>
@@ -343,9 +312,7 @@ const Attribute = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="no-data-cell">
-                      No attributes found.
-                    </td>
+                    <td colSpan="6" className="no-data-cell">No attributes found.</td>
                   </tr>
                 )}
               </tbody>
@@ -388,7 +355,6 @@ const Attribute = () => {
             </div>
           </div>
         </div>
-
       </div>
 
       {/* POPUP MODAL FOR ADD / EDIT ATTRIBUTE */}
@@ -425,9 +391,7 @@ const Attribute = () => {
                 >
                   <option value="">Select Group</option>
                   {groups.map((g) => (
-                    <option key={g.name} value={g.name}>
-                      {g.name}
-                    </option>
+                    <option key={g.name} value={g.name}>{g.name}</option>
                   ))}
                 </select>
               </div>
@@ -477,11 +441,7 @@ const Attribute = () => {
               </div>
 
               <div className="form-actions">
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick={handleCloseModal}
-                >
+                <button type="button" className="btn-cancel" onClick={handleCloseModal}>
                   Cancel
                 </button>
                 <button type="submit" className="btn-save">

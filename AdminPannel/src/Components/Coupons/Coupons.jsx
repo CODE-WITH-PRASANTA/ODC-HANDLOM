@@ -1,5 +1,5 @@
 // Coupons.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FiPercent, 
   FiTag, 
@@ -15,6 +15,7 @@ import {
   FiX 
 } from 'react-icons/fi';
 import './Coupons.css';
+import API, { IMG_URL } from "../../api/axios";
 
 const Coupons = () => {
   // State for date range & calendar popup
@@ -32,19 +33,11 @@ const Coupons = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Coupons Data List
-  const [couponsList, setCouponsList] = useState([
-    { id: 1, code: 'HANDLOOM10', type: 'Percentage', discount: '10% OFF', minOrder: '₹999', usage: '245 / 500', validityStart: '01 May 2025', validityEnd: '31 May 2025', status: 'Active' },
-    { id: 2, code: 'WELCOME15', type: 'Percentage', discount: '15% OFF', minOrder: '₹1,499', usage: '120 / 300', validityStart: '01 Apr 2025', validityEnd: '30 Apr 2025', status: 'Expired' },
-    { id: 3, code: 'FREESHIP', type: 'Free Shipping', discount: 'Free Shipping', minOrder: '₹799', usage: '320 / 1000', validityStart: '01 May 2025', validityEnd: '30 Jun 2025', status: 'Active' },
-    { id: 4, code: 'SAVE200', type: 'Flat Amount', discount: '₹200 OFF', minOrder: '₹1,999', usage: '85 / 200', validityStart: '10 May 2025', validityEnd: '10 Jun 2025', status: 'Active' },
-    { id: 5, code: 'HANDLOOMS', type: 'Percentage', discount: '5% OFF', minOrder: '₹499', usage: '560 / 1000', validityStart: '01 May 2025', validityEnd: '31 May 2025', status: 'Active' },
-    { id: 6, code: 'SUMMER20', type: 'Percentage', discount: '20% OFF', minOrder: '₹2,499', usage: '60 / 150', validityStart: '01 Mar 2025', validityEnd: '31 Mar 2025', status: 'Expired' },
-    { id: 7, code: 'NEWUSER100', type: 'Flat Amount', discount: '₹100 OFF', minOrder: '₹799', usage: '410 / 1000', validityStart: '01 May 2025', validityEnd: '31 Jul 2025', status: 'Active' },
-    { id: 8, code: 'FESTIVE25', type: 'Percentage', discount: '25% OFF', minOrder: '₹2,999', usage: '35 / 100', validityStart: '15 Oct 2024', validityEnd: '31 Oct 2024', status: 'Inactive' }
-  ]);
+  // Coupons Data List & Editing State
+  const [couponsList, setCouponsList] = useState([]);
+  const [editingId, setEditingId] = useState(null);
 
-  // Create New Coupon Form State
+  // Create/Edit Form State
   const [newCoupon, setNewCoupon] = useState({
     code: '',
     discountType: 'Percentage',
@@ -61,20 +54,42 @@ const Coupons = () => {
   // Modal State for "Create Coupon" button click
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Right Form visibility toggle (clicking cross button in right form makes left side expand)
+  // Right Form visibility toggle
   const [showRightForm, setShowRightForm] = useState(true);
 
+  // Fetch Coupons from Backend on Mount using custom API client
+  useEffect(() => {
+    fetchCoupons();
+  }, []);
+
+  const fetchCoupons = async () => {
+    try {
+      const response = await API.get('/coupons');
+      setCouponsList(response.data);
+    } catch (error) {
+      console.error('Error fetching coupons:', error);
+    }
+  };
+
   // Handle Delete Coupon
-  const handleDelete = (id) => {
-    setCouponsList(couponsList.filter(coupon => coupon.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const response = await API.delete(`/coupons/${id}`);
+      if (response.status === 200 || response.data) {
+        setCouponsList(couponsList.filter(coupon => coupon._id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting coupon:', error);
+    }
   };
 
   // Handle Edit Coupon (Pre-fill right form with data)
   const handleEdit = (coupon) => {
+    setEditingId(coupon._id);
     setNewCoupon({
       code: coupon.code,
       discountType: coupon.type,
-      discountValue: coupon.discount,
+      discountValue: coupon.discount.replace(/[^0-9]/g, ''),
       discountOn: 'All Products',
       minOrderAmount: coupon.minOrder.replace('₹', '').replace(',', ''),
       usageLimit: coupon.usage.split('/')[1]?.trim() || '',
@@ -96,15 +111,23 @@ const Coupons = () => {
   };
 
   // Handle Submit New/Edited Coupon
-  const handleCreateCouponSubmit = (e) => {
+  const handleCreateCouponSubmit = async (e) => {
     e.preventDefault();
     if (!newCoupon.code) return;
 
-    const formattedCoupon = {
-      id: Date.now(),
+    let formattedDiscount = '10% OFF';
+    if (newCoupon.discountType === 'Percentage') {
+      formattedDiscount = `${newCoupon.discountValue || 10}% OFF`;
+    } else if (newCoupon.discountType === 'Flat Amount') {
+      formattedDiscount = `₹${newCoupon.discountValue || 100} OFF`;
+    } else {
+      formattedDiscount = 'Free Shipping';
+    }
+
+    const couponPayload = {
       code: newCoupon.code.toUpperCase(),
       type: newCoupon.discountType,
-      discount: newCoupon.discountValue ? `${newCoupon.discountValue}% OFF` : '10% OFF',
+      discount: formattedDiscount,
       minOrder: newCoupon.minOrderAmount ? `₹${newCoupon.minOrderAmount}` : '₹0',
       usage: `0 / ${newCoupon.usageLimit || '100'}`,
       validityStart: newCoupon.startDate || '01 May 2025',
@@ -112,20 +135,41 @@ const Coupons = () => {
       status: newCoupon.isActive ? 'Active' : 'Inactive'
     };
 
-    setCouponsList([formattedCoupon, ...couponsList]);
-    setNewCoupon({
-      code: '',
-      discountType: 'Percentage',
-      discountValue: '',
-      discountOn: 'All Products',
-      minOrderAmount: '',
-      usageLimit: '',
-      startDate: '',
-      endDate: '',
-      appliesTo: 'All Products',
-      isActive: true
-    });
-    setShowCreateModal(false);
+    try {
+      if (editingId) {
+        // Update existing coupon
+        const response = await API.put(`/coupons/${editingId}`, couponPayload);
+        const updated = response.data;
+        if (response.status === 200 || updated) {
+          setCouponsList(couponsList.map(c => c._id === editingId ? updated : c));
+        }
+      } else {
+        // Create new coupon
+        const response = await API.post('/coupons', couponPayload);
+        const created = response.data;
+        if (response.status === 201 || response.status === 200 || created) {
+          setCouponsList([created, ...couponsList]);
+        }
+      }
+
+      // Reset Form State
+      setEditingId(null);
+      setNewCoupon({
+        code: '',
+        discountType: 'Percentage',
+        discountValue: '',
+        discountOn: 'All Products',
+        minOrderAmount: '',
+        usageLimit: '',
+        startDate: '',
+        endDate: '',
+        appliesTo: 'All Products',
+        isActive: true
+      });
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error('Error saving coupon:', error);
+    }
   };
 
   // Filter logic
@@ -163,42 +207,25 @@ const Coupons = () => {
     <div className="coupons-container">
       {/* Top Header Section */}
       <div className="coupons-header">
-        <div className="coupons-breadcrumb">
-           <span></span> 
-        </div>
+        <div className="coupons-breadcrumb"><span></span></div>
         <div className="coupons-actions-header">
           {/* Calendar Picker */}
           <div className="coupons-calendar-wrapper">
-            <button 
-              className="coupons-calendar-btn"
-              onClick={() => setShowCalendar(!showCalendar)}
-            >
+            <button className="coupons-calendar-btn" onClick={() => setShowCalendar(!showCalendar)}>
               <FiCalendar className="coupons-icon" />
               <span>{dateRange}</span>
             </button>
             {showCalendar && (
               <div className="coupons-calendar-dropdown">
                 <p>Select Date Range:</p>
-                <input 
-                  type="text" 
-                  value={dateRange} 
-                  onChange={(e) => setDateRange(e.target.value)}
-                />
-                <button 
-                  className="coupons-apply-date"
-                  onClick={() => setShowCalendar(false)}
-                >
-                  Apply
-                </button>
+                <input type="text" value={dateRange} onChange={(e) => setDateRange(e.target.value)} />
+                <button className="coupons-apply-date" onClick={() => setShowCalendar(false)}>Apply</button>
               </div>
             )}
           </div>
 
           {/* Create Coupon Header Button */}
-          <button 
-            className="coupons-create-btn"
-            onClick={() => setShowCreateModal(true)}
-          >
+          <button className="coupons-create-btn" onClick={() => { setEditingId(null); setShowCreateModal(true); }}>
             <FiPlus className="coupons-icon" />
             <span>Create Coupon</span>
           </button>
@@ -208,42 +235,31 @@ const Coupons = () => {
       {/* Top Metric Cards Grid */}
       <div className="coupons-metrics-grid">
         <div className="coupons-metric-card">
-          <div className="coupons-metric-icon-box pink">
-            <FiPercent />
-          </div>
+          <div className="coupons-metric-icon-box pink"><FiPercent /></div>
           <div className="coupons-metric-content">
             <span className="coupons-metric-title">Total Coupons</span>
-            <h3 className="coupons-metric-value">24</h3>
-            <span className="coupons-metric-sub">Active Coupons<br /><b>16</b></span>
+            <h3 className="coupons-metric-value">{couponsList.length}</h3>
+            <span className="coupons-metric-sub">Active Coupons<br /><b>{couponsList.filter(c => c.status === 'Active').length}</b></span>
           </div>
         </div>
-
         <div className="coupons-metric-card">
-          <div className="coupons-metric-icon-box gold">
-            <FiTag />
-          </div>
+          <div className="coupons-metric-icon-box gold"><FiTag /></div>
           <div className="coupons-metric-content">
             <span className="coupons-metric-title">Total Usage</span>
             <h3 className="coupons-metric-value">1,248</h3>
             <span className="coupons-metric-sub">This Month<br /><b>325</b></span>
           </div>
         </div>
-
         <div className="coupons-metric-card">
-          <div className="coupons-metric-icon-box green">
-            <FiGift />
-          </div>
+          <div className="coupons-metric-icon-box green"><FiGift /></div>
           <div className="coupons-metric-content">
             <span className="coupons-metric-title">Total Discount Given</span>
             <h3 className="coupons-metric-value">₹1,45,230</h3>
             <span className="coupons-metric-sub">This Month<br /><b>₹32,450</b></span>
           </div>
         </div>
-
         <div className="coupons-metric-card">
-          <div className="coupons-metric-icon-box purple">
-            <FiPieChart />
-          </div>
+          <div className="coupons-metric-icon-box purple"><FiPieChart /></div>
           <div className="coupons-metric-content">
             <span className="coupons-metric-title">Redemption Rate</span>
             <h3 className="coupons-metric-value">32.6%</h3>
@@ -252,25 +268,21 @@ const Coupons = () => {
         </div>
       </div>
 
-      {/* Main Content Layout: Left Table + Right Form (Conditional Width based on showRightForm) */}
+      {/* Main Content Layout */}
       <div className={`coupons-main-layout ${!showRightForm ? 'full-width-table' : ''}`}>
         
         {/* Left Section: Coupons Table */}
         <div className="coupons-table-card">
-          {/* Table Header Filter Bar */}
           <div className="coupons-table-header-bar">
             <div className="coupons-table-title-wrapper">
               <FiTag className="coupons-section-icon" />
               <h2>All Coupons</h2>
             </div>
-            
+
             <div className="coupons-filter-controls">
               {/* Status Dropdown */}
               <div className="coupons-dropdown-container">
-                <button 
-                  className="coupons-filter-dropdown-btn"
-                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                >
+                <button className="coupons-filter-dropdown-btn" onClick={() => setShowStatusDropdown(!showStatusDropdown)}>
                   {statusFilter} ▾
                 </button>
                 {showStatusDropdown && (
@@ -286,10 +298,7 @@ const Coupons = () => {
 
               {/* Type Dropdown */}
               <div className="coupons-dropdown-container">
-                <button 
-                  className="coupons-filter-dropdown-btn"
-                  onClick={() => setShowTypeDropdown(!showTypeDropdown)}
-                >
+                <button className="coupons-filter-dropdown-btn" onClick={() => setShowTypeDropdown(!showTypeDropdown)}>
                   {typeFilter} ▾
                 </button>
                 {showTypeDropdown && (
@@ -334,7 +343,7 @@ const Coupons = () => {
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((coupon) => (
-                    <tr key={coupon.id}>
+                    <tr key={coupon._id}>
                       <td><span className="coupons-code-badge">{coupon.code}</span></td>
                       <td>{coupon.type}</td>
                       <td>{coupon.discount}</td>
@@ -353,7 +362,7 @@ const Coupons = () => {
                         <button className="coupons-action-icon-btn edit" onClick={() => handleEdit(coupon)} title="Edit">
                           <FiEdit2 />
                         </button>
-                        <button className="coupons-action-icon-btn delete" onClick={() => handleDelete(coupon.id)} title="Delete">
+                        <button className="coupons-action-icon-btn delete" onClick={() => handleDelete(coupon._id)} title="Delete">
                           <FiTrash2 />
                         </button>
                       </td>
@@ -374,10 +383,7 @@ const Coupons = () => {
           <div className="coupons-pagination-footer">
             <span>Showing {filteredCoupons.length > 0 ? indexOfFirstItem + 1 : 0} to {Math.min(indexOfLastItem, filteredCoupons.length)} of {filteredCoupons.length} coupons</span>
             <div className="coupons-pagination-controls">
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
+              <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
                 <FiChevronLeft />
               </button>
               {[...Array(totalPages)].map((_, i) => (
@@ -389,29 +395,22 @@ const Coupons = () => {
                   {i + 1}
                 </button>
               ))}
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
+              <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages || totalPages === 0}>
                 <FiChevronRight />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right Section: Create New Coupon Form */}
+        {/* Right Section: Create/Edit Coupon Form */}
         {showRightForm && (
           <div className="coupons-form-card">
             <div className="coupons-form-card-header">
               <div className="coupons-form-title-wrapper">
                 <FiTag className="coupons-section-icon" />
-                <h2>Create New Coupon</h2>
+                <h2>{editingId ? 'Edit Coupon' : 'Create New Coupon'}</h2>
               </div>
-              <button 
-                className="coupons-form-close-btn"
-                onClick={() => setShowRightForm(false)}
-                title="Close form"
-              >
+              <button className="coupons-form-close-btn" onClick={() => setShowRightForm(false)} title="Close form">
                 <FiX />
               </button>
             </div>
@@ -431,11 +430,7 @@ const Coupons = () => {
 
               <div className="coupons-form-group">
                 <label>Discount Type *</label>
-                <select 
-                  name="discountType" 
-                  value={newCoupon.discountType}
-                  onChange={handleInputChange}
-                >
+                <select name="discountType" value={newCoupon.discountType} onChange={handleInputChange}>
                   <option value="Percentage">Percentage</option>
                   <option value="Flat Amount">Flat Amount</option>
                   <option value="Free Shipping">Free Shipping</option>
@@ -455,12 +450,7 @@ const Coupons = () => {
                 </div>
                 <div className="coupons-form-group">
                   <label>Discount on *</label>
-                  <select 
-                    name="discountOn" 
-                    value={newCoupon.discountOn}
-                    onChange={handleInputChange}
-                  >
-                    <option value="All Products">Select</option>
+                  <select name="discountOn" value={newCoupon.discountOn} onChange={handleInputChange}>
                     <option value="All Products">All Products</option>
                     <option value="Specific Categories">Specific Categories</option>
                   </select>
@@ -476,7 +466,6 @@ const Coupons = () => {
                   value={newCoupon.minOrderAmount}
                   onChange={handleInputChange}
                 />
-                <small>Leave empty for no minimum</small>
               </div>
 
               <div className="coupons-form-group">
@@ -488,7 +477,6 @@ const Coupons = () => {
                   value={newCoupon.usageLimit}
                   onChange={handleInputChange}
                 />
-                <small>Total number of times this coupon can be used</small>
               </div>
 
               <div className="coupons-form-group">
@@ -498,7 +486,7 @@ const Coupons = () => {
                     <input 
                       type="text" 
                       name="startDate" 
-                      placeholder="Start Date" 
+                      placeholder="01 May 2025" 
                       value={newCoupon.startDate}
                       onChange={handleInputChange}
                     />
@@ -509,27 +497,13 @@ const Coupons = () => {
                     <input 
                       type="text" 
                       name="endDate" 
-                      placeholder="End Date" 
+                      placeholder="31 May 2025" 
                       value={newCoupon.endDate}
                       onChange={handleInputChange}
                     />
                     <FiCalendar className="field-icon" />
                   </div>
                 </div>
-              </div>
-
-              <div className="coupons-form-group">
-                <label>Applies To</label>
-                <select 
-                  name="appliesTo" 
-                  value={newCoupon.appliesTo}
-                  onChange={handleInputChange}
-                >
-                  <option value="All Products">All Products</option>
-                  <option value="Handloom Sarees">Handloom Sarees</option>
-                  <option value="Dupattas">Dupattas</option>
-                </select>
-                <small>Choose specific categories or products (optional)</small>
               </div>
 
               <div className="coupons-form-group-toggle">
@@ -549,29 +523,14 @@ const Coupons = () => {
               </div>
 
               <button type="submit" className="coupons-submit-btn">
-                <FiPlus /> Create Coupon
+                <FiPlus /> {editingId ? 'Update Coupon' : 'Create Coupon'}
               </button>
             </form>
           </div>
         )}
-
       </div>
 
-      {/* Bottom Heritage Banner */}
-      <div className="coupons-banner-card">
-        <div className="coupons-banner-content">
-          <div className="coupons-banner-text">
-            <h3>Coupons help you boost sales and reward your customers.</h3>
-            <p>Create smart offers and track their performance.</p>
-            <div className="coupons-ornament-divider"></div>
-          </div>
-          <div className="coupons-banner-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&auto=format&fit=crop&q=80" alt="Handloom Fabric" />
-          </div>
-        </div>
-      </div>
-
-      {/* Popup Modal for "Create Coupon" button at top */}
+      {/* Popup Modal for Top "Create Coupon" button */}
       {showCreateModal && (
         <div className="coupons-modal-overlay">
           <div className="coupons-modal-content">
@@ -618,7 +577,7 @@ const Coupons = () => {
         </div>
       )}
 
-      {/* Hidden button trigger download report cleanly */}
+      {/* Hidden Download Trigger */}
       <div style={{ display: 'none' }}>
         <button id="downloadReportTrigger" onClick={handleDownloadReport}>Download Report</button>
       </div>
