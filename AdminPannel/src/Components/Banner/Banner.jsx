@@ -16,7 +16,7 @@ import {
   Plus
 } from 'lucide-react';
 import './Banner.css';
-
+import API, { IMG_URL } from "../../api/axios";
 const Banner = () => {
   // --- Form States ---
   const [formData, setFormData] = useState({
