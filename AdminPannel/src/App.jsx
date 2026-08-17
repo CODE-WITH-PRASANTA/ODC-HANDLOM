@@ -27,6 +27,8 @@ import CreateOrder from "./Components/CreateOrder/CreateOrder"; // <-- IMPORTED 
 
 // Marketing Components
 import Banner from "./Components/Banner/Banner";
+import FlashSale from "../../frontend/src/Components/FlashSale/FlashSale";
+import Flashsale from "./Components/Flashsale/Flashsale";
 import PushNotifications from "./Components/PushNotifications/PushNotifications";
 import Newsletters from "./Components/Newsletters/Newsletters";
 import Reports from "./Components/Reports/Reports";
@@ -76,6 +78,9 @@ function App() {
           {/* 4. Marketing */}
          
           <Route path="marketing/banner-sliders" element={<Banner />} />
+          <Route path="marketing/flash-sale" element={<Flashsale/>}/>
+          <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
+          <Route path="marketing/push-notifications" element={<Page name="Push Notifications" />} />
           <Route path="marketing/flash-sale" element={<Page name="Flash Sale" />} />
           <Route path="marketing/newsletters" element={<Newsletters />} />
           <Route path="marketing/push-notifications" element={<PushNotifications />} />

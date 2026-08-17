@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Eye,
   Save,
@@ -11,13 +11,19 @@ import {
   Copy,
   Trash2,
   FileText,
-  Tag,
   Globe,
-  Plus
+  Plus,
+  Edit2
 } from 'lucide-react';
 import './Banner.css';
 import API, { IMG_URL } from "../../api/axios";
+
 const Banner = () => {
+  // --- Banners Table List & Edit State ---
+  const [banners, setBanners] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   // --- Form States ---
   const [formData, setFormData] = useState({
     bannerTitle: "Men's Collection",
@@ -71,6 +77,20 @@ const Banner = () => {
   // Color Swatches
   const colorSwatches = ['#FFA640', '#0052CC', '#D93535', '#00A389', '#6554C0'];
 
+  // Fetch Banners from Backend
+  const fetchBanners = async () => {
+    try {
+      const response = await API.get('/banners');
+      setBanners(response.data);
+    } catch (error) {
+      console.error('Error fetching banners:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
   // Handlers
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -90,6 +110,7 @@ const Banner = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file);
       const imageUrl = URL.createObjectURL(file);
       setBannerImage(imageUrl);
     }
@@ -107,20 +128,100 @@ const Banner = () => {
     setTags(tags.filter((t) => t !== tagToRemove));
   };
 
+  // Handle Form Submit (Create or Update)
+  const handleSaveBanner = async () => {
+    try {
+      const data = new FormData();
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
+      });
+      data.append('displaySettings', JSON.stringify(displaySettings));
+      data.append('tags', JSON.stringify(tags));
+      if (selectedFile) {
+        data.append('imageFile', selectedFile);
+      }
+
+      if (editingId) {
+        await API.put(`/banners/${editingId}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert('Banner updated successfully!');
+      } else {
+        await API.post('/banners', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        alert('Banner created successfully!');
+      }
+
+      setEditingId(null);
+      setSelectedFile(null);
+      fetchBanners();
+    } catch (error) {
+      console.error('Error saving banner:', error);
+      alert('Failed to save banner.');
+    }
+  };
+
+  // Handle Edit Action (Loads data into form)
+  const handleEditClick = (banner) => {
+    setEditingId(banner._id);
+    setFormData({
+      bannerTitle: banner.bannerTitle || '',
+      subtitle: banner.subtitle || '',
+      buttonText: banner.buttonText || '',
+      buttonLink: banner.buttonLink || '',
+      bannerType: banner.bannerType || 'Hero Banner',
+      displayPosition: banner.displayPosition || 'Hero Slider',
+      priority: banner.priority || 1,
+      status: banner.status ?? true,
+      startDate: banner.startDate || '',
+      endDate: banner.endDate || '',
+      featured: banner.featured ?? false,
+      bgColor: banner.bgColor || '#FFA640',
+      titleColor: banner.titleColor || '#FFFFFF',
+      subtitleColor: banner.subtitleColor || '#FFFFFF',
+      buttonColor: banner.buttonColor || '#000000',
+      buttonTextColor: banner.buttonTextColor || '#FFFFFF',
+      publishStartTime: banner.publishStartTime || '00:00',
+      timezone: banner.timezone || '(GMT+05:30) Asia/Kolkata',
+      seoAltText: banner.seoAltText || '',
+      seoTitle: banner.seoTitle || '',
+      seoDescription: banner.seoDescription || '',
+      language: banner.language || 'English'
+    });
+    if (banner.displaySettings) {
+      setDisplaySettings(banner.displaySettings);
+    }
+    if (banner.tags) {
+      setTags(banner.tags);
+    }
+    if (banner.bannerImage) {
+      setBannerImage(`${IMG_URL || 'http://localhost:5000'}${banner.bannerImage}`);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Handle Delete Action
+  const handleDeleteClick = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this banner?')) return;
+    try {
+      await API.delete(`/banners/${id}`);
+      fetchBanners();
+    } catch (error) {
+      console.error('Error deleting banner:', error);
+    }
+  };
+
   return (
     <div className="banner-page-container">
       
       {/* TOP HEADER */}
       <div className="banner-top-bar">
-        <h1 className="banner-page-title">Add / Edit Banner</h1>
+        <h1 className="banner-page-title">{editingId ? 'Edit Banner' : 'Add New Banner'}</h1>
         <div className="banner-top-actions">
-          <button className="btn-preview-hp">
-            <Eye size={16} />
-            <span>Preview Homepage</span>
-          </button>
-          <button className="btn-save-changes">
+          <button className="btn-save-changes" onClick={handleSaveBanner}>
             <Save size={16} />
-            <span>Save Changes</span>
+            <span>{editingId ? 'Update Changes' : 'Save Changes'}</span>
           </button>
         </div>
       </div>
@@ -457,7 +558,6 @@ const Banner = () => {
                 <h3>Preview</h3>
               </div>
 
-              {/* Device Tabs */}
               <div className="device-tabs">
                 {['desktop', 'tablet', 'mobile'].map((tab) => (
                   <button
@@ -470,7 +570,6 @@ const Banner = () => {
                 ))}
               </div>
 
-              {/* Dynamic Live Banner Box */}
               <div
                 className={`live-preview-box ${previewTab}`}
                 style={{ backgroundColor: formData.bgColor }}
@@ -492,13 +591,6 @@ const Banner = () => {
                     {formData.buttonText.toUpperCase()}
                   </button>
                 </div>
-              </div>
-
-              {/* Slider Dots Indicator */}
-              <div className="slider-dots">
-                <span className="dot active"></span>
-                <span className="dot"></span>
-                <span className="dot"></span>
               </div>
             </div>
 
@@ -602,7 +694,7 @@ const Banner = () => {
         {/* ================= RIGHT SIDEBAR COLUMN ================= */}
         <div className="banner-sidebar-col">
           
-          {/* STATS CARD (PURPLE GRADIENT) */}
+          {/* STATS CARD */}
           <div className="banner-stats-card">
             <div className="stats-card-header">
               <h3>Banner Statistics</h3>
@@ -615,132 +707,53 @@ const Banner = () => {
                   <span className="dot-indicator teal"></span>
                   <span>Total Banners</span>
                 </div>
-                <span className="stat-number">12</span>
-              </div>
-
-              <div className="stat-item-row">
-                <div className="stat-label-left">
-                  <span className="dot-indicator orange"></span>
-                  <span>Active Banners</span>
-                </div>
-                <span className="stat-number">10</span>
-              </div>
-
-              <div className="stat-item-row">
-                <div className="stat-label-left">
-                  <span className="dot-indicator red"></span>
-                  <span>Inactive Banners</span>
-                </div>
-                <span className="stat-number">2</span>
-              </div>
-
-              <div className="stat-item-row highlight">
-                <span className="stat-label-text">Today's Clicks</span>
-                <span className="stat-green-val">1,530</span>
-              </div>
-
-              <div className="stat-item-row highlight">
-                <span className="stat-label-text">Total Impressions</span>
-                <span className="stat-white-val">8,200</span>
+                <span className="stat-number">{banners.length}</span>
               </div>
             </div>
-
-            <button className="btn-detailed-analytics">
-              <span>View Detailed Analytics</span>
-              <TrendingUp size={16} />
-            </button>
           </div>
 
-          {/* PUBLISH SCHEDULE CARD */}
+          {/* BANNERS LIST TABLE CARD */}
           <div className="banner-card">
             <div className="card-header-title">
-              <span className="card-icon-purple">
-                <Calendar size={16} />
-              </span>
-              <h3>Publish Schedule</h3>
+              <h3>Existing Banners</h3>
             </div>
-
-            <div className="publish-schedule-form">
-              <div className="form-group">
-                <label>Start Date</label>
-                <div className="input-calendar-box">
-                  <input
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                  />
-                  <Calendar size={15} className="cal-icon" />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>End Date</label>
-                <div className="input-calendar-box">
-                  <input
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
-                  />
-                  <Calendar size={15} className="cal-icon" />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Time</label>
-                <div className="input-calendar-box">
-                  <input
-                    type="time"
-                    name="publishStartTime"
-                    value={formData.publishStartTime}
-                    onChange={handleInputChange}
-                  />
-                  <Clock size={15} className="cal-icon" />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Timezone</label>
-                <select
-                  name="timezone"
-                  value={formData.timezone}
-                  onChange={handleInputChange}
-                >
-                  <option value="(GMT+05:30) Asia/Kolkata">
-                    (GMT+05:30) Asia/Kolkata
-                  </option>
-                  <option value="(GMT+00:00) UTC">(GMT+00:00) UTC</option>
-                  <option value="(GMT-05:00) Eastern Time">
-                    (GMT-05:00) Eastern Time
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* QUICK ACTIONS CARD */}
-          <div className="quick-actions-card">
-            <div className="card-header-title">
-              <span className="quick-bolt-icon">⚡</span>
-              <h3>Quick Actions</h3>
-            </div>
-
-            <div className="quick-actions-grid">
-              <button className="btn-action-light">
-                <Copy size={15} />
-                <span>Duplicate Banner</span>
-              </button>
-
-              <button className="btn-action-light">
-                <Save size={15} />
-                <span>Save Draft</span>
-              </button>
-
-              <button className="btn-action-danger">
-                <Trash2 size={15} />
-                <span>Delete Banner</span>
-              </button>
+            <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #ddd', textAlign: 'left' }}>
+                    <th style={{ padding: '8px' }}>Title</th>
+                    <th style={{ padding: '8px' }}>Type</th>
+                    <th style={{ padding: '8px' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {banners.map((b) => (
+                    <tr key={b._id} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px' }}>{b.bannerTitle}</td>
+                      <td style={{ padding: '8px' }}>{b.bannerType}</td>
+                      <td style={{ padding: '8px', display: 'flex', gap: '5px' }}>
+                        <button 
+                          onClick={() => handleEditClick(b)} 
+                          style={{ background: '#0052CC', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}
+                        >
+                          <Edit2 size={12} />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteClick(b._id)} 
+                          style={{ background: '#D93535', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {banners.length === 0 && (
+                    <tr>
+                      <td colSpan="3" style={{ textAlign: 'center', padding: '15px', color: '#777' }}>No banners found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -751,7 +764,6 @@ const Banner = () => {
       {/* FOOTER */}
       <div className="banner-page-footer">
         <span>© 2024 Handlom Admin Panel. All rights reserved.</span>
-        <span>Handcrafted with ❤️ for a better admin experience.</span>
       </div>
 
     </div>

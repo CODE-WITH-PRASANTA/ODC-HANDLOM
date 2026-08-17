@@ -12,53 +12,54 @@ import product7 from "../../assets/p6.webp";
 import product8 from "../../assets/p7.webp";
 import product9 from "../../assets/p8.webp";
 
+// INR में प्रोडक्ट्स की कीमतें
 const products = [
   {
     id: 1,
     image: product1,
     title: "Armani Veni Vidi Vici",
     desc: "Fendi began life in 1925 as a fur and leather shop.",
-    price: 17.99,
-    oldPrice: 20.00,
+    price: 1499.00,
+    oldPrice: 1999.00,
   },
   {
     id: 2,
     image: product2,
     title: "Adidas Shoes Black",
     desc: "Men Black top shoes gown built for supreme casual comfort.",
-    price: 45.00,
-    oldPrice: 99.99,
+    price: 3499.00,
+    oldPrice: 7999.00,
   },
   {
     id: 3,
     image: product3,
     title: "Gucci Carlton UK",
     desc: "Knitted midi A-line dress, features a elegant scoop neck.",
-    price: 14.99,
-    oldPrice: 19.99,
+    price: 1249.00,
+    oldPrice: 1699.00,
   },
   {
     id: 4,
     image: product4,
     title: "Scuba Stand Collar Topper",
     desc: "Zara provides only the highest-quality luxury fashion.",
-    price: 12.00,
-    oldPrice: 16.00,
+    price: 999.00,
+    oldPrice: 1399.00,
   },
   {
     id: 5,
     image: product5,
     title: "Regular Fit Crew-neck T-shirt",
     desc: "Self-striped knitted midi A-line dress with stretch fit.",
-    price: 12.30,
-    oldPrice: 16.38,
+    price: 899.00,
+    oldPrice: 1299.00,
   },
   {
     id: 6,
     image: product6,
     title: "Hermes Carlton London",
     desc: "Off-White self-striped knitted midi formal dress.",
-    price: 15.00,
+    price: 1299.00,
     oldPrice: null,
   },
   {
@@ -66,26 +67,34 @@ const products = [
     image: product7,
     title: "Wayfarer Sunglasses",
     desc: "Our optical engineers developed this ultimate lens design.",
-    price: 20.00,
-    oldPrice: 25.00,
+    price: 1699.00,
+    oldPrice: 2199.00,
   },
   {
     id: 8,
     image: product8,
     title: "Armani Wide-Leg Trousers",
     desc: "Monochrome elegance. Made with sustainable premium fabric.",
-    price: 60.00,
-    oldPrice: 80.00,
+    price: 4999.00,
+    oldPrice: 6999.00,
   },
   {
     id: 9,
     image: product9,
     title: "REDQ Steel Watch",
     desc: "The Black Bay celebrates 60 years of horology excellence.",
-    price: 80.00,
-    oldPrice: 120.00,
+    price: 6999.00,
+    oldPrice: 9999.00,
   },
 ];
+
+// भारतीय रुपये के फॉर्मेट के लिए हेल्पर फ़ंक्शन
+const formatINR = (amount) => {
+  return "₹" + amount.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
 
 const SellingProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -156,10 +165,12 @@ const SellingProducts = () => {
                 <p>{item.desc}</p>
                 
                 <div className="SellingProducts__priceRow">
-                  <span className="SellingProducts__newPrice">${item.price.toFixed(2)}</span>
+                  <span className="SellingProducts__newPrice">
+                    {formatINR(item.price)}
+                  </span>
                   {item.oldPrice && (
                     <span className="SellingProducts__oldPrice">
-                      ${item.oldPrice.toFixed(2)}
+                      {formatINR(item.oldPrice)}
                     </span>
                   )}
                 </div>
@@ -179,7 +190,7 @@ const SellingProducts = () => {
           >
             <button 
               className="SellingProducts__closeBtn" 
-              onClick={handleCloseModal}
+              onClick={handleCloseModal} 
               aria-label="Close modal"
             >
               <FiX />
@@ -198,11 +209,11 @@ const SellingProducts = () => {
 
                 <div className="SellingProducts__modalPrice">
                   <span className="SellingProducts__modalNewPrice">
-                    ${selectedProduct.price.toFixed(2)}
+                    {formatINR(selectedProduct.price)}
                   </span>
                   {selectedProduct.oldPrice && (
                     <span className="SellingProducts__modalOldPrice">
-                      ${selectedProduct.oldPrice.toFixed(2)}
+                      {formatINR(selectedProduct.oldPrice)}
                     </span>
                   )}
                 </div>
@@ -273,7 +284,7 @@ const SellingProducts = () => {
                       </>
                     ) : (
                       <>
-                        <FiShoppingBag /> Add To Cart • ${(selectedProduct.price * quantity).toFixed(2)}
+                        <FiShoppingBag /> Add To Cart • {formatINR(selectedProduct.price * quantity)}
                       </>
                     )}
                   </button>
