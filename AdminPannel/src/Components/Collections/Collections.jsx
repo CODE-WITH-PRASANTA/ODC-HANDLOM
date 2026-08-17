@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import {
   Search,
   Plus,
@@ -18,98 +19,20 @@ import {
 } from 'lucide-react';
 import './Collections.css';
 
-// Initial Mock Data matching your reference design
-const initialCollections = [
-  {
-    id: 1,
-    name: "Men's Collection",
-    image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=200",
-    type: "Manual",
-    products: 320,
-    status: "Active",
-    sortOrder: 1,
-    dateCreated: "20 May 2025"
-  },
-  {
-    id: 2,
-    name: "Women's Collection",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
-    type: "Manual",
-    products: 280,
-    status: "Active",
-    sortOrder: 2,
-    dateCreated: "20 May 2025"
-  },
-  {
-    id: 3,
-    name: "Sports Collection",
-    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=200",
-    type: "Automatic",
-    products: 150,
-    status: "Active",
-    sortOrder: 3,
-    dateCreated: "19 May 2025"
-  },
-  {
-    id: 4,
-    name: "Bags Collection",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=200",
-    type: "Manual",
-    products: 95,
-    status: "Active",
-    sortOrder: 4,
-    dateCreated: "18 May 2025"
-  },
-  {
-    id: 5,
-    name: "Sunglasses Collection",
-    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=200",
-    type: "Manual",
-    products: 80,
-    status: "Inactive",
-    sortOrder: 5,
-    dateCreated: "17 May 2025"
-  },
-  {
-    id: 6,
-    name: "Backpack Collection",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=200",
-    type: "Manual",
-    products: 60,
-    status: "Active",
-    sortOrder: 6,
-    dateCreated: "16 May 2025"
-  },
-  {
-    id: 7,
-    name: "Coupon Collection",
-    image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=200",
-    type: "Automatic",
-    products: "-",
-    status: "Inactive",
-    sortOrder: 7,
-    dateCreated: "15 May 2025"
-  },
-  {
-    id: 8,
-    name: "New Arrivals",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=200",
-    type: "Automatic",
-    products: 260,
-    status: "Active",
-    sortOrder: 8,
-    dateCreated: "14 May 2025"
-  }
-];
+const API_BASE_URL = 'http://localhost:5000/api/collections';
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200';
 
 const Collections = () => {
-  const [collections, setCollections] = useState(initialCollections);
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
   const [sortBy, setSortBy] = useState('Newest');
   const [selectedRows, setSelectedRows] = useState([]);
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -121,9 +44,30 @@ const Collections = () => {
     name: '',
     type: 'Manual',
     status: 'Active',
-    products: 0,
-    image: ''
+    products: 0
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+
+  // 1. Fetch Collections from Backend
+  const fetchCollections = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(API_BASE_URL);
+      if (res.data && res.data.success) {
+        setCollections(res.data.data);
+      }
+    } catch (err) {
+      console.error('Error fetching collections:', err);
+      alert('Failed to load collections from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCollections();
+  }, []);
 
   // KPI Metrics Calculation
   const totalCollectionsCount = collections.length;
@@ -133,15 +77,26 @@ const Collections = () => {
     return acc + (typeof curr.products === 'number' ? curr.products : 0);
   }, 0);
 
-  // Filter & Search Logic
+  // Filter & Search & Sort Logic
   const filteredCollections = useMemo(() => {
-    return collections.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    let result = collections.filter((item) => {
+      const name = item.name || '';
+      const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
       const matchesType = typeFilter === 'All' || item.type === typeFilter;
       return matchesSearch && matchesStatus && matchesType;
     });
-  }, [collections, searchTerm, statusFilter, typeFilter]);
+
+    if (sortBy === 'Newest') {
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (sortBy === 'Oldest') {
+      result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (sortBy === 'Name') {
+      result.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    }
+
+    return result;
+  }, [collections, searchTerm, statusFilter, typeFilter, sortBy]);
 
   // Pagination Logic
   const totalEntries = filteredCollections.length;
@@ -150,10 +105,10 @@ const Collections = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredCollections.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Handlers
+  // Row Selection Handlers
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedRows(currentItems.map(item => item.id));
+      setSelectedRows(currentItems.map(item => item._id));
     } else {
       setSelectedRows([]);
     }
@@ -167,72 +122,112 @@ const Collections = () => {
     }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this collection?")) {
-      setCollections(collections.filter(item => item.id !== id));
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+  // Image Upload Handler
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
+  // Modal Open Handlers
   const handleOpenAddModal = () => {
     setEditingCollection(null);
     setFormData({
       name: '',
       type: 'Manual',
       status: 'Active',
-      products: 0,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200'
+      products: 0
     });
+    setImageFile(null);
+    setImagePreview('');
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (item) => {
     setEditingCollection(item);
     setFormData({
-      name: item.name,
-      type: item.type,
-      status: item.status,
-      products: item.products === '-' ? 0 : item.products,
-      image: item.image
+      name: item.name || '',
+      type: item.type || 'Manual',
+      status: item.status || 'Active',
+      products: item.products || 0
     });
+    setImageFile(null);
+    setImagePreview(item.image || '');
     setIsModalOpen(true);
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({ ...formData, image: imageUrl });
-    }
-  };
-
-  const handleSaveCollection = (e) => {
+  // Save / Update Collection
+  const handleSaveCollection = async (e) => {
     e.preventDefault();
-    if (editingCollection) {
-      setCollections(collections.map(c => 
-        c.id === editingCollection.id 
-          ? { ...c, ...formData, products: Number(formData.products) }
-          : c
-      ));
-    } else {
-      const newCollection = {
-        id: Date.now(),
-        name: formData.name,
-        image: formData.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200",
-        type: formData.type,
-        products: Number(formData.products) || "-",
-        status: formData.status,
-        sortOrder: collections.length + 1,
-        dateCreated: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-      };
-      setCollections([newCollection, ...collections]);
+    if (!formData.name.trim()) {
+      alert('Please enter Collection Name.');
+      return;
     }
-    setIsModalOpen(false);
+
+    const payload = new FormData();
+    payload.append('name', formData.name.trim());
+    payload.append('type', formData.type);
+    payload.append('status', formData.status);
+    payload.append('products', Number(formData.products) || 0);
+
+    if (imageFile) {
+      payload.append('image', imageFile);
+    }
+
+    try {
+      setSaving(true);
+      if (editingCollection) {
+        // UPDATE (PUT)
+        const res = await axios.put(`${API_BASE_URL}/${editingCollection._id}`, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCollections(prev =>
+            prev.map(c => (c._id === editingCollection._id ? res.data.data : c))
+          );
+        }
+      } else {
+        // CREATE (POST)
+        const res = await axios.post(API_BASE_URL, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCollections(prev => [res.data.data, ...prev]);
+        }
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Error saving collection:', err);
+      alert(err.response?.data?.message || 'Error saving collection.');
+    } finally {
+      setSaving(false);
+    }
   };
 
+  // Delete Action
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this collection?')) return;
+
+    try {
+      const res = await axios.delete(`${API_BASE_URL}/${id}`);
+      if (res.data && res.data.success) {
+        setCollections(prev => prev.filter(item => item._id !== id));
+        setSelectedRows(prev => prev.filter(rowId => rowId !== id));
+      }
+    } catch (err) {
+      console.error('Error deleting collection:', err);
+      alert('Failed to delete collection.');
+    }
+  };
+
+  // Export CSV
   const handleExportCSV = () => {
     const csvHeader = "ID,Name,Type,Products,Status,Date Created\n";
-    const csvRows = collections.map(c => `${c.id},"${c.name}",${c.type},${c.products},${c.status},"${c.dateCreated}"`).join("\n");
+    const csvRows = collections
+      .map(c => `${c._id},"${c.name}",${c.type},${c.products},${c.status},"${new Date(c.createdAt).toLocaleDateString()}"`)
+      .join("\n");
     const blob = new Blob([csvHeader + csvRows], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -247,8 +242,6 @@ const Collections = () => {
         
         {/* TOP STATS CARDS & ADD BUTTON */}
         <div className="stats-grid">
-          
-          {/* Total Collections */}
           <div className="stat-card">
             <div className="stat-info">
               <span className="stat-label">Total Collections</span>
@@ -260,7 +253,6 @@ const Collections = () => {
             </div>
           </div>
 
-          {/* Active Collections */}
           <div className="stat-card">
             <div className="stat-info">
               <span className="stat-label">Active Collections</span>
@@ -272,7 +264,6 @@ const Collections = () => {
             </div>
           </div>
 
-          {/* Inactive Collections */}
           <div className="stat-card">
             <div className="stat-info">
               <span className="stat-label">Inactive Collections</span>
@@ -284,7 +275,6 @@ const Collections = () => {
             </div>
           </div>
 
-          {/* Total Products */}
           <div className="stat-card">
             <div className="stat-info">
               <span className="stat-label">Total Products</span>
@@ -296,7 +286,6 @@ const Collections = () => {
             </div>
           </div>
 
-          {/* Add New Collection Button */}
           <button className="add-btn" onClick={handleOpenAddModal}>
             <Plus size={18} />
             <span>Add New Collection</span>
@@ -311,14 +300,20 @@ const Collections = () => {
                 type="text"
                 placeholder="Search collections..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
               <Search size={16} className="search-icon" />
             </div>
 
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
               className="select-dropdown"
             >
               <option value="All">All Status</option>
@@ -328,7 +323,10 @@ const Collections = () => {
 
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setCurrentPage(1);
+              }}
               className="select-dropdown"
             >
               <option value="All">All Types</option>
@@ -377,8 +375,8 @@ const Collections = () => {
                     />
                   </th>
                   <th style={{ width: '40px', textAlign: 'center' }}>#</th>
-                  <th>Collection Name</th>
                   <th>Image</th>
+                  <th>Collection Name</th>
                   <th>Type</th>
                   <th>Products</th>
                   <th>Status</th>
@@ -388,14 +386,18 @@ const Collections = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="10" className="no-data">Loading collections...</td>
+                  </tr>
+                ) : currentItems.length > 0 ? (
                   currentItems.map((item, index) => (
-                    <tr key={item.id}>
+                    <tr key={item._id}>
                       <td style={{ textAlign: 'center' }}>
                         <input
                           type="checkbox"
-                          checked={selectedRows.includes(item.id)}
-                          onChange={() => handleSelectRow(item.id)}
+                          checked={selectedRows.includes(item._id)}
+                          onChange={() => handleSelectRow(item._id)}
                         />
                       </td>
                       <td style={{ textAlign: 'center', color: '#6b7280', fontWeight: 500 }}>
@@ -403,7 +405,14 @@ const Collections = () => {
                       </td>
                       <td>
                         <div className="collection-banner">
-                          <img src={item.image} alt={item.name} />
+                          <img
+                            src={item.image || FALLBACK_IMAGE}
+                            alt={item.name}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = FALLBACK_IMAGE;
+                            }}
+                          />
                           <div className="banner-overlay">
                             <span>{item.name}</span>
                           </div>
@@ -411,29 +420,35 @@ const Collections = () => {
                       </td>
                       <td style={{ fontWeight: 500, color: '#1f2937' }}>{item.name}</td>
                       <td>
-                        <span className={`badge ${item.type.toLowerCase()}`}>
+                        <span className={`badge ${item.type ? item.type.toLowerCase() : 'manual'}`}>
                           {item.type}
                         </span>
                       </td>
                       <td style={{ fontWeight: 500 }}>{item.products}</td>
                       <td>
-                        <span className={`badge ${item.status.toLowerCase()}`}>
+                        <span className={`badge ${item.status ? item.status.toLowerCase() : 'active'}`}>
                           {item.status}
                         </span>
                       </td>
                       <td style={{ textAlign: 'center' }}>
                         <div className="sort-order-box">
                           <GripVertical size={14} color="#9ca3af" />
-                          <span>{item.sortOrder}</span>
+                          <span>{item.sortOrder || index + 1}</span>
                         </div>
                       </td>
-                      <td style={{ color: '#6b7280', fontSize: '12px' }}>{item.dateCreated}</td>
+                      <td style={{ color: '#6b7280', fontSize: '12px' }}>
+                        {new Date(item.createdAt || Date.now()).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </td>
                       <td style={{ textAlign: 'center' }}>
                         <div className="action-buttons">
                           <button className="action-btn edit" onClick={() => handleOpenEditModal(item)} title="Edit">
                             <Edit3 size={15} />
                           </button>
-                          <button className="action-btn delete" onClick={() => handleDelete(item.id)} title="Delete">
+                          <button className="action-btn delete" onClick={() => handleDelete(item._id)} title="Delete">
                             <Trash2 size={15} />
                           </button>
                         </div>
@@ -530,10 +545,12 @@ const Collections = () => {
               <div className="form-group">
                 <label>Collection Image</label>
                 <div className="upload-box">
-                  {formData.image && <img src={formData.image} alt="Preview" className="upload-preview" />}
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className="upload-preview" />
+                  )}
                   <label className="upload-btn">
                     <Upload size={16} />
-                    <span>Upload Banner Image</span>
+                    <span>{imagePreview ? 'Change Banner Image' : 'Upload Banner Image'}</span>
                     <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
                   </label>
                 </div>
@@ -574,11 +591,11 @@ const Collections = () => {
               </div>
 
               <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>
+                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)} disabled={saving}>
                   Cancel
                 </button>
-                <button type="submit" className="btn-submit">
-                  {editingCollection ? 'Update' : 'Save'}
+                <button type="submit" className="btn-submit" disabled={saving}>
+                  {saving ? 'Saving...' : editingCollection ? 'Update' : 'Save'}
                 </button>
               </div>
             </form>
