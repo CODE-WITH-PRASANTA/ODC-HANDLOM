@@ -29,6 +29,14 @@ import CreateOrder from "./Components/CreateOrder/CreateOrder"; // <-- IMPORTED 
 import Banner from "./Components/Banner/Banner";
 import FlashSale from "../../frontend/src/Components/FlashSale/FlashSale";
 import Flashsale from "./Components/Flashsale/Flashsale";
+import PushNotifications from "./Components/PushNotifications/PushNotifications";
+import Newsletters from "./Components/Newsletters/Newsletters";
+import Reports from "./Components/Reports/Reports";
+import Coupons from "./Components/Coupons/Coupons";
+import Payments from "./Components/Payments/Payments";
+import AllProduct from "./Components/AllProduct/AllProduct";
+import StoreSettings from "./Components/StoreSettings/StoreSettings";
+import ShippingMethods from "./Components/ShippingMethods/ShippingMethods";
 
 // Placeholder Component for pages without unique views yet
 const Page = ({ name }) => (
@@ -52,7 +60,7 @@ function App() {
 
           {/* 2. Products */}
           <Route path="products/all-products" element={<NewProduct />} />
-          <Route path="products/add-new" element={<AddNewProduct />} />
+          
           <Route path="products/preview" element={<PreviewProduct />} />
           <Route path="products/collections" element={<Collections />} />
           <Route path="products/attributes" element={<Attribute />} />
@@ -65,24 +73,32 @@ function App() {
           <Route path="sales/refunds" element={<Refunds />} />
           <Route path="sales/new-refund" element={<NewRefund />} />
           <Route path="sales/customers" element={<SalesCostumers />} />
-          <Route path="sales/coupons" element={<Page name="Coupons" />} />
-          <Route path="sales/payments" element={<Page name="Payments" />} />
-
+         
+          
           {/* 4. Marketing */}
           <Route path="marketing/banner-sliders" element={<Banner />} />
           <Route path="marketing/flash-sale" element={<Flashsale/>}/>
           <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
           <Route path="marketing/push-notifications" element={<Page name="Push Notifications" />} />
+          <Route path="marketing/flash-sale" element={<Page name="Flash Sale" />} />
+          <Route path="marketing/newsletters" element={<Newsletters />} />
+          <Route path="marketing/push-notifications" element={<PushNotifications />} />
 
           {/* 5. Reports */}
-          <Route path="reports/reports" element={<Page name="Reports" />} />
+          {/* <Route path="reports/reports" element={<Page name="Reports" />} /> */}
           <Route path="reports/sales-analytics" element={<Page name="Sales Analytics" />} />
 
           {/* 6. Settings */}
-          <Route path="settings/store-settings" element={<Page name="Store Settings" />} />
-          <Route path="settings/shipping-methods" element={<Page name="Shipping Methods" />} />
+          
+         
           <Route path="settings/payment-methods" element={<Page name="Payment Methods" />} />
           <Route path="settings/users-roles" element={<Page name="Users & Roles" />} />
+          <Route path="/reports/reports" element={<Reports/>}/>
+         <Route path="sales/coupons" element={<Coupons/>}/>
+         <Route path="/sales/payments" element={<Payments/>}/>
+         <Route path="/products/add-new" element={<AllProduct/>}/>
+         <Route path="/settings/store-settings" element={<StoreSettings/>}/>
+          <Route path="settings/shipping-methods" element={<ShippingMethods/>} />
         </Route>
 
         {/* Fallback 404 Route */}
