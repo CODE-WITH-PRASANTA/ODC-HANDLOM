@@ -38,7 +38,7 @@ const menuSections = [
     title: 'PRODUCTS',
     items: [
       { label: 'Products', path: '/products/all-products', icon: ShoppingBag },
-      { label: 'AddNewProduct', path: 'products/add-new', icon: ShoppingBag },
+      { label: 'AllProduct', path: 'products/add-new', icon: ShoppingBag },
 
       { label: 'Categories', path: '/products/categories', icon: ListTree },
       { label: 'Collections', path: '/products/collections', icon: Gem },
@@ -69,7 +69,7 @@ const menuSections = [
     title: 'REPORTS',
     items: [
       { label: 'Reports', path: '/reports/reports', icon: BarChart3 },
-      { label: 'Sales Analytics', path: '/reports/sales-analytics', icon: PieChart },
+      
     ]
   },
   {

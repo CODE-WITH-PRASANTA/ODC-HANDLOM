@@ -1,0 +1,982 @@
+/* PushNotifications.css - Custom Responsive Dropdown System */
+
+.PushNotifications-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #fdfdfd;
+  color: #111827;
+  padding: 32px;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.PushNotifications-container *, 
+.PushNotifications-container *:before, 
+.PushNotifications-container *:after {
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.PushNotifications-header-section {
+  margin-bottom: 28px;
+}
+
+.PushNotifications-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+.PushNotifications-main-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.6px;
+  margin: 0 0 4px 0;
+  word-break: break-word;
+}
+
+.PushNotifications-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.PushNotifications-history-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.PushNotifications-history-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+/* Grid Layout */
+.PushNotifications-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+.PushNotifications-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Modern Cards */
+.PushNotifications-card {
+  background: #ffffff;
+  border: 1px solid #e9eef5;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.PushNotifications-card:hover {
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.PushNotifications-section-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.PushNotifications-step-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Notification Types Grid */
+.PushNotifications-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.PushNotifications-type-option {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  min-width: 0;
+}
+
+.PushNotifications-type-option:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.PushNotifications-type-option.active {
+  border-color: #dc2626;
+  background-color: #fff5f5;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.PushNotifications-type-icon {
+  font-size: 20px;
+  color: #64748b;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.PushNotifications-type-option.active .PushNotifications-type-icon {
+  color: #dc2626;
+}
+
+.PushNotifications-type-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  word-break: break-word;
+}
+
+.PushNotifications-type-desc {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+/* Inputs & Form Elements */
+.PushNotifications-input-group {
+  margin-bottom: 16px;
+  width: 100%;
+  position: relative;
+}
+
+.PushNotifications-input-group:last-child {
+  margin-bottom: 0;
+}
+
+.PushNotifications-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.PushNotifications-label span {
+  color: #dc2626;
+}
+
+.PushNotifications-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.PushNotifications-text-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 11px 14px;
+  padding-right: 55px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.PushNotifications-text-input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.PushNotifications-char-counter {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Rich Text Editor Box */
+.PushNotifications-editor-box {
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: visible;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  position: relative;
+}
+
+.PushNotifications-editor-box:focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.PushNotifications-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  width: 100%;
+  position: relative;
+}
+
+.PushNotifications-editor-toolbar button {
+  background: transparent;
+  border: none;
+  padding: 5px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.PushNotifications-editor-toolbar button:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.PushNotifications-toolbar-divider {
+  width: 1px;
+  height: 16px;
+  background: #cbd5e1;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.PushNotifications-custom-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.PushNotifications-select-normal {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 26px 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #334155;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.PushNotifications-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.PushNotifications-textarea {
+  width: 100%;
+  border: none;
+  padding: 12px;
+  font-size: 13px;
+  color: #0f172a;
+  min-height: 110px;
+  outline: none;
+  resize: vertical;
+  background: transparent;
+}
+
+.PushNotifications-char-counter-bottom {
+  text-align: right;
+  padding: 0 12px 8px 0;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Dropzone */
+.PushNotifications-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.PushNotifications-dropzone:hover {
+  border-color: #dc2626;
+  background: #fff5f5;
+}
+
+.PushNotifications-upload-icon {
+  font-size: 24px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.PushNotifications-upload-text {
+  font-weight: 700;
+  color: #334155;
+  font-size: 12px;
+}
+
+.PushNotifications-upload-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.PushNotifications-upload-success {
+  margin-top: 6px;
+  color: #10b981;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Additional Options Toggles */
+.PushNotifications-additional-options {
+  border-top: 1px solid #f1f5f9;
+  margin-top: 16px;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.PushNotifications-option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.PushNotifications-option-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.PushNotifications-option-desc {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.action-group-sub, .schedule-group-sub {
+  margin-top: 6px;
+  padding-left: 4px;
+}
+
+/* Toggle Switch */
+.PushNotifications-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.PushNotifications-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.PushNotifications-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+}
+
+.PushNotifications-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.PushNotifications-switch input:checked + .PushNotifications-slider {
+  background-color: #dc2626;
+}
+
+.PushNotifications-switch input:checked + .PushNotifications-slider:before {
+  transform: translateX(20px);
+}
+
+/* Delivery & Settings Layout & Perfect Custom Dropdown Menu Alignment */
+.PushNotifications-delivery-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.flex-1 {
+  flex: 1;
+  min-width: 100%;
+}
+
+@media screen and (min-width: 481px) {
+  .flex-1 {
+    min-width: 180px;
+  }
+}
+
+.PushNotifications-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.PushNotifications-select-icon-left {
+  position: absolute;
+  left: 12px;
+  color: #475569;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Custom Dropdown Styling to lock list exactly inside element bounds */
+.PushNotifications-dropdown-custom {
+  width: 100%;
+  max-width: 100%;
+  padding: 11px 36px 11px 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.PushNotifications-dropdown-custom:hover {
+  border-color: #94a3b8;
+}
+
+.dropdown-arrow-icon {
+  position: absolute;
+  right: 12px;
+  color: #475569;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.dropdown-selected-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Absolute menu constrained exactly to the parent input box container width */
+.PushNotifications-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  overflow: hidden;
+  animation: fadeInMenu 0.15s ease;
+}
+
+@keyframes fadeInMenu {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.PushNotifications-dropdown-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #1e293b;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.PushNotifications-dropdown-item:hover {
+  background: #f1f5f9;
+  color: #dc2626;
+}
+
+/* Counter Control */
+.PushNotifications-counter-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  height: 43px;
+  width: 100%;
+}
+
+.PushNotifications-counter-btn {
+  background: #f8fafc;
+  border: none;
+  padding: 0 12px;
+  height: 100%;
+  cursor: pointer;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.PushNotifications-counter-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.PushNotifications-counter-input {
+  width: 100%;
+  flex: 1;
+  border: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  outline: none;
+  background: transparent;
+}
+
+/* Preview Column */
+.PushNotifications-preview-column {
+  width: 100%;
+  min-width: 0;
+}
+
+.PushNotifications-preview-card {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.PushNotifications-preview-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+  width: 100%;
+}
+
+.PushNotifications-preview-subtext {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 20px 0;
+  width: 100%;
+}
+
+.PushNotifications-phone-frame {
+  width: 280px;
+  height: 480px;
+  background: #0f172a;
+  border-radius: 36px;
+  padding: 10px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  border: 3px solid #334155;
+  max-width: 100%;
+}
+
+.PushNotifications-phone-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #4f46e5 0%, #ec4899 50%, #f97316 100%);
+  border-radius: 26px;
+  padding: 16px 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Simulated Banner inside screen */
+.PushNotifications-simulated-banner {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  width: 100%;
+}
+
+.PushNotifications-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.PushNotifications-app-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.PushNotifications-app-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.PushNotifications-app-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.PushNotifications-banner-time {
+  font-size: 9px;
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.PushNotifications-banner-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.PushNotifications-banner-content-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.PushNotifications-banner-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.PushNotifications-banner-message {
+  font-size: 10px;
+  color: #475569;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.PushNotifications-banner-action-btn {
+  margin-top: 6px;
+  padding: 3px 7px;
+  font-size: 9px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.PushNotifications-banner-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.PushNotifications-platforms {
+  margin-top: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.PushNotifications-platforms-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.PushNotifications-platforms-icons {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.PushNotifications-platform-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.android-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #10b981;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Footer Summary Bar */
+.PushNotifications-footer-bar {
+  margin-top: 24px;
+  background: #ffffff;
+  border: 1px solid #e9eef5;
+  border-radius: 20px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03);
+  width: 100%;
+}
+
+.PushNotifications-summary-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.PushNotifications-summary-item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.PushNotifications-summary-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.PushNotifications-summary-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.PushNotifications-summary-tags {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.PushNotifications-summary-tags span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.PushNotifications-footer-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.PushNotifications-btn-secondary {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.PushNotifications-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.PushNotifications-btn-primary {
+  background: #dc2626;
+  border: 1px solid #dc2626;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+  white-space: nowrap;
+}
+
+.PushNotifications-btn-primary:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+
+/* --- RESPONSIVE ADJUSTMENTS: iPad Pro & Android (Facebook Webview / Mobile Browsers) --- */
+
+/* iPad Pro / Tablets (max-width: 1024px) */
+@media screen and (max-width: 1024px) {
+  .PushNotifications-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .PushNotifications-preview-card {
+    position: static;
+  }
+}
+
+/* Facebook Android In-App Browser / Small Mobile screens (max-width: 480px) */
+@media screen and (max-width: 480px) {
+  .PushNotifications-container {
+    padding: 10px;
+  }
+
+  .PushNotifications-title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .PushNotifications-history-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .PushNotifications-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .PushNotifications-delivery-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .PushNotifications-footer-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+  }
+
+  .PushNotifications-footer-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .PushNotifications-btn-secondary,
+  .PushNotifications-btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .PushNotifications-card {
+    padding: 16px;
+  }
+  
+  .PushNotifications-phone-frame {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}
