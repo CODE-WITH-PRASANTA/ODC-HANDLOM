@@ -1,5 +1,5 @@
-// AllProduct.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { 
   FiBox, 
   FiTag, 
@@ -15,13 +15,16 @@ import {
   FiChevronLeft, 
   FiChevronRight, 
   FiX, 
-  FiMoreVertical,
-  FiCheck,
   FiAlertTriangle
 } from 'react-icons/fi';
 import './AllProduct.css';
 
+const API_BASE_URL = 'http://localhost:5000/api/products';
+
 const AllProduct = () => {
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   // Calendar date range state
   const [dateRange, setDateRange] = useState('01 May 2025 - 31 May 2025');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -39,18 +42,6 @@ const AllProduct = () => {
   const [showBrandDrop, setShowBrandDrop] = useState(false);
   const [showStatusDrop, setShowStatusDrop] = useState(false);
 
-  // Products Data State
-  const [productsList, setProductsList] = useState([
-    { id: 1, name: 'Handloom Silk Saree', desc: 'Premium quality silk saree', sku: 'SKU12345', category: 'Sarees', price: '₹2,499', stock: 50, status: 'Active', rating: 4.8, reviews: 324, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100&auto=format&fit=crop&q=80' },
-    { id: 2, name: 'Cotton Handloom Dupatta', desc: 'Pure cotton handloom dupatta', sku: 'SKU12346', category: 'Dupattas', price: '₹899', stock: 30, status: 'Active', rating: 4.7, reviews: 210, image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=100&auto=format&fit=crop&q=80' },
-    { id: 3, name: 'Ikat Dress Material', desc: 'Premium ikat cotton material', sku: 'SKU12347', category: 'Dress Materials', price: '₹1,299', stock: 75, status: 'Active', rating: 4.6, reviews: 178, image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=100&auto=format&fit=crop&q=80' },
-    { id: 4, name: 'Handwoven Table Runner', desc: 'Elegant handwoven runner', sku: 'SKU12348', category: 'Home Textiles', price: '₹699', stock: 20, status: 'Active', rating: 4.5, reviews: 126, image: 'https://images.unsplash.com/photo-1590736963159-1c0c327220d5?w=100&auto=format&fit=crop&q=80' },
-    { id: 5, name: 'Cotton Cushion Cover', desc: 'Handloom cotton cushion cover', sku: 'SKU12349', category: 'Home Decor', price: '₹499', stock: 0, status: 'Out of Stock', rating: 4.4, reviews: 98, image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=100&auto=format&fit=crop&q=80' },
-    { id: 6, name: 'Handloom Cotton Stole', desc: 'Soft & comfortable stole', sku: 'SKU12350', category: 'Stoles', price: '₹599', stock: 15, status: 'Active', rating: 4.3, reviews: 87, image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=100&auto=format&fit=crop&q=80' },
-    { id: 7, name: 'Handloom Bedspread', desc: 'King size handloom bedspread', sku: 'SKU12351', category: 'Bedspreads', price: '₹1,899', stock: 10, status: 'Active', rating: 4.2, reviews: 65, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=100&auto=format&fit=crop&q=80' },
-    { id: 8, name: 'Handloom Cotton Kurta', desc: "Men's handloom cotton kurta", sku: 'SKU12352', category: 'Men Wear', price: '₹1,199', stock: 22, status: 'Active', rating: 4.1, reviews: 54, image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=100&auto=format&fit=crop&q=80' }
-  ]);
-
   // Selected checkboxes state
   const [selectedProducts, setSelectedProducts] = useState([]);
 
@@ -58,9 +49,12 @@ const AllProduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(8);
 
-  // Modal State for "Add New Product"
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newProduct, setNewProduct] = useState({
+  // Edit / Add Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentProductId, setCurrentProductId] = useState(null);
+
+  const initialFormState = {
     name: '',
     desc: '',
     sku: '',
@@ -68,22 +62,126 @@ const AllProduct = () => {
     price: '',
     stock: '',
     status: 'Active'
-  });
+  };
+  const [formData, setFormData] = useState(initialFormState);
 
-  // Modal State for "Delete Confirmation"
+  // Delete Confirmation Modal State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
-  // Handle Select All Checkbox
+  // 1. Fetch Products from Backend (Handles both { success, data } and raw array formats)
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(API_BASE_URL);
+      if (res.data && res.data.success && Array.isArray(res.data.data)) {
+        setProductsList(res.data.data);
+      } else if (Array.isArray(res.data)) {
+        setProductsList(res.data);
+      } else {
+        setProductsList([]);
+      }
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // 2. Add or Edit Product Submit
+  const handleSubmitProduct = async (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.price) return;
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        desc: formData.desc.trim(),
+        sku: formData.sku.trim() || undefined,
+        category: formData.category,
+        price: Number(formData.price),
+        stock: Number(formData.stock) || 0,
+        status: Number(formData.stock) === 0 ? 'Out of Stock' : (formData.status || 'Active')
+      };
+
+      if (isEditing && currentProductId) {
+        await axios.put(`${API_BASE_URL}/${currentProductId}`, payload);
+      } else {
+        await axios.post(API_BASE_URL, payload);
+      }
+
+      await fetchProducts(); // List refresh
+      closeModal();          // Modal close and reset
+    } catch (err) {
+      console.error('Error saving product:', err.response?.data || err.message);
+      alert('Product save karne mein error aayi: ' + (err.response?.data?.message || err.message));
+    }
+  };
+  // Open modal for Create
+  const handleOpenAddModal = () => {
+    setIsEditing(false);
+    setCurrentProductId(null);
+    setFormData(initialFormState);
+    setShowModal(true);
+  };
+
+  // Open modal for Edit with prepopulated values
+  const handleEdit = (product) => {
+    setIsEditing(true);
+    setCurrentProductId(product._id);
+    setFormData({
+      name: product.name,
+      desc: product.desc || '',
+      sku: product.sku || '',
+      category: product.category,
+      price: product.price,
+      stock: product.stock,
+      status: product.status
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setIsEditing(false);
+    setCurrentProductId(null);
+    setFormData(initialFormState);
+  };
+
+  // 3. Delete Product Flow
+  const openDeleteModal = (product) => {
+    setProductToDelete(product);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (productToDelete) {
+      try {
+        await axios.delete(`${API_BASE_URL}/${productToDelete._id}`);
+        fetchProducts();
+        setSelectedProducts(prev => prev.filter(id => id !== productToDelete._id));
+      } catch (err) {
+        console.error('Error deleting product:', err);
+      } finally {
+        setShowDeleteModal(false);
+        setProductToDelete(null);
+      }
+    }
+  };
+
+  // Checkbox handlers
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedProducts(currentItems.map(p => p.id));
+      setSelectedProducts(currentItems.map(p => p._id));
     } else {
       setSelectedProducts([]);
     }
   };
 
-  // Handle Individual Checkbox
   const handleSelectOne = (id) => {
     if (selectedProducts.includes(id)) {
       setSelectedProducts(selectedProducts.filter(item => item !== id));
@@ -92,64 +190,10 @@ const AllProduct = () => {
     }
   };
 
-  // Open Delete Confirmation Modal
-  const openDeleteModal = (product) => {
-    setProductToDelete(product);
-    setShowDeleteModal(true);
-  };
-
-  // Confirm Delete Product
-  const confirmDelete = () => {
-    if (productToDelete) {
-      setProductsList(productsList.filter(p => p.id !== productToDelete.id));
-      setSelectedProducts(selectedProducts.filter(item => item !== productToDelete.id));
-      setShowDeleteModal(false);
-      setProductToDelete(null);
-    }
-  };
-
-  // Handle Edit Product (loads into add modal for simplicity)
-  const handleEdit = (product) => {
-    setNewProduct({
-      name: product.name,
-      desc: product.desc,
-      sku: product.sku,
-      category: product.category,
-      price: product.price.replace('₹', '').replace(',', ''),
-      stock: product.stock,
-      status: product.status
-    });
-    setShowAddModal(true);
-  };
-
-  // Handle Add New Product Submit
-  const handleAddProductSubmit = (e) => {
-    e.preventDefault();
-    if (!newProduct.name || !newProduct.price) return;
-
-    const formattedProduct = {
-      id: Date.now(),
-      name: newProduct.name,
-      desc: newProduct.desc || 'Handloom artisan product',
-      sku: newProduct.sku || `SKU${Math.floor(10000 + Math.random() * 90000)}`,
-      category: newProduct.category,
-      price: `₹${Number(newProduct.price).toLocaleString('en-IN')}`,
-      stock: Number(newProduct.stock) || 10,
-      status: newProduct.status,
-      rating: 4.5,
-      reviews: 12,
-      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100&auto=format&fit=crop&q=80'
-    };
-
-    setProductsList([formattedProduct, ...productsList]);
-    setNewProduct({ name: '', desc: '', sku: '', category: 'Sarees', price: '', stock: '', status: 'Active' });
-    setShowAddModal(false);
-  };
-
   // Filter Logic
   const filteredProducts = productsList.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+                          (product.sku && product.sku.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = categoryFilter === 'All Categories' || product.category === categoryFilter;
     const matchesStatus = statusFilter === 'Status: All' || product.status === statusFilter.replace('Status: ', '');
     return matchesSearch && matchesCategory && matchesStatus;
@@ -161,10 +205,16 @@ const AllProduct = () => {
   const indexOfFirstItem = indexOfLastItem - perPage;
   const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Export / Download Report Function
+  // Metrics Data Calculations
+  const totalCount = productsList.length;
+  const activeCount = productsList.filter(p => p.status === 'Active').length;
+  const outOfStockCount = productsList.filter(p => p.stock === 0 || p.status === 'Out of Stock').length;
+  const lowStockCount = productsList.filter(p => p.stock > 0 && p.stock <= 15).length;
+
+  // Export Report Function
   const handleExportReport = () => {
     const reportText = productsList.map(p => 
-      `Name: ${p.name} | SKU: ${p.sku} | Category: ${p.category} | Price: ${p.price} | Stock: ${p.stock} | Status: ${p.status} | Rating: ${p.rating}`
+      `Name: ${p.name} | SKU: ${p.sku} | Category: ${p.category} | Price: ₹${p.price} | Stock: ${p.stock} | Status: ${p.status} | Rating: ${p.rating}`
     ).join('\n');
 
     const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
@@ -213,10 +263,9 @@ const AllProduct = () => {
             )}
           </div>
 
-          {/* Add New Product Header Button */}
           <button 
             className="allproduct-add-btn"
-            onClick={() => setShowAddModal(true)}
+            onClick={handleOpenAddModal}
           >
             <FiPlus className="allproduct-icon" />
             <span>Add New Product</span>
@@ -224,7 +273,7 @@ const AllProduct = () => {
         </div>
       </div>
 
-      {/* Top 4 Summary Cards Grid */}
+      {/* Summary Cards */}
       <div className="allproduct-metrics-grid">
         <div className="allproduct-metric-card">
           <div className="allproduct-metric-icon-box pink">
@@ -232,8 +281,8 @@ const AllProduct = () => {
           </div>
           <div className="allproduct-metric-content">
             <span className="allproduct-metric-title">Total Products</span>
-            <h3 className="allproduct-metric-value">1,248</h3>
-            <span className="allproduct-metric-sub">Active Products<br /><b>1,125</b></span>
+            <h3 className="allproduct-metric-value">{totalCount}</h3>
+            <span className="allproduct-metric-sub">Active Products<br /><b>{activeCount}</b></span>
           </div>
         </div>
 
@@ -243,8 +292,8 @@ const AllProduct = () => {
           </div>
           <div className="allproduct-metric-content">
             <span className="allproduct-metric-title">Out of Stock</span>
-            <h3 className="allproduct-metric-value">45</h3>
-            <span className="allproduct-metric-sub">Low Stock<br /><b>78</b></span>
+            <h3 className="allproduct-metric-value">{outOfStockCount}</h3>
+            <span className="allproduct-metric-sub">Low Stock<br /><b>{lowStockCount}</b></span>
           </div>
         </div>
 
@@ -265,16 +314,16 @@ const AllProduct = () => {
           </div>
           <div className="allproduct-metric-content">
             <span className="allproduct-metric-title">Top Rated Product</span>
-            <h3 className="allproduct-metric-value product-name-val">Handloom Silk Saree</h3>
+            <h3 className="allproduct-metric-value product-name-val">{productsList[0]?.name || 'N/A'}</h3>
             <div className="allproduct-rating-row">
               <span className="stars">★★★★★</span>
-              <b>4.8</b> <small>(324)</small>
+              <b>{productsList[0]?.rating || '5.0'}</b> <small>({productsList[0]?.reviews || 0})</small>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Table Card Section */}
+      {/* Main Table Card */}
       <div className="allproduct-table-card">
         {/* Filters and Search Bar */}
         <div className="allproduct-table-filter-bar">
@@ -289,7 +338,6 @@ const AllProduct = () => {
           </div>
 
           <div className="allproduct-filter-dropdowns">
-            {/* Category Dropdown */}
             <div className="allproduct-dropdown-container">
               <button className="allproduct-filter-btn" onClick={() => setShowCategoryDrop(!showCategoryDrop)}>
                 {categoryFilter} ▾
@@ -303,7 +351,6 @@ const AllProduct = () => {
               )}
             </div>
 
-            {/* Collections Dropdown */}
             <div className="allproduct-dropdown-container">
               <button className="allproduct-filter-btn" onClick={() => setShowCollectionDrop(!showCollectionDrop)}>
                 {collectionFilter} ▾
@@ -317,7 +364,6 @@ const AllProduct = () => {
               )}
             </div>
 
-            {/* Brands Dropdown */}
             <div className="allproduct-dropdown-container">
               <button className="allproduct-filter-btn" onClick={() => setShowBrandDrop(!showBrandDrop)}>
                 {brandFilter} ▾
@@ -331,7 +377,6 @@ const AllProduct = () => {
               )}
             </div>
 
-            {/* Status Dropdown */}
             <div className="allproduct-dropdown-container">
               <button className="allproduct-filter-btn" onClick={() => setShowStatusDrop(!showStatusDrop)}>
                 {statusFilter} ▾
@@ -344,10 +389,6 @@ const AllProduct = () => {
                 </div>
               )}
             </div>
-
-            <button className="allproduct-filter-icon-btn">
-              <FiFilter /> Filter
-            </button>
 
             <button className="allproduct-export-btn" onClick={handleExportReport}>
               <FiDownload /> Export
@@ -378,14 +419,18 @@ const AllProduct = () => {
               </tr>
             </thead>
             <tbody>
-              {currentItems.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="9" style={{ textAlign: 'center', padding: '30px' }}>Loading products...</td>
+                </tr>
+              ) : currentItems.length > 0 ? (
                 currentItems.map((product) => (
-                  <tr key={product.id}>
+                  <tr key={product._id}>
                     <td>
                       <input 
                         type="checkbox" 
-                        checked={selectedProducts.includes(product.id)}
-                        onChange={() => handleSelectOne(product.id)}
+                        checked={selectedProducts.includes(product._id)}
+                        onChange={() => handleSelectOne(product._id)}
                       />
                     </td>
                     <td className="allproduct-product-cell">
@@ -399,7 +444,7 @@ const AllProduct = () => {
                     <td>
                       <span className="allproduct-category-badge">{product.category}</span>
                     </td>
-                    <td className="price-cell">{product.price}</td>
+                    <td className="price-cell">₹{product.price?.toLocaleString('en-IN')}</td>
                     <td>
                       <span className={`stock-val ${product.stock === 0 ? 'out' : ''}`}>{product.stock}</span>
                     </td>
@@ -417,7 +462,6 @@ const AllProduct = () => {
                     </td>
                     <td>
                       <div className="allproduct-actions-cell">
-                        <button className="action-icon-btn" title="View"><FiEye /></button>
                         <button className="action-icon-btn" onClick={() => handleEdit(product)} title="Edit"><FiEdit2 /></button>
                         <button 
                           className="action-icon-btn delete-btn" 
@@ -462,15 +506,6 @@ const AllProduct = () => {
                   {i + 1}
                 </button>
               ))}
-              {totalPages > 5 && <span>...</span>}
-              {totalPages > 5 && (
-                <button 
-                  className={currentPage === totalPages ? 'active' : ''}
-                  onClick={() => setCurrentPage(totalPages)}
-                >
-                  {totalPages}
-                </button>
-              )}
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -492,36 +527,22 @@ const AllProduct = () => {
         </div>
       </div>
 
-      {/* Bottom Heritage Banner */}
-      <div className="allproduct-banner-card">
-        <div className="allproduct-banner-content">
-          <div className="allproduct-banner-text">
-            <h3>We weave tradition, you sell heritage.</h3>
-            <p>Add new products and bring the magic of handloom to more lives.</p>
-            <div className="allproduct-ornament-divider"></div>
-          </div>
-          <div className="allproduct-banner-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&auto=format&fit=crop&q=80" alt="Handloom Banner" />
-          </div>
-        </div>
-      </div>
-
-      {/* Add New Product Modal Popup */}
-      {showAddModal && (
+      {/* Add / Edit Product Modal */}
+      {showModal && (
         <div className="allproduct-modal-overlay">
           <div className="allproduct-modal-content">
             <div className="allproduct-modal-header">
-              <h2>Add New Product</h2>
-              <button onClick={() => setShowAddModal(false)}><FiX /></button>
+              <h2>{isEditing ? 'Edit Product' : 'Add New Product'}</h2>
+              <button onClick={closeModal}><FiX /></button>
             </div>
-            <form onSubmit={handleAddProductSubmit} className="allproduct-modal-form">
+            <form onSubmit={handleSubmitProduct} className="allproduct-modal-form">
               <div className="allproduct-form-group">
                 <label>Product Name *</label>
                 <input 
                   type="text" 
                   placeholder="e.g. Kanchipuram Silk Saree" 
-                  value={newProduct.name}
-                  onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
                   required 
                 />
               </div>
@@ -531,8 +552,8 @@ const AllProduct = () => {
                 <input 
                   type="text" 
                   placeholder="Short description" 
-                  value={newProduct.desc}
-                  onChange={(e) => setNewProduct({...newProduct, desc: e.target.value})}
+                  value={formData.desc}
+                  onChange={(e) => setFormData({...formData, desc: e.target.value})}
                 />
               </div>
 
@@ -540,8 +561,8 @@ const AllProduct = () => {
                 <div className="allproduct-form-group">
                   <label>Category *</label>
                   <select 
-                    value={newProduct.category}
-                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
                   >
                     <option value="Sarees">Sarees</option>
                     <option value="Dupattas">Dupattas</option>
@@ -555,9 +576,9 @@ const AllProduct = () => {
                   <label>SKU Code</label>
                   <input 
                     type="text" 
-                    placeholder="e.g. SKU99881" 
-                    value={newProduct.sku}
-                    onChange={(e) => setNewProduct({...newProduct, sku: e.target.value})}
+                    placeholder="Auto-generated if empty" 
+                    value={formData.sku}
+                    onChange={(e) => setFormData({...formData, sku: e.target.value})}
                   />
                 </div>
               </div>
@@ -568,8 +589,8 @@ const AllProduct = () => {
                   <input 
                     type="number" 
                     placeholder="e.g. 2499" 
-                    value={newProduct.price}
-                    onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                    value={formData.price}
+                    onChange={(e) => setFormData({...formData, price: e.target.value})}
                     required 
                   />
                 </div>
@@ -578,22 +599,22 @@ const AllProduct = () => {
                   <input 
                     type="number" 
                     placeholder="e.g. 50" 
-                    value={newProduct.stock}
-                    onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
+                    value={formData.stock}
+                    onChange={(e) => setFormData({...formData, stock: e.target.value})}
                   />
                 </div>
               </div>
 
               <div className="allproduct-modal-actions">
-                <button type="button" className="allproduct-cancel-btn" onClick={() => setShowAddModal(false)}>Cancel</button>
-                <button type="submit" className="allproduct-submit-btn">Save Product</button>
+                <button type="button" className="allproduct-cancel-btn" onClick={closeModal}>Cancel</button>
+                <button type="submit" className="allproduct-submit-btn">{isEditing ? 'Update Product' : 'Save Product'}</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Remove / Delete Confirmation Modal Popup */}
+      {/* Remove / Delete Confirmation Modal */}
       {showDeleteModal && productToDelete && (
         <div className="allproduct-modal-overlay">
           <div className="allproduct-modal-content delete-modal">
@@ -623,7 +644,6 @@ const AllProduct = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

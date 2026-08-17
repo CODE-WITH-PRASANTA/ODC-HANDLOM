@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import {
   Search,
   Plus,
@@ -14,77 +15,13 @@ import {
 } from 'lucide-react';
 import './Categories.css';
 
-// Initial Mock Data
-const initialCategories = [
-  {
-    id: 1,
-    name: 'Men',
-    description: "Men's fashion and clothing",
-    products: 120,
-    status: true,
-    parent: '',
-    image: 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=100'
-  },
-  {
-    id: 2,
-    name: 'Women',
-    description: "Women's fashion and clothing",
-    products: 95,
-    status: true,
-    parent: '',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100'
-  },
-  {
-    id: 3,
-    name: 'Accessories',
-    description: 'Bags, watches, and more',
-    products: 60,
-    status: true,
-    parent: '',
-    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=100'
-  },
-  {
-    id: 4,
-    name: 'Shoes',
-    description: 'Men and women shoes',
-    products: 80,
-    status: true,
-    parent: 'Accessories',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=100'
-  },
-  {
-    id: 5,
-    name: 'Watches',
-    description: 'Branded watches collection',
-    products: 40,
-    status: true,
-    parent: 'Accessories',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100'
-  }
-];
-
-// Initial Tree Structure
-const initialCategoryTree = [
-  {
-    name: 'Men',
-    open: true,
-    subcategories: ['Shirts', 'T-Shirts', 'Jeans', 'Jackets']
-  },
-  {
-    name: 'Women',
-    open: true,
-    subcategories: ['Tops', 'Dresses', 'Skirts']
-  },
-  {
-    name: 'Accessories',
-    open: true,
-    subcategories: ['Bags', 'Watches', 'Shoes']
-  }
-];
+const API_BASE_URL = 'http://localhost:5000/api/categories';
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100';
 
 const Categories = () => {
-  const [categories, setCategories] = useState(initialCategories);
-  const [categoryTree, setCategoryTree] = useState(initialCategoryTree);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,22 +31,55 @@ const Categories = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Popup Modal State
+  // Modal & Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Form State (Add / Edit)
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     parent: '',
     description: '',
-    image: '',
     status: true
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
-  // Toggle Category Tree Collapse
+  // 1. Fetch Categories from Backend
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(API_BASE_URL);
+      if (res.data && res.data.success) {
+        setCategories(res.data.data);
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      alert('Failed to load categories from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Category Tree State & Logic
+  const [treeState, setTreeState] = useState([]);
+
+  useEffect(() => {
+    const rootCats = categories.filter((c) => !c.parent);
+    const dynamicTree = rootCats.map((root) => ({
+      name: root.name,
+      open: true,
+      subcategories: categories
+        .filter((sub) => sub.parent === root.name)
+        .map((sub) => sub.name)
+    }));
+    setTreeState(dynamicTree);
+  }, [categories]);
+
   const toggleTreeFolder = (index) => {
-    setCategoryTree((prev) =>
+    setTreeState((prev) =>
       prev.map((item, i) => (i === index ? { ...item, open: !item.open } : item))
     );
   };
@@ -127,115 +97,128 @@ const Categories = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, image: imageUrl }));
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  // Open Add Category Modal
-  const handleOpenAddModal = () => {
-    handleResetForm();
-    setIsModalOpen(true);
-  };
-
-  // Save / Update Category
-  const handleSaveCategory = (e) => {
+  // Save / Update Category (Submit to Backend)
+  const handleSaveCategory = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       alert('Please enter a Category Name.');
       return;
     }
 
-    if (editingId) {
-      // Edit Existing
-      setCategories(
-        categories.map((cat) =>
-          cat.id === editingId ? { ...cat, ...formData } : cat
-        )
-      );
-    } else {
-      // Add New Category
-      const newCat = {
-        id: Date.now(),
-        name: formData.name,
-        description: formData.description || 'New category description',
-        products: 0,
-        status: formData.status,
-        parent: formData.parent,
-        image:
-          formData.image ||
-          'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100'
-      };
-      setCategories([...categories, newCat]);
+    const payload = new FormData();
+    payload.append('name', formData.name.trim());
+    payload.append('parent', formData.parent.trim());
+    payload.append('description', formData.description.trim());
+    payload.append('status', formData.status);
+    if (imageFile) {
+      payload.append('image', imageFile);
     }
 
-    handleCloseModal();
+    try {
+      setSaving(true);
+      if (editingId) {
+        // UPDATE (PUT)
+        const res = await axios.put(`${API_BASE_URL}/${editingId}`, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCategories((prev) =>
+            prev.map((cat) => (cat._id === editingId ? res.data.data : cat))
+          );
+        }
+      } else {
+        // CREATE (POST)
+        const res = await axios.post(API_BASE_URL, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCategories((prev) => [res.data.data, ...prev]);
+        }
+      }
+      handleCloseModal();
+    } catch (err) {
+      console.error('Error saving category:', err);
+      alert(err.response?.data?.message || 'Error saving category.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Edit Button Action
-  const handleEdit = (category) => {
-    setEditingId(category.id);
+  // Edit Action
+  const handleEdit = (cat) => {
+    setEditingId(cat._id);
     setFormData({
-      name: category.name,
-      parent: category.parent || '',
-      description: category.description || '',
-      image: category.image || '',
-      status: category.status
+      name: cat.name || '',
+      parent: cat.parent || '',
+      description: cat.description || '',
+      status: Boolean(cat.status)
     });
+    setImagePreview(cat.image || '');
+    setImageFile(null);
     setIsModalOpen(true);
   };
 
   // Delete Action
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to remove this category?')) {
-      setCategories(categories.filter((cat) => cat.id !== id));
-      if (editingId === id) {
-        handleCloseModal();
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
+
+    try {
+      const res = await axios.delete(`${API_BASE_URL}/${id}`);
+      if (res.data && res.data.success) {
+        setCategories((prev) => prev.filter((cat) => cat._id !== id));
+        if (editingId === id) handleCloseModal();
       }
+    } catch (err) {
+      console.error('Error deleting category:', err);
+      alert('Failed to delete category.');
     }
   };
 
-  // Toggle Table Row Status
-  const handleToggleStatus = (id) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === id ? { ...cat, status: !cat.status } : cat
-      )
-    );
+  // Toggle Status Action
+  const handleToggleStatus = async (id) => {
+    try {
+      const res = await axios.patch(`${API_BASE_URL}/${id}/status`);
+      if (res.data && res.data.success) {
+        setCategories((prev) =>
+          prev.map((cat) => (cat._id === id ? res.data.data : cat))
+        );
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Failed to update status.');
+    }
   };
 
-  // Reset Form Inputs
   const handleResetForm = () => {
     setEditingId(null);
     setFormData({
       name: '',
       parent: '',
       description: '',
-      image: '',
       status: true
     });
+    setImageFile(null);
+    setImagePreview('');
   };
 
-  // Close Modal Action
   const handleCloseModal = () => {
     setIsModalOpen(false);
     handleResetForm();
   };
 
-  // Add Root Category to Tree
-  const handleAddRootCategory = () => {
-    const name = prompt('Enter Root Category Name:');
-    if (name) {
-      setCategoryTree((prev) => [...prev, { name, open: true, subcategories: [] }]);
-    }
-  };
-
   // Filtered Logic
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
+      const name = cat.name || '';
+      const desc = cat.description || '';
       const matchesSearch =
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cat.description.toLowerCase().includes(searchTerm.toLowerCase());
+        name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        desc.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
         statusFilter === 'All Status' ||
@@ -255,7 +238,7 @@ const Categories = () => {
 
   return (
     <div className="cat-container">
-      {/* TOP HEADER BAR */}
+      {/* HEADER */}
       <div className="cat-header">
         <div className="cat-title-area">
           <div className="cat-badge">{categories.length}</div>
@@ -264,52 +247,59 @@ const Categories = () => {
             <p className="cat-subtitle">Organize your products into categories.</p>
           </div>
         </div>
-        <button className="btn-add-header" onClick={handleOpenAddModal}>
+        <button
+          className="btn-add-header"
+          onClick={() => {
+            handleResetForm();
+            setIsModalOpen(true);
+          }}
+        >
           <Plus size={16} />
           <span>Add New Category</span>
         </button>
       </div>
 
-      {/* TWO COLUMN GRID LAYOUT */}
+      {/* MAIN GRID */}
       <div className="cat-main-grid">
-        {/* LEFT COLUMN: CATEGORY TREE */}
+        {/* CATEGORY TREE */}
         <div className="card cat-left-col">
           <h3 className="card-heading">Category Tree</h3>
 
           <div className="tree-wrapper">
-            {categoryTree.map((item, idx) => (
-              <div key={item.name} className="tree-group">
-                <div
-                  className="tree-parent"
-                  onClick={() => toggleTreeFolder(idx)}
-                >
-                  {item.open ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
-                  <span>{item.name}</span>
-                </div>
-
-                {item.open && (
-                  <div className="tree-sub-list">
-                    {item.subcategories.map((sub) => (
-                      <div key={sub} className="tree-sub-item">
-                        <span className="tree-line"></span>
-                        <span className="tree-sub-text">{sub}</span>
-                      </div>
-                    ))}
+            {treeState.length > 0 ? (
+              treeState.map((item, idx) => (
+                <div key={item.name + idx} className="tree-group">
+                  <div className="tree-parent" onClick={() => toggleTreeFolder(idx)}>
+                    {item.open ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                    <span>{item.name}</span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
 
-          <button className="btn-add-root" onClick={handleAddRootCategory}>
-            <Plus size={14} />
-            <span>Add Root Category</span>
-          </button>
+                  {item.open && (
+                    <div className="tree-sub-list">
+                      {item.subcategories.length > 0 ? (
+                        item.subcategories.map((sub, sIdx) => (
+                          <div key={sub + sIdx} className="tree-sub-item">
+                            <span className="tree-line"></span>
+                            <span className="tree-sub-text">{sub}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <span className="tree-sub-text" style={{ fontStyle: 'italic', paddingLeft: 12 }}>
+                          No subcategories
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: '12px', color: '#9CA3AF' }}>No categories created yet.</p>
+            )}
+          </div>
         </div>
 
-        {/* RIGHT COLUMN: CATEGORIES TABLE */}
+        {/* TABLE & CONTROLS */}
         <div className="card cat-center-col">
-          {/* SEARCH & FILTER CONTROLS */}
           <div className="table-controls">
             <div className="search-input-wrapper">
               <Search size={16} className="search-icon" />
@@ -345,7 +335,6 @@ const Categories = () => {
             </div>
           </div>
 
-          {/* TABLE CONTAINER */}
           <div className="table-wrapper">
             <table className="categories-table">
               <thead>
@@ -358,42 +347,43 @@ const Categories = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="no-data-cell">
+                      Loading data...
+                    </td>
+                  </tr>
+                ) : currentItems.length > 0 ? (
                   currentItems.map((cat) => (
-                    <tr key={cat.id}>
-                      {/* Image & Title */}
+                    <tr key={cat._id}>
                       <td>
                         <div className="category-cell">
                           <img
-                            src={cat.image}
+                            src={cat.image || FALLBACK_IMAGE}
                             alt={cat.name}
                             className="cat-thumb"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = FALLBACK_IMAGE;
+                            }}
                           />
                           <span className="cat-name-text">{cat.name}</span>
                         </div>
                       </td>
-
-                      {/* Description */}
-                      <td className="cat-desc-text">{cat.description}</td>
-
-                      {/* Products Count */}
+                      <td className="cat-desc-text">{cat.description || '-'}</td>
                       <td style={{ textAlign: 'center', fontWeight: 500 }}>
-                        {cat.products}
+                        {cat.products || 0}
                       </td>
-
-                      {/* Status Toggle Switch */}
                       <td style={{ textAlign: 'center' }}>
                         <label className="switch">
                           <input
                             type="checkbox"
-                            checked={cat.status}
-                            onChange={() => handleToggleStatus(cat.id)}
+                            checked={Boolean(cat.status)}
+                            onChange={() => handleToggleStatus(cat._id)}
                           />
                           <span className="slider round"></span>
                         </label>
                       </td>
-
-                      {/* Action Edit/Delete */}
                       <td>
                         <div className="action-buttons-cell">
                           <button
@@ -405,7 +395,7 @@ const Categories = () => {
                           </button>
                           <button
                             className="btn-action delete"
-                            onClick={() => handleDelete(cat.id)}
+                            onClick={() => handleDelete(cat._id)}
                             title="Remove Category"
                           >
                             <Trash2 size={15} />
@@ -425,7 +415,7 @@ const Categories = () => {
             </table>
           </div>
 
-          {/* PAGINATION FOOTER */}
+          {/* PAGINATION */}
           <div className="table-footer">
             <span className="footer-info">
               Showing {totalEntries === 0 ? 0 : indexOfFirstItem + 1} to{' '}
@@ -463,7 +453,7 @@ const Categories = () => {
         </div>
       </div>
 
-      {/* POPUP MODAL FOR ADD / EDIT CATEGORY */}
+      {/* POPUP MODAL */}
       {isModalOpen && (
         <div className="modal-backdrop" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -475,7 +465,6 @@ const Categories = () => {
             </div>
 
             <form onSubmit={handleSaveCategory} className="category-form">
-              {/* Category Name */}
               <div className="form-group">
                 <label>Category Name</label>
                 <input
@@ -488,7 +477,6 @@ const Categories = () => {
                 />
               </div>
 
-              {/* Parent Category */}
               <div className="form-group">
                 <label>Parent Category</label>
                 <select
@@ -496,18 +484,17 @@ const Categories = () => {
                   value={formData.parent}
                   onChange={handleInputChange}
                 >
-                  <option value="">Select Parent Category</option>
+                  <option value="">Select Parent Category (None)</option>
                   {categories
-                    .filter((c) => c.id !== editingId)
+                    .filter((c) => c._id !== editingId)
                     .map((c) => (
-                      <option key={c.id} value={c.name}>
+                      <option key={c._id} value={c.name}>
                         {c.name}
                       </option>
                     ))}
                 </select>
               </div>
 
-              {/* Description */}
               <div className="form-group">
                 <label>Description</label>
                 <textarea
@@ -519,13 +506,12 @@ const Categories = () => {
                 />
               </div>
 
-              {/* Category Image Upload */}
               <div className="form-group">
                 <label>Category Image</label>
                 <div className="upload-box-wrapper">
-                  {formData.image ? (
+                  {imagePreview ? (
                     <div className="image-preview-container">
-                      <img src={formData.image} alt="Preview" className="uploaded-preview" />
+                      <img src={imagePreview} alt="Preview" className="uploaded-preview" />
                       <label className="reupload-btn">
                         Change Image
                         <input
@@ -551,7 +537,6 @@ const Categories = () => {
                 </div>
               </div>
 
-              {/* Status Toggle */}
               <div className="form-group toggle-group">
                 <label>Status</label>
                 <div className="status-inline">
@@ -570,17 +555,17 @@ const Categories = () => {
                 </div>
               </div>
 
-              {/* Form Actions Buttons */}
               <div className="form-actions">
                 <button
                   type="button"
                   className="btn-cancel"
                   onClick={handleCloseModal}
+                  disabled={saving}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-save">
-                  {editingId ? 'Update Category' : 'Save Category'}
+                <button type="submit" className="btn-save" disabled={saving}>
+                  {saving ? 'Saving...' : editingId ? 'Update Category' : 'Save Category'}
                 </button>
               </div>
             </form>

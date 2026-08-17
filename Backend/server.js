@@ -7,6 +7,9 @@ const path = require("path");
 const fs = require("fs");
 
 const customerRoutes = require('./routes/customerRoutes');
+const productRoutes = require('./routes/productRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const collectionRoutes = require('./routes/collectionRoutes');
 
 const app = express();
 const refundRoutes = require('./routes/refundRoutes');
@@ -18,6 +21,18 @@ const uploadDir = path.join(__dirname, "uploads/banners");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+// Folders ensure karein
+const uploadsBase = path.join(__dirname, "uploads");
+const categoryUploads = path.join(__dirname, "uploads/categories");
+const collectionUploads = path.join(__dirname, "uploads/collections");
+const bannerUploads = path.join(__dirname, "uploads/banners");
+
+[uploadsBase, categoryUploads, collectionUploads, bannerUploads].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 // Global Middlewares
 app.use(cors());
@@ -39,15 +54,17 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-
 connectDB();
 
 // API Routes
 app.use('/api/customers', customerRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/collections', collectionRoutes);
 
 // Health Check Route
 app.get("/", (req, res) => {
-  res.json({ status: "running", message: "ODC Handloom Banner API is active" });
+  res.json({ status: "running", message: "API is active" });
 });
 
 // Global Error Handler Middleware
@@ -60,7 +77,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
