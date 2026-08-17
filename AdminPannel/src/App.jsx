@@ -76,6 +76,7 @@ function App() {
          
           
           {/* 4. Marketing */}
+         
           <Route path="marketing/banner-sliders" element={<Banner />} />
           <Route path="marketing/flash-sale" element={<Flashsale/>}/>
           <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
