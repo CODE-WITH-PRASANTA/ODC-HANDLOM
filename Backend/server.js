@@ -9,7 +9,10 @@ const fs = require("fs");
 const customerRoutes = require('./routes/customerRoutes');
 
 const app = express();
-
+const refundRoutes = require('./routes/refundRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
+const flashSaleRoutes = require('./routes/flashSaleRoutes');
 // Ensure uploads directory exists on server startup
 const uploadDir = path.join(__dirname, "uploads/banners");
 if (!fs.existsSync(uploadDir)) {
@@ -20,10 +23,12 @@ if (!fs.existsSync(uploadDir)) {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/api/refunds', refundRoutes);
 // Serve static uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/flashsales', flashSaleRoutes);
 // MongoDB Database Connection
 const connectDB = async () => {
   try {
