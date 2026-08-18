@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   Plus,
-  Filter,
   Edit3,
   Trash2,
   ChevronLeft,
@@ -12,61 +11,11 @@ import {
   X
 } from 'lucide-react';
 import './Brands.css';
-
-// Initial Mock Data with working Google CDN Logo Links
-const initialBrands = [
-  {
-    id: 1,
-    name: 'Nike',
-    description: 'Just Do It',
-    products: 45,
-    status: true,
-    logo: 'https://cdn.iconscout.com/icon/free/png-256/free-nike-logo-icon-download-in-svg-png-gif-file-formats--brand-app-social-media-pack-logos-icons-226404.png'
-  },
-  {
-    id: 2,
-    name: 'Adidas',
-    description: 'Impossible is Nothing',
-    products: 38,
-    status: true,
-    logo: 'https://cdn.iconscout.com/icon/free/png-256/free-adidas-logo-icon-download-in-svg-png-gif-file-formats--app-social-media-company-brand-pack-logos-icons-226402.png'
-  },
-  {
-    id: 3,
-    name: 'Puma',
-    description: 'Forever Faster',
-    products: 22,
-    status: true,
-    logo: 'https://cdn.iconscout.com/icon/free/png-256/free-puma-logo-icon-download-in-svg-png-gif-file-formats--brand-fashion-app-social-media-pack-logos-icons-226408.png'
-  },
-  {
-    id: 4,
-    name: 'Rolex',
-    description: 'A Crown for Every Achievement',
-    products: 18,
-    status: true,
-    logo: 'https://upload.wikimedia.org/wikipedia/en/9/95/Rolex_logo.svg'
-  },
-  {
-    id: 5,
-    name: 'Fossil',
-    description: 'Vintage Inspired',
-    products: 15,
-    status: true,
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Fossil_Group_logo.svg'
-  },
-  {
-    id: 6,
-    name: 'Reebok',
-    description: 'Life is Not a Spectator Sport',
-    products: 12,
-    status: false,
-    logo: 'https://cdn.iconscout.com/icon/free/png-256/free-reebok-logo-icon-download-in-svg-png-gif-file-formats--company-brand-social-media-pack-logos-icons-226406.png'
-  }
-];
+import API, { IMG_URL } from "../../api/axios";
 
 const Brands = () => {
-  const [brands, setBrands] = useState(initialBrands);
+  const [brands, setBrands] = useState([]);
+  const [stats, setStats] = useState({ totalBrands: 0, activeBrands: 0, inactiveBrands: 0 });
 
   // Filters & Search State
   const [searchTerm, setSearchTerm] = useState('');
@@ -84,14 +33,33 @@ const Brands = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    logo: '',
     status: true
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
 
-  // Calculate Stats Dynamically
-  const totalBrandsCount = brands.length + 18;
-  const activeBrandsCount = brands.filter((b) => b.status).length + 15;
-  const inactiveBrandsCount = brands.filter((b) => !b.status).length + 3;
+  // Fetch data from backend using custom API client
+  const fetchBrands = async () => {
+    try {
+      const queryParams = new URLSearchParams();
+      if (searchTerm) queryParams.append('search', searchTerm);
+      if (statusFilter && statusFilter !== 'All Status') queryParams.append('status', statusFilter);
+
+      const response = await API.get(`/brands?${queryParams.toString()}`);
+      const result = response.data;
+      
+      if (result.success) {
+        setBrands(result.data || []);
+        setStats(result.stats || { totalBrands: 0, activeBrands: 0, inactiveBrands: 0 });
+      }
+    } catch (error) {
+      console.error('Error fetching brands:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBrands();
+  }, [searchTerm, statusFilter]);
 
   // Input Change Handler
   const handleInputChange = (e) => {
@@ -102,12 +70,12 @@ const Brands = () => {
     }));
   };
 
-  // Upload Logo Action
+  // Upload Logo Action with cleanup
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const logoUrl = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, logo: logoUrl }));
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -117,68 +85,86 @@ const Brands = () => {
     setIsModalOpen(true);
   };
 
-  // Save / Update Brand
-  const handleSaveBrand = (e) => {
+  // Save / Update Brand Backend Integration
+  const handleSaveBrand = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       alert('Please enter a Brand Name.');
       return;
     }
 
-    if (editingId) {
-      setBrands(
-        brands.map((b) =>
-          b.id === editingId
-            ? { ...b, ...formData }
-            : b
-        )
-      );
-    } else {
-      const newBrand = {
-        id: Date.now(),
-        name: formData.name,
-        description: formData.description || 'Brand tag line',
-        products: 0,
-        status: formData.status,
-        logo:
-          formData.logo ||
-          'https://cdn.iconscout.com/icon/free/png-256/free-nike-logo-icon-download-in-svg-png-gif-file-formats--brand-app-social-media-pack-logos-icons-226404.png'
-      };
-      setBrands([newBrand, ...brands]);
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('description', formData.description);
+    data.append('status', formData.status);
+    if (selectedFile) {
+      data.append('logo', selectedFile);
     }
 
-    handleCloseModal();
+    try {
+      let response;
+      if (editingId) {
+        response = await API.put(`/brands/${editingId}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        response = await API.post('/brands', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      }
+
+      const result = response.data;
+      if (result.success) {
+        await fetchBrands();
+        handleCloseModal();
+      } else {
+        alert(result.message || 'Error saving brand');
+      }
+    } catch (error) {
+      console.error('Error saving brand:', error);
+      alert('Network error while saving brand.');
+    }
   };
 
   // Edit Action
   const handleEdit = (brand) => {
-    setEditingId(brand.id);
+    setEditingId(brand._id);
     setFormData({
       name: brand.name,
       description: brand.description || '',
-      logo: brand.logo || '',
       status: brand.status
     });
+    setPreviewUrl(brand.logo ? `${IMG_URL}${brand.logo}` : '');
+    setSelectedFile(null);
     setIsModalOpen(true);
   };
 
   // Delete Action
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to remove this brand?')) {
-      setBrands(brands.filter((b) => b.id !== id));
-      if (editingId === id) {
-        handleCloseModal();
+      try {
+        const response = await API.delete(`/brands/${id}`);
+        const result = response.data;
+        if (result.success) {
+          fetchBrands();
+        }
+      } catch (error) {
+        console.error('Error deleting brand:', error);
       }
     }
   };
 
   // Status Toggle
-  const handleToggleStatus = (id) => {
-    setBrands(
-      brands.map((b) =>
-        b.id === id ? { ...b, status: !b.status } : b
-      )
-    );
+  const handleToggleStatus = async (id) => {
+    try {
+      const response = await API.patch(`/brands/${id}/status`);
+      const result = response.data;
+      if (result.success) {
+        fetchBrands();
+      }
+    } catch (error) {
+      console.error('Error toggling status:', error);
+    }
   };
 
   // Reset Form Inputs
@@ -187,9 +173,10 @@ const Brands = () => {
     setFormData({
       name: '',
       description: '',
-      logo: '',
       status: true
     });
+    setSelectedFile(null);
+    setPreviewUrl('');
   };
 
   // Close Modal Action
@@ -198,26 +185,11 @@ const Brands = () => {
     handleResetForm();
   };
 
-  // Filter Logic
-  const filteredBrands = useMemo(() => {
-    return brands.filter((brand) => {
-      const matchesSearch =
-        brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        brand.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === 'All Status' ||
-        (statusFilter === 'Active' && brand.status) ||
-        (statusFilter === 'Inactive' && !brand.status);
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [brands, searchTerm, statusFilter]);
-
   // Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredBrands.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = brands.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(brands.length / itemsPerPage) || 1;
 
   return (
     <div className="brands-container">
@@ -237,24 +209,22 @@ const Brands = () => {
 
       {/* TWO COLUMN GRID */}
       <div className="brands-main-grid">
-        
         {/* LEFT COLUMN */}
         <div className="brands-left-col">
           <div className="card stats-card">
             <h3 className="card-heading">Brand Stats</h3>
-            
             <div className="stats-list">
               <div className="stat-row">
                 <span className="stat-label">Total Brands</span>
-                <span className="stat-badge neutral">{totalBrandsCount}</span>
+                <span className="stat-badge neutral">{stats.totalBrands}</span>
               </div>
               <div className="stat-row">
                 <span className="stat-label">Active Brands</span>
-                <span className="stat-badge green">{activeBrandsCount}</span>
+                <span className="stat-badge green">{stats.activeBrands}</span>
               </div>
               <div className="stat-row">
                 <span className="stat-label">Inactive Brands</span>
-                <span className="stat-badge red">{inactiveBrandsCount}</span>
+                <span className="stat-badge red">{stats.inactiveBrands}</span>
               </div>
             </div>
           </div>
@@ -264,15 +234,12 @@ const Brands = () => {
               <FileText size={18} className="note-icon" />
               <h4>Note</h4>
             </div>
-            <p>
-              Only active brands will be visible on the storefront.
-            </p>
+            <p>Only active brands will be visible on the storefront.</p>
           </div>
         </div>
 
         {/* CENTER COLUMN: TABLE */}
         <div className="card brands-center-col">
-          
           <div className="table-controls">
             <div className="search-input-wrapper">
               <Search size={16} className="search-icon" />
@@ -300,11 +267,6 @@ const Brands = () => {
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
-
-              <button className="btn-filter-icon">
-                <Filter size={15} />
-                <span>Filter</span>
-              </button>
             </div>
           </div>
 
@@ -322,34 +284,30 @@ const Brands = () => {
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((brand) => (
-                    <tr key={brand.id}>
+                    <tr key={brand._id}>
                       <td>
                         <div className="brand-logo-cell">
                           <img
-                            src={brand.logo}
+                            src={brand.logo ? `${IMG_URL}${brand.logo}` : 'https://placehold.co/100'}
                             alt={brand.name}
                             className="brand-logo-img"
                           />
                         </div>
                       </td>
-
                       <td className="brand-desc-text">{brand.description}</td>
-
                       <td style={{ textAlign: 'center', fontWeight: 500 }}>
-                        {brand.products}
+                        {brand.products || 0}
                       </td>
-
                       <td style={{ textAlign: 'center' }}>
                         <label className="switch">
                           <input
                             type="checkbox"
                             checked={brand.status}
-                            onChange={() => handleToggleStatus(brand.id)}
+                            onChange={() => handleToggleStatus(brand._id)}
                           />
                           <span className="slider round"></span>
                         </label>
                       </td>
-
                       <td>
                         <div className="action-buttons-cell">
                           <button
@@ -361,7 +319,7 @@ const Brands = () => {
                           </button>
                           <button
                             className="btn-action delete"
-                            onClick={() => handleDelete(brand.id)}
+                            onClick={() => handleDelete(brand._id)}
                             title="Remove Brand"
                           >
                             <Trash2 size={15} />
@@ -383,7 +341,7 @@ const Brands = () => {
 
           <div className="table-footer">
             <span className="footer-info">
-              Showing 1 to {currentItems.length} of 24 brands
+              Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, brands.length)} of {brands.length} brands
             </span>
 
             <div className="pagination">
@@ -395,45 +353,18 @@ const Brands = () => {
                 <ChevronLeft size={16} />
               </button>
 
-              <button
-                className={`page-num ${currentPage === 1 ? 'active' : ''}`}
-                onClick={() => setCurrentPage(1)}
-              >
-                1
-              </button>
-              <button
-                className={`page-num ${currentPage === 2 ? 'active' : ''}`}
-                onClick={() => setCurrentPage(2)}
-              >
-                2
-              </button>
-              <button
-                className={`page-num ${currentPage === 3 ? 'active' : ''}`}
-                onClick={() => setCurrentPage(3)}
-              >
-                3
-              </button>
-
-              <span className="page-ellipsis">...</span>
-
-              <button
-                className={`page-num ${currentPage === 5 ? 'active' : ''}`}
-                onClick={() => setCurrentPage(5)}
-              >
-                5
-              </button>
+              <span className="page-num active">{currentPage} / {totalPages}</span>
 
               <button
                 className="page-nav"
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, 5))}
-                disabled={currentPage === 5}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages}
               >
                 <ChevronRight size={16} />
               </button>
             </div>
           </div>
         </div>
-
       </div>
 
       {/* POPUP MODAL FOR ADD / EDIT BRAND */}
@@ -472,16 +403,16 @@ const Brands = () => {
               </div>
 
               <div className="form-group">
-                <label>Brand Logo</label>
+                <label>Brand Logo (Supports WebP / PNG / JPG)</label>
                 <div className="upload-box-wrapper">
-                  {formData.logo ? (
+                  {previewUrl ? (
                     <div className="image-preview-container">
-                      <img src={formData.logo} alt="Preview" className="uploaded-preview" />
+                      <img src={previewUrl} alt="Preview" className="uploaded-preview" />
                       <label className="reupload-btn">
                         Change Logo
                         <input
                           type="file"
-                          accept="image/*"
+                          accept="image/webp, image/png, image/jpeg"
                           onChange={handleLogoUpload}
                           hidden
                         />
@@ -493,7 +424,7 @@ const Brands = () => {
                       <span>Click to Upload Logo</span>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/webp, image/png, image/jpeg"
                         onChange={handleLogoUpload}
                         hidden
                       />

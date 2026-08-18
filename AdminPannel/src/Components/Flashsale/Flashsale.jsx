@@ -1,91 +1,54 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Flashsale.css';
-
-const initialFlashSales = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=150&q=80',
-    title: 'Adidas Shoes Black',
-    rating: 4.8,
-    originalPrice: 7999,
-    salePrice: 3499,
-    discount: 56,
-    createdAt: '14 May 2025, 10:30 AM',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=150&q=80',
-    title: 'Armani Wide-Leg Trousers',
-    rating: 4.5,
-    originalPrice: 1599,
-    salePrice: 1199,
-    discount: 25,
-    createdAt: '14 May 2025, 10:25 AM',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=150&q=80',
-    title: 'Zara Shoes Green',
-    rating: 4.5,
-    originalPrice: 5699,
-    salePrice: 3999,
-    discount: 25,
-    createdAt: '14 May 2025, 10:20 AM',
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=150&q=80',
-    title: 'Wayfarer Sunglasses',
-    rating: 4.6,
-    originalPrice: 1599,
-    salePrice: 1299,
-    discount: 18,
-    createdAt: '14 May 2025, 10:15 AM',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=150&q=80',
-    title: 'Tissot Classic Watch',
-    rating: 5.0,
-    originalPrice: 69999,
-    salePrice: 49999,
-    discount: 28,
-    createdAt: '14 May 2025, 10:10 AM',
-  },
-];
 
 const Flashsale = () => {
   const defaultImage =
     'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80';
 
-  // Form State
-  const [productTitle, setProductTitle] = useState('Zara Shoes Green');
+  // Form State & Editing ID
+  const [editingId, setEditingId] = useState(null);
+  const [productTitle, setProductTitle] = useState('');
   const [rating, setRating] = useState(4.5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [description, setDescription] = useState(
-    'Premium comfort and stylish design built for everyday performance and all-day wear.'
-  );
-  const [originalPrice, setOriginalPrice] = useState('5699.00');
-  const [salePrice, setSalePrice] = useState('3999.00');
-  const [discountPercent, setDiscountPercent] = useState('25');
+  const [description, setDescription] = useState('');
+  const [originalPrice, setOriginalPrice] = useState('');
+  const [salePrice, setSalePrice] = useState('');
+  const [discountPercent, setDiscountPercent] = useState('0');
   
   // Image & File State
   const [imagePreview, setImagePreview] = useState(defaultImage);
-  const [uploadedFileName, setUploadedFileName] = useState('zara-shoes-green.jpg');
-  const [uploadedFileSize, setUploadedFileSize] = useState('245 KB');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const [uploadedFileSize, setUploadedFileSize] = useState('');
 
   // Table State
-  const [flashSales, setFlashSales] = useState(initialFlashSales);
+  const [flashSales, setFlashSales] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activePage, setActivePage] = useState(1);
 
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
 
+  // Fetch Flash Sales from Backend on Load
+  const fetchFlashSales = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/flashsales');
+      const data = await response.json();
+      setFlashSales(data);
+    } catch (error) {
+      console.error('Error fetching flash sales:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFlashSales();
+  }, []);
+
   // Image Upload Handler
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file);
       const imageUrl = URL.createObjectURL(file);
       setImagePreview(imageUrl);
       setUploadedFileName(file.name);
@@ -96,6 +59,7 @@ const Flashsale = () => {
   // Remove Uploaded Image
   const handleRemoveImage = () => {
     setImagePreview(defaultImage);
+    setSelectedFile(null);
     setUploadedFileName('');
     setUploadedFileSize('');
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -115,43 +79,99 @@ const Flashsale = () => {
 
   // Reset Form
   const handleReset = () => {
+    setEditingId(null);
     setProductTitle('');
-    setRating(0);
+    setRating(4.5);
     setDescription('');
     setOriginalPrice('');
     setSalePrice('');
     setDiscountPercent('0');
     setImagePreview(defaultImage);
+    setSelectedFile(null);
     setUploadedFileName('');
     setUploadedFileSize('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // Add Flash Sale to Table
-  const handleSubmit = (e) => {
+  // Submit Form (Create or Update)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newSale = {
-      id: flashSales.length + 1,
-      image: imagePreview,
-      title: productTitle || 'Untitled Product',
-      rating: rating || 5.0,
-      originalPrice: parseFloat(originalPrice) || 0,
-      salePrice: parseFloat(salePrice) || 0,
-      discount: parseInt(discountPercent, 10) || 0,
-      createdAt: 'Just now',
-    };
 
-    setFlashSales([newSale, ...flashSales]);
-    alert('Flash sale item added to the list successfully!');
+    const formData = new FormData();
+    formData.append('title', productTitle);
+    formData.append('rating', rating);
+    formData.append('description', description);
+    formData.append('originalPrice', originalPrice);
+    formData.append('salePrice', salePrice);
+    formData.append('discount', discountPercent);
+    formData.append('image', imagePreview);
+    if (selectedFile) {
+      formData.append('imageFile', selectedFile);
+    }
+
+    try {
+      if (editingId) {
+        // Update Request
+        const response = await fetch(`http://localhost:5000/api/flashsales/${editingId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+        if (response.ok) {
+          alert('Flash sale item updated successfully!');
+          fetchFlashSales();
+          handleReset();
+        }
+      } else {
+        // Create Request
+        const response = await fetch('http://localhost:5000/api/flashsales', {
+          method: 'POST',
+          body: formData,
+        });
+        if (response.ok) {
+          alert('Flash sale item added successfully!');
+          fetchFlashSales();
+          handleReset();
+        }
+      }
+    } catch (error) {
+      console.error('Error saving flash sale item:', error);
+      alert('Failed to save flash sale item.');
+    }
+  };
+
+  // Handle Edit Click - Load data into form
+  const handleEditClick = (item) => {
+    setEditingId(item._id);
+    setProductTitle(item.title);
+    setRating(item.rating);
+    setDescription(item.description || '');
+    setOriginalPrice(item.originalPrice.toString());
+    setSalePrice(item.salePrice.toString());
+    setDiscountPercent(item.discount.toString());
+    setImagePreview(item.image.startsWith('/uploads') ? `http://localhost:5000${item.image}` : item.image);
+    setUploadedFileName('');
+    setUploadedFileSize('');
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Delete Action
-  const handleDelete = (id) => {
-    setFlashSales(flashSales.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this flash sale item?')) return;
+    try {
+      const response = await fetch(`http://localhost:5000/api/flashsales/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        fetchFlashSales();
+      }
+    } catch (error) {
+      console.error('Error deleting flash sale item:', error);
+    }
   };
 
-  // Scroll smoothly to form when top button clicked
+  // Scroll smoothly to form
   const handleScrollToForm = () => {
+    handleReset();
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -168,7 +188,7 @@ const Flashsale = () => {
         <header className="flashsale-header">
           <div className="header-title-wrap">
             <span className="header-icon">⚡</span>
-            <h1 className="header-title">Create Flash Sale</h1>
+            <h1 className="header-title">{editingId ? 'Edit Flash Sale' : 'Create Flash Sale'}</h1>
           </div>
           <p className="header-subtitle">Add product details for flash sale</p>
         </header>
@@ -319,7 +339,6 @@ const Flashsale = () => {
               />
 
               {uploadedFileName ? (
-                /* Uploaded File Chip / Status */
                 <div className="uploaded-file-card">
                   <div className="uploaded-file-info">
                     <img src={imagePreview} alt="thumb" className="uploaded-thumbnail" />
@@ -338,7 +357,6 @@ const Flashsale = () => {
                   </button>
                 </div>
               ) : (
-                /* Dropzone to upload */
                 <div
                   className="upload-dropzone"
                   onClick={() => fileInputRef.current?.click()}
@@ -367,7 +385,7 @@ const Flashsale = () => {
                 Reset
               </button>
               <button type="submit" className="btn btn-primary">
-                <span>⊕</span> Add Flash Sale
+                <span>⊕</span> {editingId ? 'Update Flash Sale' : 'Add Flash Sale'}
               </button>
             </div>
           </form>
@@ -380,7 +398,6 @@ const Flashsale = () => {
                 <p className="preview-subtitle">This is how your flash sale item will appear</p>
               </div>
 
-              {/* Product Preview Card */}
               <div className="product-card">
                 <div className="card-image-box">
                   {discountPercent && discountPercent !== '0' && (
@@ -391,23 +408,6 @@ const Flashsale = () => {
                     alt={productTitle || 'Product'}
                     className="preview-image"
                   />
-                  <button type="button" className="btn-quick-view">
-                    <svg className="quick-view-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                    Quick View
-                  </button>
                 </div>
 
                 <div className="card-content">
@@ -441,9 +441,7 @@ const Flashsale = () => {
 
         </div>
 
-        {/* ---------------------------------------------------- */}
         {/* Table Section: Flash Sale List */}
-        {/* ---------------------------------------------------- */}
         <section className="flashsale-list-section">
           
           <div className="list-top-bar">
@@ -453,7 +451,6 @@ const Flashsale = () => {
             </div>
 
             <div className="list-actions-bar">
-              {/* Search Bar */}
               <div className="table-search-box">
                 <input
                   type="text"
@@ -462,17 +459,8 @@ const Flashsale = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="table-search-input"
                 />
-                <svg className="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
               </div>
 
-              {/* Add New Flash Sale Button */}
               <button
                 type="button"
                 onClick={handleScrollToForm}
@@ -483,7 +471,6 @@ const Flashsale = () => {
             </div>
           </div>
 
-          {/* Data Table */}
           <div className="table-responsive">
             <table className="flashsale-table">
               <thead>
@@ -502,14 +489,15 @@ const Flashsale = () => {
               <tbody>
                 {filteredSales.length > 0 ? (
                   filteredSales.map((item, index) => (
-                    <tr
-                      key={item.id}
-                      className={index === 2 ? 'row-highlighted' : ''}
-                    >
+                    <tr key={item._id}>
                       <td className="col-index">{index + 1}</td>
                       <td className="col-image">
                         <div className="table-image-wrapper">
-                          <img src={item.image} alt={item.title} className="table-img" />
+                          <img 
+                            src={item.image.startsWith('/uploads') ? `http://localhost:5000${item.image}` : item.image} 
+                            alt={item.title} 
+                            className="table-img" 
+                          />
                         </div>
                       </td>
                       <td className="col-title">{item.title}</td>
@@ -532,7 +520,7 @@ const Flashsale = () => {
                             type="button"
                             className="btn-action btn-edit"
                             title="Edit"
-                            onClick={() => alert(`Edit item: ${item.title}`)}
+                            onClick={() => handleEditClick(item)}
                           >
                             ✎
                           </button>
@@ -540,7 +528,7 @@ const Flashsale = () => {
                             type="button"
                             className="btn-action btn-delete"
                             title="Delete"
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => handleDelete(item._id)}
                           >
                             🗑
                           </button>
@@ -559,38 +547,10 @@ const Flashsale = () => {
             </table>
           </div>
 
-          {/* Table Footer / Pagination */}
           <div className="table-footer">
             <p className="entries-text">
-              Showing 1 to {filteredSales.length} of 15 entries
+              Showing 1 to {filteredSales.length} of {flashSales.length} entries
             </p>
-            <div className="pagination">
-              <button
-                type="button"
-                className="page-nav-btn"
-                disabled={activePage === 1}
-                onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
-              >
-                ‹
-              </button>
-              {[1, 2, 3].map((page) => (
-                <button
-                  type="button"
-                  key={page}
-                  className={`page-num-btn ${activePage === page ? 'page-active' : ''}`}
-                  onClick={() => setActivePage(page)}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="page-nav-btn"
-                onClick={() => setActivePage((prev) => prev + 1)}
-              >
-                ›
-              </button>
-            </div>
           </div>
 
         </section>
