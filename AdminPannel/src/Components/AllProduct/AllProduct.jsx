@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useMemo } from 'react';
+import api from '../../api/axios'; 
 import { 
   FiBox, 
   FiTag, 
@@ -19,11 +19,13 @@ import {
 } from 'react-icons/fi';
 import './AllProduct.css';
 
-const API_BASE_URL = 'http://localhost:5000/api/products';
+const FALLBACK_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=200';
 
 const AllProduct = () => {
   const [productsList, setProductsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // Calendar date range state
   const [dateRange, setDateRange] = useState('01 May 2025 - 31 May 2025');
@@ -58,7 +60,7 @@ const AllProduct = () => {
     name: '',
     desc: '',
     sku: '',
-    category: 'Sarees',
+    category: '',
     price: '',
     stock: '',
     status: 'Active'
@@ -69,11 +71,11 @@ const AllProduct = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
-  // 1. Fetch Products from Backend (Handles both { success, data } and raw array formats)
+  // 1. Fetch Products using imported api instance
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(API_BASE_URL);
+      const res = await api.get('/products');
       if (res.data && res.data.success && Array.isArray(res.data.data)) {
         setProductsList(res.data.data);
       } else if (Array.isArray(res.data)) {
@@ -88,16 +90,39 @@ const AllProduct = () => {
     }
   };
 
+  // 2. Fetch Categories dynamically using imported api instance
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get('/categories');
+      if (res.data && res.data.success && Array.isArray(res.data.data)) {
+        const activeCats = res.data.data
+          .filter(cat => cat.status === true || cat.status === 'Active')
+          .map(cat => cat.name);
+        setCategoriesList(activeCats);
+      } else if (Array.isArray(res.data)) {
+        setCategoriesList(res.data.map(cat => cat.name));
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      setCategoriesList(['Sarees', 'Dupattas', 'Dress Materials', 'Home Textiles', 'Home Decor', 'Stoles']);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
-  // 2. Add or Edit Product Submit
+  // 3. Add or Edit Product Submit
   const handleSubmitProduct = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.price) return;
+    if (!formData.name.trim() || !formData.price || !formData.category) {
+      alert('Please fill product name, category and price.');
+      return;
+    }
 
     try {
+      setSaving(true);
       const payload = {
         name: formData.name.trim(),
         desc: formData.desc.trim(),
@@ -109,23 +134,36 @@ const AllProduct = () => {
       };
 
       if (isEditing && currentProductId) {
-        await axios.put(`${API_BASE_URL}/${currentProductId}`, payload);
+        const res = await api.put(`/products/${currentProductId}`, payload);
+        if (res.data && res.data.success) {
+          setProductsList(prev =>
+            prev.map(p => (p._id === currentProductId ? res.data.data : p))
+          );
+        }
       } else {
-        await axios.post(API_BASE_URL, payload);
+        const res = await api.post('/products', payload);
+        if (res.data && res.data.success) {
+          setProductsList(prev => [res.data.data, ...prev]);
+        }
       }
 
-      await fetchProducts(); // List refresh
-      closeModal();          // Modal close and reset
+      closeModal();
     } catch (err) {
       console.error('Error saving product:', err.response?.data || err.message);
-      alert('Product save karne mein error aayi: ' + (err.response?.data?.message || err.message));
+      alert('Error saving product: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setSaving(false);
     }
   };
+
   // Open modal for Create
   const handleOpenAddModal = () => {
     setIsEditing(false);
     setCurrentProductId(null);
-    setFormData(initialFormState);
+    setFormData({
+      ...initialFormState,
+      category: categoriesList.length > 0 ? categoriesList[0] : ''
+    });
     setShowModal(true);
   };
 
@@ -134,13 +172,13 @@ const AllProduct = () => {
     setIsEditing(true);
     setCurrentProductId(product._id);
     setFormData({
-      name: product.name,
+      name: product.name || '',
       desc: product.desc || '',
       sku: product.sku || '',
-      category: product.category,
-      price: product.price,
-      stock: product.stock,
-      status: product.status
+      category: product.category || (categoriesList[0] || ''),
+      price: product.price || '',
+      stock: product.stock !== undefined ? product.stock : '',
+      status: product.status || 'Active'
     });
     setShowModal(true);
   };
@@ -152,7 +190,7 @@ const AllProduct = () => {
     setFormData(initialFormState);
   };
 
-  // 3. Delete Product Flow
+  // 4. Delete Product Flow
   const openDeleteModal = (product) => {
     setProductToDelete(product);
     setShowDeleteModal(true);
@@ -161,11 +199,14 @@ const AllProduct = () => {
   const confirmDelete = async () => {
     if (productToDelete) {
       try {
-        await axios.delete(`${API_BASE_URL}/${productToDelete._id}`);
-        fetchProducts();
-        setSelectedProducts(prev => prev.filter(id => id !== productToDelete._id));
+        const res = await api.delete(`/products/${productToDelete._id}`);
+        if (res.data && res.data.success) {
+          setProductsList(prev => prev.filter(p => p._id !== productToDelete._id));
+          setSelectedProducts(prev => prev.filter(id => id !== productToDelete._id));
+        }
       } catch (err) {
         console.error('Error deleting product:', err);
+        alert('Failed to delete product.');
       } finally {
         setShowDeleteModal(false);
         setProductToDelete(null);
@@ -191,16 +232,28 @@ const AllProduct = () => {
   };
 
   // Filter Logic
-  const filteredProducts = productsList.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (product.sku && product.sku.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = categoryFilter === 'All Categories' || product.category === categoryFilter;
-    const matchesStatus = statusFilter === 'Status: All' || product.status === statusFilter.replace('Status: ', '');
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  const filteredProducts = useMemo(() => {
+    return productsList.filter(product => {
+      const name = product.name || '';
+      const sku = product.sku || '';
+      const category = product.category || '';
+      const status = product.status || '';
+
+      const matchesSearch = 
+        name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        category.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesCategory = categoryFilter === 'All Categories' || category === categoryFilter;
+      const matchesStatus = statusFilter === 'Status: All' || status === statusFilter.replace('Status: ', '');
+
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [productsList, searchQuery, categoryFilter, statusFilter]);
 
   // Pagination Logic
-  const totalPages = Math.ceil(filteredProducts.length / perPage) || 1;
+  const totalEntries = filteredProducts.length;
+  const totalPages = Math.ceil(totalEntries / perPage) || 1;
   const indexOfLastItem = currentPage * perPage;
   const indexOfFirstItem = indexOfLastItem - perPage;
   const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -214,7 +267,7 @@ const AllProduct = () => {
   // Export Report Function
   const handleExportReport = () => {
     const reportText = productsList.map(p => 
-      `Name: ${p.name} | SKU: ${p.sku} | Category: ${p.category} | Price: ₹${p.price} | Stock: ${p.stock} | Status: ${p.status} | Rating: ${p.rating}`
+      `Name: ${p.name} | SKU: ${p.sku} | Category: ${p.category} | Price: ₹${p.price} | Stock: ${p.stock} | Status: ${p.status} | Rating: ${p.rating || '5.0'}`
     ).join('\n');
 
     const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
@@ -333,19 +386,28 @@ const AllProduct = () => {
               type="text" 
               placeholder="Search by product name, SKU or category..." 
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
 
           <div className="allproduct-filter-dropdowns">
+            {/* Dynamic Category Filter */}
             <div className="allproduct-dropdown-container">
               <button className="allproduct-filter-btn" onClick={() => setShowCategoryDrop(!showCategoryDrop)}>
                 {categoryFilter} ▾
               </button>
               {showCategoryDrop && (
                 <div className="allproduct-dropdown-menu">
-                  {['All Categories', 'Sarees', 'Dupattas', 'Dress Materials', 'Home Textiles', 'Home Decor', 'Stoles', 'Bedspreads', 'Men Wear'].map(cat => (
-                    <span key={cat} onClick={() => { setCategoryFilter(cat); setShowCategoryDrop(false); }}>{cat}</span>
+                  <span onClick={() => { setCategoryFilter('All Categories'); setShowCategoryDrop(false); setCurrentPage(1); }}>
+                    All Categories
+                  </span>
+                  {categoriesList.map(cat => (
+                    <span key={cat} onClick={() => { setCategoryFilter(cat); setShowCategoryDrop(false); setCurrentPage(1); }}>
+                      {cat}
+                    </span>
                   ))}
                 </div>
               )}
@@ -429,18 +491,25 @@ const AllProduct = () => {
                     <td>
                       <input 
                         type="checkbox" 
-                        checked={selectedProducts.includes(product._id)}
+                        checked={selectedProducts.includes(product._id)} 
                         onChange={() => handleSelectOne(product._id)}
                       />
                     </td>
                     <td className="allproduct-product-cell">
-                      <img src={product.image} alt={product.name} />
+                      <img 
+                        src={product.image || FALLBACK_PRODUCT_IMAGE} 
+                        alt={product.name}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = FALLBACK_PRODUCT_IMAGE;
+                        }} 
+                      />
                       <div className="product-info-text">
                         <b>{product.name}</b>
-                        <span>{product.desc}</span>
+                        <span>{product.desc || '-'}</span>
                       </div>
                     </td>
-                    <td className="sku-cell">{product.sku}</td>
+                    <td className="sku-cell">{product.sku || '-'}</td>
                     <td>
                       <span className="allproduct-category-badge">{product.category}</span>
                     </td>
@@ -456,8 +525,8 @@ const AllProduct = () => {
                     <td>
                       <div className="allproduct-table-rating">
                         <span>★★★★★</span>
-                        <b>{product.rating}</b>
-                        <small>({product.reviews})</small>
+                        <b>{product.rating || '5.0'}</b>
+                        <small>({product.reviews || 0})</small>
                       </div>
                     </td>
                     <td>
@@ -563,13 +632,12 @@ const AllProduct = () => {
                   <select 
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    required
                   >
-                    <option value="Sarees">Sarees</option>
-                    <option value="Dupattas">Dupattas</option>
-                    <option value="Dress Materials">Dress Materials</option>
-                    <option value="Home Textiles">Home Textiles</option>
-                    <option value="Home Decor">Home Decor</option>
-                    <option value="Stoles">Stoles</option>
+                    <option value="" disabled>Select Category</option>
+                    {categoriesList.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="allproduct-form-group">
@@ -606,8 +674,12 @@ const AllProduct = () => {
               </div>
 
               <div className="allproduct-modal-actions">
-                <button type="button" className="allproduct-cancel-btn" onClick={closeModal}>Cancel</button>
-                <button type="submit" className="allproduct-submit-btn">{isEditing ? 'Update Product' : 'Save Product'}</button>
+                <button type="button" className="allproduct-cancel-btn" onClick={closeModal} disabled={saving}>
+                  Cancel
+                </button>
+                <button type="submit" className="allproduct-submit-btn" disabled={saving}>
+                  {saving ? 'Saving...' : isEditing ? 'Update Product' : 'Save Product'}
+                </button>
               </div>
             </form>
           </div>

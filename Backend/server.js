@@ -6,10 +6,10 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 
-const customerRoutes = require('./routes/customerRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const collectionRoutes = require('./routes/collectionRoutes');
+const customerRoutes = require('./routes/customerRoutes');
 
 const app = express();
 
@@ -46,10 +46,10 @@ const connectDB = async () => {
 connectDB();
 
 // API Routes
-app.use('/api/customers', customerRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/collections', collectionRoutes);
+app.use('/api/customers', customerRoutes);
 
 // Health Check Route
 app.get("/", (req, res) => {

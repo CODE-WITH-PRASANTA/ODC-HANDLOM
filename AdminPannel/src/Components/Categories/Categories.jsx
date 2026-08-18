@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import api from '../../api/axios'; 
 import {
   Search,
   Plus,
@@ -15,8 +15,7 @@ import {
 } from 'lucide-react';
 import './Categories.css';
 
-const API_BASE_URL = 'http://localhost:5000/api/categories';
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100';
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -43,11 +42,11 @@ const Categories = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
 
-  // 1. Fetch Categories from Backend
+  // 1. Fetch Categories
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(API_BASE_URL);
+      const res = await api.get('/categories');
       if (res.data && res.data.success) {
         setCategories(res.data.data);
       }
@@ -63,7 +62,7 @@ const Categories = () => {
     fetchCategories();
   }, []);
 
-  // Category Tree State & Logic
+  // Category Tree State
   const [treeState, setTreeState] = useState([]);
 
   useEffect(() => {
@@ -84,7 +83,6 @@ const Categories = () => {
     );
   };
 
-  // Form Inputs Handler
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -93,104 +91,11 @@ const Categories = () => {
     }));
   };
 
-  // Image Upload Handler
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  // Save / Update Category (Submit to Backend)
-  const handleSaveCategory = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) {
-      alert('Please enter a Category Name.');
-      return;
-    }
-
-    const payload = new FormData();
-    payload.append('name', formData.name.trim());
-    payload.append('parent', formData.parent.trim());
-    payload.append('description', formData.description.trim());
-    payload.append('status', formData.status);
-    if (imageFile) {
-      payload.append('image', imageFile);
-    }
-
-    try {
-      setSaving(true);
-      if (editingId) {
-        // UPDATE (PUT)
-        const res = await axios.put(`${API_BASE_URL}/${editingId}`, payload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        if (res.data && res.data.success) {
-          setCategories((prev) =>
-            prev.map((cat) => (cat._id === editingId ? res.data.data : cat))
-          );
-        }
-      } else {
-        // CREATE (POST)
-        const res = await axios.post(API_BASE_URL, payload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        if (res.data && res.data.success) {
-          setCategories((prev) => [res.data.data, ...prev]);
-        }
-      }
-      handleCloseModal();
-    } catch (err) {
-      console.error('Error saving category:', err);
-      alert(err.response?.data?.message || 'Error saving category.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Edit Action
-  const handleEdit = (cat) => {
-    setEditingId(cat._id);
-    setFormData({
-      name: cat.name || '',
-      parent: cat.parent || '',
-      description: cat.description || '',
-      status: Boolean(cat.status)
-    });
-    setImagePreview(cat.image || '');
-    setImageFile(null);
-    setIsModalOpen(true);
-  };
-
-  // Delete Action
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this category?')) return;
-
-    try {
-      const res = await axios.delete(`${API_BASE_URL}/${id}`);
-      if (res.data && res.data.success) {
-        setCategories((prev) => prev.filter((cat) => cat._id !== id));
-        if (editingId === id) handleCloseModal();
-      }
-    } catch (err) {
-      console.error('Error deleting category:', err);
-      alert('Failed to delete category.');
-    }
-  };
-
-  // Toggle Status Action
-  const handleToggleStatus = async (id) => {
-    try {
-      const res = await axios.patch(`${API_BASE_URL}/${id}/status`);
-      if (res.data && res.data.success) {
-        setCategories((prev) =>
-          prev.map((cat) => (cat._id === id ? res.data.data : cat))
-        );
-      }
-    } catch (err) {
-      console.error('Error updating status:', err);
-      alert('Failed to update status.');
     }
   };
 
@@ -211,7 +116,97 @@ const Categories = () => {
     handleResetForm();
   };
 
-  // Filtered Logic
+  // Save / Update Category
+  const handleSaveCategory = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      alert('Please enter a Category Name.');
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append('name', formData.name.trim());
+    payload.append('parent', formData.parent.trim());
+    payload.append('description', formData.description.trim());
+    payload.append('status', formData.status);
+    if (imageFile) {
+      payload.append('image', imageFile);
+    }
+
+    try {
+      setSaving(true);
+      if (editingId) {
+        // UPDATE (PUT)
+        const res = await api.put(`/categories/${editingId}`, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCategories((prev) =>
+            prev.map((cat) => (cat._id === editingId ? res.data.data : cat))
+          );
+        }
+      } else {
+        // CREATE (POST)
+        const res = await api.post('/categories', payload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (res.data && res.data.success) {
+          setCategories((prev) => [res.data.data, ...prev]);
+        }
+      }
+      handleCloseModal();
+    } catch (err) {
+      console.error('Error saving category:', err);
+      alert(err.response?.data?.message || 'Error saving category.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEdit = (cat) => {
+    setEditingId(cat._id);
+    setFormData({
+      name: cat.name || '',
+      parent: cat.parent || '',
+      description: cat.description || '',
+      status: Boolean(cat.status)
+    });
+    setImagePreview(cat.image || '');
+    setImageFile(null);
+    setIsModalOpen(true);
+  };
+
+  // Delete Category
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
+
+    try {
+      const res = await api.delete(`/categories/${id}`);
+      if (res.data && res.data.success) {
+        setCategories((prev) => prev.filter((cat) => cat._id !== id));
+        if (editingId === id) handleCloseModal();
+      }
+    } catch (err) {
+      console.error('Error deleting category:', err);
+      alert('Failed to delete category.');
+    }
+  };
+
+  // Toggle Status
+  const handleToggleStatus = async (id) => {
+    try {
+      const res = await api.patch(`/categories/${id}/status`);
+      if (res.data && res.data.success) {
+        setCategories((prev) =>
+          prev.map((cat) => (cat._id === id ? res.data.data : cat))
+        );
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Failed to update status.');
+    }
+  };
+
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
       const name = cat.name || '';
@@ -229,7 +224,6 @@ const Categories = () => {
     });
   }, [categories, searchTerm, statusFilter]);
 
-  // Pagination Logic
   const totalEntries = filteredCategories.length;
   const totalPages = Math.ceil(totalEntries / itemsPerPage) || 1;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -268,7 +262,7 @@ const Categories = () => {
           <div className="tree-wrapper">
             {treeState.length > 0 ? (
               treeState.map((item, idx) => (
-                <div key={item.name + idx} className="tree-group">
+                <div key={`${item.name}-${idx}`} className="tree-group">
                   <div className="tree-parent" onClick={() => toggleTreeFolder(idx)}>
                     {item.open ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                     <span>{item.name}</span>
@@ -278,7 +272,7 @@ const Categories = () => {
                     <div className="tree-sub-list">
                       {item.subcategories.length > 0 ? (
                         item.subcategories.map((sub, sIdx) => (
-                          <div key={sub + sIdx} className="tree-sub-item">
+                          <div key={`${sub}-${sIdx}`} className="tree-sub-item">
                             <span className="tree-line"></span>
                             <span className="tree-sub-text">{sub}</span>
                           </div>
@@ -359,12 +353,12 @@ const Categories = () => {
                       <td>
                         <div className="category-cell">
                           <img
-                            src={cat.image || FALLBACK_IMAGE}
+                            src={cat.image || PLACEHOLDER_IMAGE}
                             alt={cat.name}
                             className="cat-thumb"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = FALLBACK_IMAGE;
+                              e.target.src = PLACEHOLDER_IMAGE;
                             }}
                           />
                           <span className="cat-name-text">{cat.name}</span>
