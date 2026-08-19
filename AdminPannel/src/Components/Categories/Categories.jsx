@@ -477,22 +477,16 @@ const Categories = () => {
                 />
               </div>
 
+              {/* Updated: Parent Category Input Box instead of Select */}
               <div className="form-group">
                 <label>Parent Category</label>
-                <select
+                <input
+                  type="text"
                   name="parent"
+                  placeholder="e.g. Electronics (leave blank for none)"
                   value={formData.parent}
                   onChange={handleInputChange}
-                >
-                  <option value="">Select Parent Category (None)</option>
-                  {categories
-                    .filter((c) => c._id !== editingId)
-                    .map((c) => (
-                      <option key={c._id} value={c.name}>
-                        {c.name}
-                      </option>
-                    ))}
-                </select>
+                />
               </div>
 
               <div className="form-group">
