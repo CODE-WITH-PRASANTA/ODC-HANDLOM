@@ -38,7 +38,7 @@ const menuSections = [
     title: 'PRODUCTS',
     items: [
       { label: 'Products', path: '/products/all-products', icon: ShoppingBag },
-      { label: 'AllProduct', path: 'products/add-new', icon: ShoppingBag },
+      { label: 'AddProduct', path: 'products/add-new', icon: ShoppingBag },
 
       { label: 'Categories', path: '/products/categories', icon: ListTree },
       { label: 'Collections', path: '/products/collections', icon: Gem },

@@ -34,12 +34,14 @@ import Newsletters from "./Components/Newsletters/Newsletters";
 import Reports from "./Components/Reports/Reports";
 import Coupons from "./Components/Coupons/Coupons";
 import Payments from "./Components/Payments/Payments";
-import AllProduct from "./Components/AllProduct/AllProduct";
+
 import StoreSettings from "./Components/StoreSettings/StoreSettings";
 import ShippingMethods from "./Components/ShippingMethods/ShippingMethods";
 import Paymentmethod from "./Components/Paymentmethod/Paymentmethod";
 import Usersrole from "./Components/Usersrole/Usersrole";
 
+import Addproduct from "./Pages/Addproduct/Addproduct";
+import AllProduct from "./Pages/AllProduct/AllProduct";
 
 // Placeholder Component for pages without unique views yet
 const Page = ({ name }) => (
@@ -62,7 +64,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
 
           {/* 2. Products */}
-          <Route path="products/all-products" element={<NewProduct />} />
+          <Route path="products/all-products" element={<AllProduct/>}/>
           
           <Route path="products/preview" element={<PreviewProduct />} />
           <Route path="products/collections" element={<Collections />} />
@@ -100,7 +102,7 @@ function App() {
           <Route path="/reports/reports" element={<Reports/>}/>
          <Route path="sales/coupons" element={<Coupons/>}/>
          <Route path="/sales/payments" element={<Payments/>}/>
-         <Route path="/products/add-new" element={<AllProduct/>}/>
+         <Route path="/products/add-new" element={<Addproduct/>}/>
          <Route path="/settings/store-settings" element={<StoreSettings/>}/>
           <Route path="settings/shipping-methods" element={<ShippingMethods/>} />
           <Route path="/settings/payment-methods" element={<Paymentmethod/>}/>

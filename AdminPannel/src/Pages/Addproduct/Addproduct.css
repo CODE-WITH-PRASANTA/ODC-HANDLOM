@@ -1,0 +1,19 @@
+.new-product-page {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Left Side */
+.left-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Right Side */
+.right-sidebar {
+  width: 350px; /* Adjust according to your design */
+  position: sticky;
+  top: 20px; /* Distance from top while scrolling */
+  align-self: flex-start;
+}

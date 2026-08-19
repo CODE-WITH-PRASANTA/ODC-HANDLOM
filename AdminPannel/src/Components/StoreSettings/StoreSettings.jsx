@@ -15,10 +15,25 @@ import {
   FiShield, 
   FiUpload, 
   FiTrash2, 
-  FiChevronDown 
+  FiChevronDown,
+  FiHome,
+  FiChevronRight,
+  FiCheckCircle
 } from 'react-icons/fi';
 import storeLogoImage from '../../assets/logo.png'; // Update path if needed based on your project structure
 import './StoreSettings.css';
+
+const NAV_ITEMS = [
+  { key: 'Store Profile', icon: FiShoppingBag },
+  { key: 'Contact Information', icon: FiUser },
+  { key: 'Store Address', icon: FiMapPin },
+  { key: 'Social Links', icon: FiShare2 },
+  { key: 'Store Policies', icon: FiFileText },
+  { key: 'SEO Settings', icon: FiSearch },
+  { key: 'Email Settings', icon: FiMail },
+  { key: 'Notification Settings', icon: FiBell },
+  { key: 'Maintenance Mode', icon: FiTool },
+];
 
 const StoreSettings = () => {
   // Navigation / Active Section State
@@ -49,6 +64,7 @@ const StoreSettings = () => {
   const [isRightFormVisible, setIsRightFormVisible] = useState(true);
   const [showBreadcrumb, setShowBreadcrumb] = useState(true);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [saveState, setSaveState] = useState('idle'); // idle | saved
 
   // File input refs for uploading photos
   const logoInputRef = useRef(null);
@@ -101,115 +117,49 @@ const StoreSettings = () => {
 
   // Save Changes Action
   const handleSaveChanges = () => {
-    alert('Store settings saved successfully!');
+    setSaveState('saved');
+    window.setTimeout(() => setSaveState('idle'), 2000);
   };
 
   // Enable 2FA Action
   const handleEnable2FA = () => {
     setIs2FAEnabled(!is2FAEnabled);
-    alert(is2FAEnabled ? '2FA Disabled' : '2FA Enabled successfully!');
   };
 
   return (
     <div className="store-settings-container">
       {/* Top Header Bar with Save Changes */}
       <div className="store-settings-header-top">
-        {showBreadcrumb ? (
-          <div className="store-settings-breadcrumb">
-             &gt;  &gt;  
-          </div>
-        ) : (
-          <div></div>
-        )}
-        <button className="store-settings-save-top-btn" onClick={handleSaveChanges}>
-          <FiSave /> Save Changes
+        <div className="store-settings-breadcrumb">
+          <FiHome className="store-settings-breadcrumb-icon" />
+          <span>Settings</span>
+          <FiChevronRight className="store-settings-breadcrumb-sep" />
+          <span className="store-settings-breadcrumb-current">{activeSection}</span>
+        </div>
+        <button
+          className={`store-settings-save-top-btn ${saveState === 'saved' ? 'is-saved' : ''}`}
+          onClick={handleSaveChanges}
+        >
+          {saveState === 'saved' ? <FiCheckCircle /> : <FiSave />}
+          {saveState === 'saved' ? 'Saved' : 'Save Changes'}
         </button>
       </div>
 
       <div className="store-settings-main-layout">
         {/* Left Sidebar Navigation */}
         <div className="store-settings-sidebar">
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Store Profile' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Store Profile');
-              setShowBreadcrumb(true);
-            }}
-          >
-            <FiShoppingBag className="store-settings-nav-icon" /> Store Profile
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Contact Information' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Contact Information');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiUser className="store-settings-nav-icon" /> Contact Information
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Store Address' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Store Address');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiMapPin className="store-settings-nav-icon" /> Store Address
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Social Links' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Social Links');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiShare2 className="store-settings-nav-icon" /> Social Links
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Store Policies' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Store Policies');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiFileText className="store-settings-nav-icon" /> Store Policies
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'SEO Settings' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('SEO Settings');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiSearch className="store-settings-nav-icon" /> SEO Settings
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Email Settings' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Email Settings');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiMail className="store-settings-nav-icon" /> Email Settings
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Notification Settings' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Notification Settings');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiBell className="store-settings-nav-icon" /> Notification Settings
-          </button>
-          <button 
-            className={`store-settings-nav-item ${activeSection === 'Maintenance Mode' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveSection('Maintenance Mode');
-              setShowBreadcrumb(false);
-            }}
-          >
-            <FiTool className="store-settings-nav-icon" /> Maintenance Mode
-          </button>
+          {NAV_ITEMS.map(({ key, icon: Icon }) => (
+            <button
+              key={key}
+              className={`store-settings-nav-item ${activeSection === key ? 'active' : ''}`}
+              onClick={() => {
+                setActiveSection(key);
+                setShowBreadcrumb(key === 'Store Profile');
+              }}
+            >
+              <Icon className="store-settings-nav-icon" /> {key}
+            </button>
+          ))}
         </div>
 
         {/* Right Content Area */}
@@ -219,7 +169,9 @@ const StoreSettings = () => {
           <div className="store-settings-card store-profile-card">
             <div className="store-settings-card-header">
               <div className="store-settings-card-title-wrapper">
-                <FiShoppingBag className="store-settings-card-icon" />
+                <span className="store-settings-card-icon-badge">
+                  <FiShoppingBag className="store-settings-card-icon" />
+                </span>
                 <div>
                   <h3>Store Profile</h3>
                   <p>Update your store details and profile information</p>
@@ -366,7 +318,9 @@ const StoreSettings = () => {
             <div className="store-settings-card admin-profile-card">
               <div className="store-settings-card-header">
                 <div className="store-settings-card-title-wrapper">
-                  <FiUser className="store-settings-card-icon" />
+                  <span className="store-settings-card-icon-badge">
+                    <FiUser className="store-settings-card-icon" />
+                  </span>
                   <div>
                     <h3>Admin Profile</h3>
                     <p>Manage your admin account details</p>
@@ -463,7 +417,9 @@ const StoreSettings = () => {
             <div className="store-settings-card timezone-card">
               <div className="store-settings-card-header">
                 <div className="store-settings-card-title-wrapper">
-                  <FiClock className="store-settings-card-icon" />
+                  <span className="store-settings-card-icon-badge">
+                    <FiClock className="store-settings-card-icon" />
+                  </span>
                   <div>
                     <h3>Store Timezone</h3>
                     <p>Set your store timezone</p>
@@ -515,8 +471,12 @@ const StoreSettings = () => {
                 <p>Two-factor authentication adds an extra layer of security to your account.</p>
               </div>
             </div>
-            <button className="store-settings-btn-secondary secure-action-btn" onClick={handleEnable2FA}>
-              {is2FAEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+            <button
+              className={`store-settings-btn-secondary secure-action-btn ${is2FAEnabled ? 'is-enabled' : ''}`}
+              onClick={handleEnable2FA}
+            >
+              {is2FAEnabled ? <FiCheckCircle /> : <FiShield />}
+              {is2FAEnabled ? '2FA Enabled' : 'Enable 2FA'}
             </button>
           </div>
 

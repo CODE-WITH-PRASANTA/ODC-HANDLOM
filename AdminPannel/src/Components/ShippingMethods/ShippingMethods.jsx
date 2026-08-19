@@ -14,7 +14,8 @@ import {
   FiChevronLeft, 
   FiChevronRight, 
   FiGrid,
-  FiX 
+  FiX,
+  FiHome
 } from 'react-icons/fi';
 import './ShippingMethods.css';
 
@@ -197,7 +198,10 @@ const ShippingMethods = () => {
       {/* Top Header & Breadcrumb */}
       <div className="shipping-methods-header-top">
         <div className="shipping-methods-breadcrumb">
-           &gt;  &gt;  
+          <FiHome className="shipping-methods-breadcrumb-icon" />
+          <span>Shipping</span>
+          <FiChevronRight className="shipping-methods-breadcrumb-sep" />
+          <span className="shipping-methods-breadcrumb-current">Shipping Methods</span>
         </div>
         <button className="shipping-methods-add-btn" onClick={handleOpenAddModal}>
           <FiPlus /> Add New Shipping Method
@@ -307,7 +311,7 @@ const ShippingMethods = () => {
                 {filteredMethods.length > 0 ? (
                   filteredMethods.map((method) => (
                     <tr key={method.id}>
-                      <td>
+                      <td data-label="Method Name">
                         <div className="shipping-method-info-cell">
                           <div className="shipping-method-row-icon">
                             <FiTruck size={16} />
@@ -318,25 +322,25 @@ const ShippingMethods = () => {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Type">
                         <span className={`shipping-method-badge type-${method.type.toLowerCase().replace(/\s+/g, '-')}`}>
                           {method.type}
                         </span>
                       </td>
-                      <td>{method.deliveryTime}</td>
-                      <td>{method.coverage}</td>
-                      <td>{method.cost}</td>
-                      <td>
+                      <td data-label="Delivery Time">{method.deliveryTime}</td>
+                      <td data-label="Coverage">{method.coverage}</td>
+                      <td data-label="Cost">{method.cost}</td>
+                      <td data-label="Status">
                         <span className={`shipping-method-status ${method.status.toLowerCase()}`}>
                           {method.status}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Sort Order">
                         <div className="shipping-method-sort-cell">
                           <FiGrid size={14} className="drag-handle" /> {method.sortOrder}
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Actions">
                         <div className="shipping-methods-action-btns">
                           <button className="shipping-action-btn" onClick={() => handleOpenEditModal(method)} title="Edit">
                             <FiEdit2 size={14} />
@@ -350,7 +354,7 @@ const ShippingMethods = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#8c7365' }}>
+                    <td colSpan="8" className="shipping-methods-empty">
                       No shipping methods found.
                     </td>
                   </tr>
