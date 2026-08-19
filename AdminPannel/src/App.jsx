@@ -37,6 +37,9 @@ import Payments from "./Components/Payments/Payments";
 import AllProduct from "./Components/AllProduct/AllProduct";
 import StoreSettings from "./Components/StoreSettings/StoreSettings";
 import ShippingMethods from "./Components/ShippingMethods/ShippingMethods";
+import Paymentmethod from "./Components/Paymentmethod/Paymentmethod";
+import Usersrole from "./Components/Usersrole/Usersrole";
+
 
 // Placeholder Component for pages without unique views yet
 const Page = ({ name }) => (
@@ -79,9 +82,9 @@ function App() {
          
           <Route path="marketing/banner-sliders" element={<Banner />} />
           <Route path="marketing/flash-sale" element={<Flashsale/>}/>
-          <Route path="marketing/newsletters" element={<Page name="Newsletters" />} />
-          <Route path="marketing/push-notifications" element={<Page name="Push Notifications" />} />
-          <Route path="marketing/flash-sale" element={<Page name="Flash Sale" />} />
+          
+          
+          
           <Route path="marketing/newsletters" element={<Newsletters />} />
           <Route path="marketing/push-notifications" element={<PushNotifications />} />
 
@@ -92,14 +95,17 @@ function App() {
           {/* 6. Settings */}
           
          
-          <Route path="settings/payment-methods" element={<Page name="Payment Methods" />} />
-          <Route path="settings/users-roles" element={<Page name="Users & Roles" />} />
+          
+          
           <Route path="/reports/reports" element={<Reports/>}/>
          <Route path="sales/coupons" element={<Coupons/>}/>
          <Route path="/sales/payments" element={<Payments/>}/>
          <Route path="/products/add-new" element={<AllProduct/>}/>
          <Route path="/settings/store-settings" element={<StoreSettings/>}/>
           <Route path="settings/shipping-methods" element={<ShippingMethods/>} />
+          <Route path="/settings/payment-methods" element={<Paymentmethod/>}/>
+          <Route path="/settings/users-roles" element={<Usersrole/>}/>
+          
         </Route>
 
         {/* Fallback 404 Route */}
