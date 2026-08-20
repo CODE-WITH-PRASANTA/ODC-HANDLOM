@@ -21,6 +21,7 @@ import MainFaq from "./Pages/MainFaq/MainFaq";
 // Components
 import SignIn from "./Components/SignIn/SignIn";
 import BlogDetails from "./Components/BlogDetails/BlogDetails";
+import ProductDetails from "./Components/ProductDetails/ProductDetails";
 
 
 
@@ -68,7 +69,10 @@ const App = () => {
            element={<BlogDetails/>}
            />
     
-
+         <Route
+         path="/productdetails" 
+         element={<ProductDetails/>}
+         />
 
         {/* Authentication */}
 
