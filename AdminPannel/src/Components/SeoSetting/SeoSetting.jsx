@@ -1,46 +1,75 @@
-// SeoSetting.jsx
-import React, { useState } from 'react';
-import { FiGlobe } from 'react-icons/fi';
-import './SeoSetting.css';
+import React from "react";
+import { FiGlobe } from "react-icons/fi";
+import "./SeoSetting.css";
 
-const SeoSetting = () => {
-  const [formData, setFormData] = useState({
-    metaTitle: 'ODC Handloom - Authentic Handcrafted Cotton & Silk Sarees',
-    urlSlug: 'odc-handloom-authentic-handcrafted-cotton-silk-sarees',
-    metaDescription: 'Shop authentic ODC Handloom products online. Discover traditional handcrafted cotton sarees, silk fabrics, and ethnic wear directly from master weavers at the best price.'
-  });
+const SeoSetting = ({
+  formData,
+  setFormData,
+  onSaveProduct,
+  saving,
+}) => {
+  // ==========================================
+  // Handle Input Change
+  // ==========================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSaveProduct = (e) => {
-    e.preventDefault();
-    console.log('Saving Product SEO Settings:', formData);
-    alert('Product SEO Settings saved successfully for ODC Handloom!');
-  };
+  // ==========================================
+  // Cancel SEO
+  // ==========================================
 
   const handleCancel = () => {
-    console.log('Action cancelled');
+    setFormData({
+      metaTitle: "",
+      urlSlug: "",
+      metaDescription: "",
+    });
+  };
+
+  // ==========================================
+  // Save Product
+  // ==========================================
+
+  const handleSave = () => {
+    if (onSaveProduct) {
+      onSaveProduct();
+    }
   };
 
   return (
     <div className="seo-setting-wrapper">
+
       <div className="seo-setting-card">
+
         <div className="seo-setting-header">
+
           <div className="seo-setting-header-icon-box">
             <FiGlobe className="seo-setting-header-icon" />
           </div>
-          <h2 className="seo-setting-header-title">SEO Settings</h2>
+
+          <h2 className="seo-setting-header-title">
+            SEO Settings
+          </h2>
+
         </div>
 
         <div className="seo-setting-grid">
+
+          {/* Meta Title */}
+
           <div className="seo-setting-field">
-            <label className="seo-setting-label">Meta Title</label>
+
+            <label className="seo-setting-label">
+              Meta Title
+            </label>
+
             <input
               type="text"
               name="metaTitle"
@@ -49,10 +78,17 @@ const SeoSetting = () => {
               className="seo-setting-input"
               placeholder="Enter meta title"
             />
+
           </div>
 
+          {/* URL Slug */}
+
           <div className="seo-setting-field">
-            <label className="seo-setting-label">URL Slug</label>
+
+            <label className="seo-setting-label">
+              URL Slug
+            </label>
+
             <input
               type="text"
               name="urlSlug"
@@ -61,11 +97,19 @@ const SeoSetting = () => {
               className="seo-setting-input"
               placeholder="enter-url-slug"
             />
+
           </div>
+
         </div>
 
+        {/* Meta Description */}
+
         <div className="seo-setting-field mt-4">
-          <label className="seo-setting-label">Meta Description</label>
+
+          <label className="seo-setting-label">
+            Meta Description
+          </label>
+
           <input
             type="text"
             name="metaDescription"
@@ -74,25 +118,41 @@ const SeoSetting = () => {
             className="seo-setting-input"
             placeholder="Enter meta description"
           />
+
         </div>
+
       </div>
 
+      {/* Actions */}
+
       <div className="seo-setting-actions">
+
+        {/* Cancel */}
+
         <button
           type="button"
           className="seo-setting-cancel-btn"
           onClick={handleCancel}
+          disabled={saving}
         >
           Cancel
         </button>
+
+        {/* Save Product */}
+
         <button
           type="button"
           className="seo-setting-save-btn"
-          onClick={handleSaveProduct}
+          onClick={handleSave}
+          disabled={saving}
         >
-          Save Product
+          {saving
+            ? "Saving..."
+            : "Save Product"}
         </button>
+
       </div>
+
     </div>
   );
 };

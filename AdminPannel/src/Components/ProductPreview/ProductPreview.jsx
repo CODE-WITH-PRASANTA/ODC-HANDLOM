@@ -1,381 +1,2497 @@
-// ProductPreview.jsx
-import React, { useState } from 'react';
-import { 
-  FiEye, 
-  FiSave, 
-  FiSend, 
-  FiFolder, 
-  FiTag, 
-  FiBookmark, 
-  FiImage, 
-  FiChevronDown, 
-  FiCalendar, 
-  FiPlus, 
-  FiX 
-} from 'react-icons/fi';
-import './ProductPreview.css';
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
-const ProductPreview = () => {
-  const [publishData, setPublishData] = useState({
-    status: 'Published',
-    visibility: 'Public',
-    publishedAt: '20 May 2025, 10:30 AM',
-  });
+import { createPortal } from "react-dom";
 
-  const [categories, setCategories] = useState({
-    men: true,
-    women: false,
-    bags: true,
-    backpacks: true,
-    handbags: false,
-    laptopBags: false,
-    accessories: false,
-  });
+import {
+  FiEye,
+  FiSave,
+  FiSend,
+  FiFolder,
+  FiTag,
+  FiBookmark,
+  FiImage,
+  FiChevronDown,
+  FiCalendar,
+  FiPlus,
+  FiX,
+  FiCheckCircle,
+  FiPackage,
+  FiTruck,
+} from "react-icons/fi";
 
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [showAddCategory, setShowAddCategory] = useState(false);
+import "./ProductPreview.css";
 
-  const [brandData, setBrandData] = useState({
-    brand: 'Nike',
-  });
-  const [showAddBrand, setShowAddBrand] = useState(false);
-  const [newBrandName, setNewBrandName] = useState('');
+import API, { IMG_URL } from "../../api/axios";
 
-  const [tags, setTags] = useState(['Bag', 'Sports', 'Travel', 'Nike']);
-  const [tagInput, setTagInput] = useState('');
+const ProductPreview = ({
+  publishData,
+  setPublishData,
 
-  const [featuredImage, setFeaturedImage] = useState(
-    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80'
-  );
+  selectedCategory,
+  setSelectedCategory,
 
-  const handleCategoryChange = (key) => {
-    setCategories((prev) => ({ ...prev, [key]: !prev[key] }));
+  selectedBrand,
+  setSelectedBrand,
+
+  tags,
+  setTags,
+
+  images,
+  setImages,
+
+  productInformation = {},
+  pricingData = {},
+  seoData = {},
+
+  onSaveProduct,
+  saving,
+}) => {
+  /* =====================================================
+     CATEGORY
+  ===================================================== */
+
+  const [categoryList, setCategoryList] =
+    useState([]);
+
+  const [loadingCategories, setLoadingCategories] =
+    useState(false);
+
+  /* =====================================================
+     BRAND
+  ===================================================== */
+
+  const [brandList, setBrandList] =
+    useState([]);
+
+  const [loadingBrands, setLoadingBrands] =
+    useState(false);
+
+  /* =====================================================
+     ADD CATEGORY
+  ===================================================== */
+
+  const [showAddCategory, setShowAddCategory] =
+    useState(false);
+
+  const [newCategoryName, setNewCategoryName] =
+    useState("");
+
+  /* =====================================================
+     ADD BRAND
+  ===================================================== */
+
+  const [showAddBrand, setShowAddBrand] =
+    useState(false);
+
+  const [newBrandName, setNewBrandName] =
+    useState("");
+
+  /* =====================================================
+     TAGS
+  ===================================================== */
+
+  const [tagInput, setTagInput] =
+    useState("");
+
+  /* =====================================================
+     FEATURED IMAGE
+  ===================================================== */
+
+  const [featuredImage, setFeaturedImage] =
+    useState("");
+
+  /* =====================================================
+     PREVIEW POPUP
+  ===================================================== */
+
+  const [showPreview, setShowPreview] =
+    useState(false);
+
+  /* =====================================================
+     FETCH CATEGORIES
+  ===================================================== */
+
+  const fetchCategories = async () => {
+    try {
+      setLoadingCategories(true);
+
+      const response =
+        await API.get("/categories");
+
+      console.log(
+        "CATEGORY RESPONSE:",
+        response.data
+      );
+
+      const data = Array.isArray(
+        response.data
+      )
+        ? response.data
+        : response.data?.data ||
+          response.data?.categories ||
+          [];
+
+      setCategoryList(data);
+    } catch (error) {
+      console.error(
+        "FETCH CATEGORY ERROR:",
+        error
+      );
+
+      setCategoryList([]);
+    } finally {
+      setLoadingCategories(false);
+    }
   };
 
-  const handleAddCategorySubmit = (e) => {
+  /* =====================================================
+     FETCH BRANDS
+  ===================================================== */
+
+  const fetchBrands = async () => {
+    try {
+      setLoadingBrands(true);
+
+      const response =
+        await API.get("/brands");
+
+      console.log(
+        "BRAND RESPONSE:",
+        response.data
+      );
+
+      const data = Array.isArray(
+        response.data
+      )
+        ? response.data
+        : response.data?.data ||
+          response.data?.brands ||
+          [];
+
+      setBrandList(data);
+    } catch (error) {
+      console.error(
+        "FETCH BRAND ERROR:",
+        error
+      );
+
+      setBrandList([]);
+    } finally {
+      setLoadingBrands(false);
+    }
+  };
+
+  /* =====================================================
+     LOAD CATEGORY + BRAND
+  ===================================================== */
+
+  useEffect(() => {
+    fetchCategories();
+    fetchBrands();
+  }, []);
+
+  /* =====================================================
+     GET CATEGORY NAME
+  ===================================================== */
+
+  const getCategoryName = (category) => {
+    if (typeof category === "string") {
+      return category;
+    }
+
+    return (
+      category?.name ||
+      category?.categoryName ||
+      category?.title ||
+      ""
+    );
+  };
+
+  /* =====================================================
+     GET BRAND NAME
+  ===================================================== */
+
+  const getBrandName = (brand) => {
+    if (typeof brand === "string") {
+      return brand;
+    }
+
+    return (
+      brand?.name ||
+      brand?.brandName ||
+      brand?.title ||
+      ""
+    );
+  };
+
+  /* =====================================================
+     ADD CATEGORY
+  ===================================================== */
+
+  const handleAddCategorySubmit = async (
+    e
+  ) => {
     e.preventDefault();
-    if (newCategoryName.trim()) {
-      alert(`New Category "${newCategoryName}" added successfully!`);
-      setNewCategoryName('');
+
+    const categoryName =
+      newCategoryName.trim();
+
+    if (!categoryName) {
+      return;
+    }
+
+    try {
+      const response = await API.post(
+        "/categories",
+        {
+          name: categoryName,
+        }
+      );
+
+      const created =
+        response.data?.data ||
+        response.data?.category ||
+        response.data;
+
+      if (created) {
+        setCategoryList((prev) => [
+          ...prev,
+          created,
+        ]);
+
+        setSelectedCategory(
+          getCategoryName(created) ||
+            categoryName
+        );
+      }
+
+      setNewCategoryName("");
       setShowAddCategory(false);
+    } catch (error) {
+      console.error(
+        "CREATE CATEGORY ERROR:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to add category"
+      );
     }
   };
 
-  const handleAddBrandSubmit = (e) => {
+  /* =====================================================
+     ADD BRAND
+  ===================================================== */
+
+  const handleAddBrandSubmit = async (
+    e
+  ) => {
     e.preventDefault();
-    if (newBrandName.trim()) {
-      setBrandData({ brand: newBrandName });
-      alert(`New Brand "${newBrandName}" added successfully!`);
-      setNewBrandName('');
+
+    const brandName =
+      newBrandName.trim();
+
+    if (!brandName) {
+      return;
+    }
+
+    try {
+      const response = await API.post(
+        "/brands",
+        {
+          name: brandName,
+        }
+      );
+
+      const created =
+        response.data?.data ||
+        response.data?.brand ||
+        response.data;
+
+      if (created) {
+        setBrandList((prev) => [
+          ...prev,
+          created,
+        ]);
+
+        setSelectedBrand(
+          getBrandName(created) ||
+            brandName
+        );
+      }
+
+      setNewBrandName("");
       setShowAddBrand(false);
+    } catch (error) {
+      console.error(
+        "CREATE BRAND ERROR:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to add brand"
+      );
     }
   };
+
+  /* =====================================================
+     TAGS
+  ===================================================== */
 
   const handleTagKeyDown = (e) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
+    if (
+      e.key === "Enter" &&
+      tagInput.trim()
+    ) {
       e.preventDefault();
-      if (!tags.includes(tagInput.trim())) {
-        setTags([...tags, tagInput.trim()]);
+
+      const newTag =
+        tagInput.trim();
+
+      if (!tags.includes(newTag)) {
+        setTags([
+          ...tags,
+          newTag,
+        ]);
       }
-      setTagInput('');
+
+      setTagInput("");
     }
   };
 
-  const removeTag = (tagToRemove) => {
-    setTags(tags.filter((t) => t !== tagToRemove));
+  const removeTag = (tag) => {
+    setTags(
+      tags.filter(
+        (item) => item !== tag
+      )
+    );
   };
+
+  /* =====================================================
+     IMAGE URL
+  ===================================================== */
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "";
+    }
+
+    let imageValue = image;
+
+    if (
+      typeof image === "object"
+    ) {
+      imageValue =
+        image.url ||
+        image.previewUrl ||
+        image.src ||
+        image.path ||
+        "";
+    }
+
+    if (!imageValue) {
+      return "";
+    }
+
+    if (
+      imageValue.startsWith(
+        "http://"
+      ) ||
+      imageValue.startsWith(
+        "https://"
+      ) ||
+      imageValue.startsWith(
+        "blob:"
+      ) ||
+      imageValue.startsWith(
+        "data:"
+      )
+    ) {
+      return imageValue;
+    }
+
+    const baseUrl = String(
+      IMG_URL || ""
+    ).replace(/\/$/, "");
+
+    const cleanPath =
+      imageValue.startsWith("/")
+        ? imageValue
+        : `/${imageValue}`;
+
+    return `${baseUrl}${cleanPath}`;
+  };
+
+  /* =====================================================
+     FEATURED IMAGE
+  ===================================================== */
+
+  useEffect(() => {
+    /*
+      IMPORTANT:
+      If the product is already saved in DB,
+      image/featuredImage can exist inside
+      productInformation.
+    */
+
+    const savedFeaturedImage =
+      productInformation?.featuredImage ||
+      productInformation?.image;
+
+    if (
+      savedFeaturedImage &&
+      (!images ||
+        images.length === 0)
+    ) {
+      setFeaturedImage(
+        savedFeaturedImage
+      );
+
+      return;
+    }
+
+    if (
+      !images ||
+      images.length === 0
+    ) {
+      setFeaturedImage(
+        savedFeaturedImage || ""
+      );
+
+      return;
+    }
+
+    const coverImage =
+      images.find(
+        (img) =>
+          img?.isCover ||
+          img?.featured ||
+          img?.isFeatured
+      );
+
+    if (coverImage) {
+      const coverUrl =
+        typeof coverImage ===
+        "string"
+          ? coverImage
+          : coverImage.url ||
+            coverImage.previewUrl ||
+            coverImage.src ||
+            coverImage.path ||
+            "";
+
+      setFeaturedImage(
+        coverUrl
+      );
+
+      return;
+    }
+
+    const firstImage =
+      typeof images[0] ===
+      "string"
+        ? images[0]
+        : images[0]?.url ||
+          images[0]?.previewUrl ||
+          images[0]?.src ||
+          images[0]?.path ||
+          "";
+
+    setFeaturedImage(
+      firstImage
+    );
+  }, [
+    images,
+    productInformation?.featuredImage,
+    productInformation?.image,
+  ]);
+
+  /* =====================================================
+     IMAGE UPLOAD
+  ===================================================== */
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFeaturedImage(URL.createObjectURL(file));
+    const file =
+      e.target.files?.[0];
+
+    if (!file) {
+      return;
     }
+
+    const previewUrl =
+      URL.createObjectURL(file);
+
+    const newImage = {
+      id:
+        Date.now() +
+        Math.random(),
+
+      file,
+
+      url: previewUrl,
+
+      previewUrl,
+
+      isCover: true,
+    };
+
+    setImages((prev) => [
+      ...prev.map((img) => ({
+        ...img,
+        isCover: false,
+      })),
+
+      newImage,
+    ]);
+
+    setFeaturedImage(
+      previewUrl
+    );
+
+    e.target.value = "";
   };
 
-  const handleSaveProduct = () => {
-    alert('Product changes saved successfully!');
+  /* =====================================================
+     SELECT IMAGE
+  ===================================================== */
+
+  const handleSelectImage = (
+    image
+  ) => {
+    const imageUrl =
+      typeof image === "string"
+        ? image
+        : image?.url ||
+          image?.previewUrl ||
+          image?.src ||
+          image?.path ||
+          "";
+
+    if (!imageUrl) {
+      return;
+    }
+
+    setFeaturedImage(
+      imageUrl
+    );
   };
 
-  const handlePreviewProduct = () => {
-    alert('Opening product preview mode...');
+  /* =====================================================
+     OPEN PREVIEW
+  ===================================================== */
+
+  const handlePreviewProduct =
+    () => {
+      setShowPreview(true);
+    };
+
+  /* =====================================================
+     CLOSE PREVIEW
+  ===================================================== */
+
+  const handleClosePreview =
+    () => {
+      setShowPreview(false);
+    };
+
+  /* =====================================================
+     ESC KEY + BODY LOCK
+  ===================================================== */
+
+  useEffect(() => {
+    if (!showPreview) {
+      document.body.classList.remove(
+        "ppv-preview-open"
+      );
+
+      return;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow =
+      "hidden";
+
+    document.body.classList.add(
+      "ppv-preview-open"
+    );
+
+    const handleEscape = (
+      event
+    ) => {
+      if (
+        event.key === "Escape"
+      ) {
+        setShowPreview(false);
+      }
+    };
+
+    window.addEventListener(
+      "keydown",
+      handleEscape
+    );
+
+    return () => {
+      document.body.style.overflow =
+        previousOverflow;
+
+      document.body.classList.remove(
+        "ppv-preview-open"
+      );
+
+      window.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+  }, [showPreview]);
+
+  /* =====================================================
+     HELPER
+     READ VALUE FROM ALL DATA OBJECTS
+  ===================================================== */
+
+  const getProductValue = (
+    ...keys
+  ) => {
+    const sources = [
+      productInformation,
+      pricingData,
+      seoData,
+      publishData,
+    ];
+
+    for (const key of keys) {
+      for (const source of sources) {
+        if (
+          source &&
+          source[key] !==
+            undefined &&
+          source[key] !== null &&
+          source[key] !== ""
+        ) {
+          return source[key];
+        }
+      }
+    }
+
+    return "";
   };
+
+  /* =====================================================
+     BASIC PRODUCT INFORMATION
+  ===================================================== */
+
+  const productName =
+    getProductValue(
+      "productName",
+      "name"
+    );
+
+  const sku =
+    getProductValue(
+      "sku"
+    );
+
+  const shortDescription =
+    getProductValue(
+      "shortDescription"
+    );
+
+  const description =
+    getProductValue(
+      "description",
+      "desc"
+    );
+
+  const category =
+    selectedCategory ||
+    getProductValue(
+      "category"
+    );
+
+  const brand =
+    selectedBrand ||
+    getProductValue(
+      "brand"
+    );
+
+  /* =====================================================
+     PRICING
+  ===================================================== */
+
+  const regularPrice =
+    Number(
+      getProductValue(
+        "regularPrice"
+      )
+    ) || 0;
+
+  const salePrice =
+    Number(
+      getProductValue(
+        "salePrice"
+      )
+    ) || 0;
+
+  const costPrice =
+    Number(
+      getProductValue(
+        "costPrice"
+      )
+    ) || 0;
+
+  const price =
+    Number(
+      getProductValue(
+        "price"
+      )
+    ) || 0;
+
+  const displayPrice =
+    salePrice > 0
+      ? salePrice
+      : price > 0
+      ? price
+      : regularPrice;
+
+  const hasDiscount =
+    salePrice > 0 &&
+    regularPrice >
+      salePrice;
+
+  const discountPercentage =
+    hasDiscount
+      ? Math.round(
+          ((regularPrice -
+            salePrice) /
+            regularPrice) *
+            100
+        )
+      : 0;
+
+  /* =====================================================
+     TAX
+  ===================================================== */
+
+  const taxClass =
+    getProductValue(
+      "taxClass"
+    );
+
+  /* =====================================================
+     INVENTORY
+  ===================================================== */
+
+  const stock =
+    Number(
+      getProductValue(
+        "stockQuantity",
+        "stock"
+      )
+    ) || 0;
+
+  const lowStockThreshold =
+    Number(
+      getProductValue(
+        "lowStockThreshold"
+      )
+    ) || 0;
+
+  const trackInventory =
+    getProductValue(
+      "trackInventory"
+    );
+
+  const allowBackorders =
+    getProductValue(
+      "allowBackorders"
+    );
+
+  /* =====================================================
+     SHIPPING
+  ===================================================== */
+
+  const weight =
+    getProductValue(
+      "weight"
+    );
+
+  const dimensions =
+    getProductValue(
+      "dimensions"
+    ) || {};
+
+  const shippingClass =
+    getProductValue(
+      "shippingClass"
+    );
+
+  const freeShipping =
+    getProductValue(
+      "freeShipping"
+    );
+
+  /* =====================================================
+     PUBLISH
+  ===================================================== */
+
+  const status =
+    publishData?.status ||
+    getProductValue(
+      "status"
+    ) ||
+    "Draft";
+
+  const visibility =
+    publishData?.visibility ||
+    getProductValue(
+      "visibility"
+    ) ||
+    "Public";
+
+  const publishedAt =
+    publishData?.publishedAt ||
+    getProductValue(
+      "publishedAt"
+    );
+
+  /* =====================================================
+     SEO
+  ===================================================== */
+
+  const metaTitle =
+    getProductValue(
+      "metaTitle"
+    );
+
+  const urlSlug =
+    getProductValue(
+      "urlSlug"
+    );
+
+  const metaDescription =
+    getProductValue(
+      "metaDescription"
+    );
+
+  /* =====================================================
+     OTHER PRODUCT DATA
+  ===================================================== */
+
+  const rating =
+    Number(
+      getProductValue(
+        "rating"
+      )
+    ) || 0;
+
+  const reviews =
+    Number(
+      getProductValue(
+        "reviews"
+      )
+    ) || 0;
+
+  const createdAt =
+    getProductValue(
+      "createdAt"
+    );
+
+  const updatedAt =
+    getProductValue(
+      "updatedAt"
+    );
+
+  /* =====================================================
+     STOCK STATUS
+  ===================================================== */
+
+  let stockStatus =
+    "In Stock";
+
+  if (stock === 0) {
+    stockStatus =
+      "Out of Stock";
+  } else if (
+    lowStockThreshold >
+      0 &&
+    stock <=
+      lowStockThreshold
+  ) {
+    stockStatus =
+      "Low Stock";
+  }
+
+  /* =====================================================
+     FORMAT VALUE
+  ===================================================== */
+
+  const formatValue = (
+    value
+  ) => {
+    if (
+      value ===
+        undefined ||
+      value === null ||
+      value === ""
+    ) {
+      return "Not available";
+    }
+
+    if (
+      typeof value ===
+      "object"
+    ) {
+      return JSON.stringify(
+        value
+      );
+    }
+
+    return String(value);
+  };
+
+  /* =====================================================
+     FORMAT BOOLEAN
+  ===================================================== */
+
+  const formatBoolean = (
+    value
+  ) => {
+    if (value === true) {
+      return "Yes";
+    }
+
+    if (value === false) {
+      return "No";
+    }
+
+    return "Not specified";
+  };
+
+  /* =====================================================
+     FORMAT DATE
+  ===================================================== */
+
+  const formatDate = (
+    value
+  ) => {
+    if (!value) {
+      return "Not available";
+    }
+
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+      return String(value);
+    }
+
+    return date.toLocaleString(
+      "en-IN",
+      {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }
+    );
+  };
+
+  /* =====================================================
+     DIMENSIONS
+  ===================================================== */
+
+  const getDimensionsText =
+    () => {
+      if (
+        !dimensions ||
+        typeof dimensions !==
+          "object"
+      ) {
+        return formatValue(
+          dimensions
+        );
+      }
+
+      const length =
+        dimensions.length ??
+        dimensions.l ??
+        "-";
+
+      const width =
+        dimensions.width ??
+        dimensions.w ??
+        "-";
+
+      const height =
+        dimensions.height ??
+        dimensions.h ??
+        "-";
+
+      return `L: ${length} × W: ${width} × H: ${height}`;
+    };
+
+  /* =====================================================
+     GALLERY
+  ===================================================== */
+
+  const galleryImages = [];
+
+  if (featuredImage) {
+    galleryImages.push(
+      featuredImage
+    );
+  }
+
+  /*
+    Saved MongoDB product can have:
+    image
+    featuredImage
+    images[]
+  */
+
+  const savedImages =
+    productInformation?.images;
+
+  if (
+    Array.isArray(savedImages)
+  ) {
+    savedImages.forEach(
+      (image) => {
+        const imageUrl =
+          typeof image ===
+          "string"
+            ? image
+            : image?.url ||
+              image?.previewUrl ||
+              image?.src ||
+              image?.path ||
+              "";
+
+        if (
+          imageUrl &&
+          !galleryImages.includes(
+            imageUrl
+          )
+        ) {
+          galleryImages.push(
+            imageUrl
+          );
+        }
+      }
+    );
+  }
+
+  if (
+    Array.isArray(images)
+  ) {
+    images.forEach(
+      (image) => {
+        const imageUrl =
+          typeof image ===
+          "string"
+            ? image
+            : image?.url ||
+              image?.previewUrl ||
+              image?.src ||
+              image?.path ||
+              "";
+
+        if (
+          imageUrl &&
+          !galleryImages.includes(
+            imageUrl
+          )
+        ) {
+          galleryImages.push(
+            imageUrl
+          );
+        }
+      }
+    );
+  }
+
+  /* =====================================================
+     PREVIEW CONTENT
+     PORTAL = ABOVE SIDEBAR / NAV / TINYMCE
+  ===================================================== */
+
+  const previewPopup =
+    showPreview
+      ? createPortal(
+          <div
+            className="ppv-overlay"
+            onMouseDown={(e) => {
+              if (
+                e.target ===
+                e.currentTarget
+              ) {
+                handleClosePreview();
+              }
+            }}
+          >
+            <div className="ppv-modal">
+
+              {/* =====================================================
+                  HEADER
+              ===================================================== */}
+
+              <div className="ppv-modal-header">
+
+                <div className="ppv-modal-heading">
+
+                  <div className="ppv-modal-icon">
+                    <FiEye />
+                  </div>
+
+                  <div>
+                    <h2>
+                      Store Preview
+                    </h2>
+
+                    <p>
+                      This is how your
+                      product will appear
+                      to customers.
+                    </p>
+                  </div>
+
+                </div>
+
+                <button
+                  type="button"
+                  className="ppv-close-btn"
+                  onClick={
+                    handleClosePreview
+                  }
+                  aria-label="Close preview"
+                >
+                  <FiX />
+                </button>
+
+              </div>
+
+              {/* =====================================================
+                  BODY
+              ===================================================== */}
+
+              <div className="ppv-modal-body">
+
+                {/* =====================================================
+                    IMAGE SECTION
+                ===================================================== */}
+
+                <div className="ppv-preview-gallery">
+
+                  <div className="ppv-preview-main-image">
+
+                    {hasDiscount && (
+                      <span className="ppv-preview-discount">
+                        {discountPercentage}%
+                        OFF
+                      </span>
+                    )}
+
+                    {featuredImage ? (
+                      <img
+                        src={getImageUrl(
+                          featuredImage
+                        )}
+                        alt={
+                          productName ||
+                          "Product"
+                        }
+                      />
+                    ) : (
+                      <div className="ppv-preview-empty-image">
+
+                        <FiPackage />
+
+                        <span>
+                          No Product Image
+                        </span>
+
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* =====================================================
+                      THUMBNAILS
+                  ===================================================== */}
+
+                  {galleryImages.length >
+                    1 && (
+                    <div className="ppv-preview-thumbnails">
+
+                      {galleryImages.map(
+                        (
+                          image,
+                          index
+                        ) => {
+                          const imageUrl =
+                            getImageUrl(
+                              image
+                            );
+
+                          return (
+                            <button
+                              type="button"
+                              key={`${imageUrl}-${index}`}
+                              className={`ppv-preview-thumbnail ${
+                                image ===
+                                featuredImage
+                                  ? "ppv-preview-thumbnail-active"
+                                  : ""
+                              }`}
+                              onClick={() =>
+                                handleSelectImage(
+                                  image
+                                )
+                              }
+                            >
+                              <img
+                                src={
+                                  imageUrl
+                                }
+                                alt={`Product ${
+                                  index +
+                                  1
+                                }`}
+                              />
+                            </button>
+                          );
+                        }
+                      )}
+
+                    </div>
+                  )}
+
+                  {/* =====================================================
+                      BENEFITS
+                  ===================================================== */}
+
+                  <div className="ppv-preview-benefits">
+
+                    <div>
+                      <FiTruck />
+
+                      <span>
+                        {freeShipping
+                          ? "Free Shipping"
+                          : "Fast & Safe Shipping"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <FiCheckCircle />
+
+                      <span>
+                        Secure Checkout
+                      </span>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* =====================================================
+                    PRODUCT DETAILS
+                ===================================================== */}
+
+                <div className="ppv-preview-details">
+
+                  {brand && (
+                    <div className="ppv-preview-brand">
+                      {brand}
+                    </div>
+                  )}
+
+                  <h1>
+                    {productName ||
+                      "Product Name"}
+                  </h1>
+
+                  {/* =====================================================
+                      RATING
+                  ===================================================== */}
+
+                  <div className="ppv-preview-rating">
+
+                    <span>
+                      {"★".repeat(
+                        Math.min(
+                          5,
+                          Math.max(
+                            0,
+                            Math.round(
+                              rating
+                            )
+                          )
+                        )
+                      )}
+
+                      {"☆".repeat(
+                        5 -
+                          Math.min(
+                            5,
+                            Math.max(
+                              0,
+                              Math.round(
+                                rating
+                              )
+                            )
+                          )
+                      )}
+                    </span>
+
+                    <b>
+                      {rating.toFixed(
+                        1
+                      )}
+                    </b>
+
+                    <small>
+                      {reviews} Reviews
+                    </small>
+
+                  </div>
+
+                  {/* =====================================================
+                      PRICE
+                  ===================================================== */}
+
+                  <div className="ppv-preview-price">
+
+                    <strong>
+                      ₹
+                      {displayPrice.toLocaleString(
+                        "en-IN",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </strong>
+
+                    {hasDiscount && (
+                      <>
+                        <del>
+                          ₹
+                          {regularPrice.toLocaleString(
+                            "en-IN",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}
+                        </del>
+
+                        <span>
+                          Save ₹
+                          {(
+                            regularPrice -
+                            salePrice
+                          ).toLocaleString(
+                            "en-IN",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}
+                        </span>
+                      </>
+                    )}
+
+                  </div>
+
+                  {/* =====================================================
+                      SHORT DESCRIPTION
+                  ===================================================== */}
+
+                  <p className="ppv-preview-short-description">
+                    {shortDescription ||
+                      "No short description added."}
+                  </p>
+
+                  {/* =====================================================
+                      STOCK
+                  ===================================================== */}
+
+                  <div className="ppv-preview-stock-row">
+
+                    <span
+                      className={`ppv-preview-stock ppv-preview-stock-${stockStatus
+                        .toLowerCase()
+                        .replace(
+                          /\s+/g,
+                          "-"
+                        )}`}
+                    >
+                      <i />
+
+                      {stockStatus}
+                    </span>
+
+                    {stock > 0 && (
+                      <small>
+                        {stock} items
+                        available
+                      </small>
+                    )}
+
+                  </div>
+
+                  {/* =====================================================
+                      PRODUCT INFORMATION
+                  ===================================================== */}
+
+                  <div className="ppv-preview-info">
+
+                    <div>
+                      <span>
+                        Product Name
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          productName
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        SKU
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          sku
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Category
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          category
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Brand
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          brand
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Regular Price
+                      </span>
+
+                      <strong>
+                        ₹
+                        {regularPrice.toLocaleString(
+                          "en-IN",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Sale Price
+                      </span>
+
+                      <strong>
+                        ₹
+                        {salePrice.toLocaleString(
+                          "en-IN",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Cost Price
+                      </span>
+
+                      <strong>
+                        ₹
+                        {costPrice.toLocaleString(
+                          "en-IN",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Price
+                      </span>
+
+                      <strong>
+                        ₹
+                        {price.toLocaleString(
+                          "en-IN",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Tax Class
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          taxClass
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* =====================================================
+                      INVENTORY
+                  ===================================================== */}
+
+                  <div className="ppv-preview-section-title">
+                    Inventory
+                  </div>
+
+                  <div className="ppv-preview-info">
+
+                    <div>
+                      <span>
+                        Stock
+                      </span>
+
+                      <strong>
+                        {stock}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Stock Quantity
+                      </span>
+
+                      <strong>
+                        {stock}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Low Stock Threshold
+                      </span>
+
+                      <strong>
+                        {lowStockThreshold}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Track Inventory
+                      </span>
+
+                      <strong>
+                        {formatBoolean(
+                          trackInventory
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Allow Backorders
+                      </span>
+
+                      <strong>
+                        {formatBoolean(
+                          allowBackorders
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* =====================================================
+                      SHIPPING
+                  ===================================================== */}
+
+                  <div className="ppv-preview-section-title">
+                    Shipping
+                  </div>
+
+                  <div className="ppv-preview-info">
+
+                    <div>
+                      <span>
+                        Weight
+                      </span>
+
+                      <strong>
+                        {weight !==
+                        ""
+                          ? `${weight} kg`
+                          : "Not available"}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Dimensions
+                      </span>
+
+                      <strong>
+                        {getDimensionsText()}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Shipping Class
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          shippingClass
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Free Shipping
+                      </span>
+
+                      <strong>
+                        {formatBoolean(
+                          freeShipping
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* =====================================================
+                      PUBLISH INFORMATION
+                  ===================================================== */}
+
+                  <div className="ppv-preview-section-title">
+                    Publish Information
+                  </div>
+
+                  <div className="ppv-preview-info">
+
+                    <div>
+                      <span>
+                        Status
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          status
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Visibility
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          visibility
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Published At
+                      </span>
+
+                      <strong>
+                        {formatDate(
+                          publishedAt
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Created At
+                      </span>
+
+                      <strong>
+                        {formatDate(
+                          createdAt
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Updated At
+                      </span>
+
+                      <strong>
+                        {formatDate(
+                          updatedAt
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* =====================================================
+                      TAGS
+                  ===================================================== */}
+
+                  {tags.length >
+                    0 && (
+                    <div className="ppv-preview-tags">
+
+                      {tags.map(
+                        (
+                          tag,
+                          index
+                        ) => (
+                          <span
+                            key={
+                              index
+                            }
+                          >
+                            #{tag}
+                          </span>
+                        )
+                      )}
+
+                    </div>
+                  )}
+
+                  {/* =====================================================
+                      SEO
+                  ===================================================== */}
+
+                  <div className="ppv-preview-section-title">
+                    SEO Information
+                  </div>
+
+                  <div className="ppv-preview-info">
+
+                    <div>
+                      <span>
+                        Meta Title
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          metaTitle
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        URL Slug
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          urlSlug
+                        )}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Meta Description
+                      </span>
+
+                      <strong>
+                        {formatValue(
+                          metaDescription
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* =====================================================
+                      DESCRIPTION
+                  ===================================================== */}
+
+                  <div className="ppv-preview-description">
+
+                    <h3>
+                      Description
+                    </h3>
+
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          description ||
+                          "<p>No description added.</p>",
+                      }}
+                    />
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* =====================================================
+                  FOOTER
+              ===================================================== */}
+
+              <div className="ppv-modal-footer">
+
+                <div className="ppv-preview-status">
+
+                  <span />
+
+                  Product Status:
+                  {" "}
+
+                  <strong>
+                    {status}
+                  </strong>
+
+                </div>
+
+                <div className="ppv-footer-actions">
+
+                  <button
+                    type="button"
+                    className="ppv-footer-close"
+                    onClick={
+                      handleClosePreview
+                    }
+                  >
+                    Continue Editing
+                  </button>
+
+                  <button
+                    type="button"
+                    className="ppv-footer-save"
+                    onClick={async () => {
+                      handleClosePreview();
+
+                      if (
+                        onSaveProduct
+                      ) {
+                        await onSaveProduct();
+                      }
+                    }}
+                    disabled={saving}
+                  >
+                    <FiSave />
+
+                    {saving
+                      ? "Saving..."
+                      : "Save Product"}
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>,
+
+          document.body
+        )
+      : null;
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
-    <div className="product-preview-sidebar-wrapper">
-      {/* Top action buttons matching the layout reference */}
-      <div className="product-preview-top-actions">
-        <button type="button" className="product-preview-top-btn preview" onClick={handlePreviewProduct}>
-          <FiEye className="product-preview-btn-icon" /> Preview Product
-        </button>
-        <button type="button" className="product-preview-top-btn save" onClick={handleSaveProduct}>
-          <FiSave className="product-preview-btn-icon" /> Save Product
-        </button>
-      </div>
+    <>
+      <div className="ppv-sidebar">
 
-      <div className="product-preview-sidebar-container">
-        {/* Publish Card */}
-        <div className="product-preview-card">
-          <div className="product-preview-header">
-            <div className="product-preview-header-icon-box blue">
-              <FiSend className="product-preview-header-icon" />
-            </div>
-            <h2 className="product-preview-header-title">Publish</h2>
-          </div>
+        {/* =====================================================
+            ACTION BUTTONS
+        ===================================================== */}
 
-          <div className="product-preview-field">
-            <label className="product-preview-label">Status</label>
-            <div className="product-preview-select-wrapper">
-              <select
-                value={publishData.status}
-                onChange={(e) => setPublishData({ ...publishData, status: e.target.value })}
-                className="product-preview-select"
-              >
-                <option value="Published">Published</option>
-                <option value="Draft">Draft</option>
-                <option value="Pending">Pending</option>
-              </select>
-              <FiChevronDown className="product-preview-select-arrow" />
-            </div>
-          </div>
+        <div className="ppv-actions">
 
-          <div className="product-preview-field mt-3">
-            <label className="product-preview-label">Visibility</label>
-            <div className="product-preview-select-wrapper">
-              <select
-                value={publishData.visibility}
-                onChange={(e) => setPublishData({ ...publishData, visibility: e.target.value })}
-                className="product-preview-select"
-              >
-                <option value="Public">Public</option>
-                <option value="Password Protected">Password Protected</option>
-                <option value="Private">Private</option>
-              </select>
-              <FiChevronDown className="product-preview-select-arrow" />
-            </div>
-          </div>
+          <button
+            type="button"
+            className="ppv-action-btn ppv-action-preview"
+            onClick={
+              handlePreviewProduct
+            }
+          >
+            <FiEye />
 
-          <div className="product-preview-field mt-3">
-            <label className="product-preview-label">Published At</label>
-            <div className="product-preview-input-icon-wrapper">
-              <input
-                type="text"
-                value={publishData.publishedAt}
-                onChange={(e) => setPublishData({ ...publishData, publishedAt: e.target.value })}
-                className="product-preview-input"
-              />
-              <FiCalendar className="product-preview-input-suffix-icon" />
-            </div>
-          </div>
+            <span>
+              Preview Product
+            </span>
+          </button>
 
-          <div className="product-preview-published-status-box mt-3">
-            <span className="product-preview-status-check">✓ Published</span>
-            <span className="product-preview-status-text">Product is live on the store</span>
-          </div>
+          <button
+            type="button"
+            className="ppv-action-btn ppv-action-save"
+            onClick={
+              onSaveProduct
+            }
+            disabled={saving}
+          >
+            <FiSave />
+
+            <span>
+              {saving
+                ? "Saving..."
+                : "Save Product"}
+            </span>
+          </button>
+
         </div>
 
-        {/* Product Categories Card */}
-        <div className="product-preview-card mt-4">
-          <div className="product-preview-header">
-            <div className="product-preview-header-icon-box purple">
-              <FiFolder className="product-preview-header-icon" />
+        {/* =====================================================
+            PUBLISH
+        ===================================================== */}
+
+        <div className="ppv-card">
+
+          <div className="ppv-card-heading">
+
+            <div className="ppv-card-icon ppv-icon-blue">
+              <FiSend />
             </div>
-            <h2 className="product-preview-header-title">Product Categories</h2>
+
+            <h2>
+              Publish
+            </h2>
+
           </div>
 
-          <div className="product-preview-categories-list">
-            <label className="product-preview-checkbox-label">
-              <input
-                type="checkbox"
-                checked={categories.men}
-                onChange={() => handleCategoryChange('men')}
-              />
-              <span>Men</span>
+          <div className="ppv-field">
+
+            <label>
+              Status
             </label>
 
-            <label className="product-preview-checkbox-label">
-              <input
-                type="checkbox"
-                checked={categories.women}
-                onChange={() => handleCategoryChange('women')}
-              />
-              <span>Women</span>
-            </label>
+            <div className="ppv-select-box">
 
-            <label className="product-preview-checkbox-label">
-              <input
-                type="checkbox"
-                checked={categories.bags}
-                onChange={() => handleCategoryChange('bags')}
-              />
-              <span>Bags</span>
-            </label>
+              <select
+                value={
+                  publishData.status
+                }
+                onChange={(e) =>
+                  setPublishData({
+                    ...publishData,
+                    status:
+                      e.target.value,
+                  })
+                }
+              >
 
-            <div className="product-preview-sub-categories">
-              <label className="product-preview-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={categories.backpacks}
-                  onChange={() => handleCategoryChange('backpacks')}
-                />
-                <span>Backpacks</span>
-              </label>
+                <option value="Published">
+                  Published
+                </option>
 
-              <label className="product-preview-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={categories.handbags}
-                  onChange={() => handleCategoryChange('handbags')}
-                />
-                <span>Handbags</span>
-              </label>
+                <option value="Draft">
+                  Draft
+                </option>
 
-              <label className="product-preview-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={categories.laptopBags}
-                  onChange={() => handleCategoryChange('laptopBags')}
-                />
-                <span>Laptop Bags</span>
-              </label>
+                <option value="Pending">
+                  Pending
+                </option>
+
+              </select>
+
+              <FiChevronDown />
+
             </div>
 
-            <label className="product-preview-checkbox-label mt-2">
-              <input
-                type="checkbox"
-                checked={categories.accessories}
-                onChange={() => handleCategoryChange('accessories')}
-              />
-              <span>Accessories</span>
+          </div>
+
+          <div className="ppv-field ppv-space-top">
+
+            <label>
+              Visibility
             </label>
+
+            <div className="ppv-select-box">
+
+              <select
+                value={
+                  publishData.visibility
+                }
+                onChange={(e) =>
+                  setPublishData({
+                    ...publishData,
+                    visibility:
+                      e.target.value,
+                  })
+                }
+              >
+
+                <option value="Public">
+                  Public
+                </option>
+
+                <option value="Private">
+                  Private
+                </option>
+
+                <option value="Password Protected">
+                  Password Protected
+                </option>
+
+              </select>
+
+              <FiChevronDown />
+
+            </div>
+
+          </div>
+
+          <div className="ppv-field ppv-space-top">
+
+            <label>
+              Published At
+            </label>
+
+            <div className="ppv-input-icon-box">
+
+              <input
+                type="datetime-local"
+                value={
+                  publishData.publishedAt
+                }
+                onChange={(e) =>
+                  setPublishData({
+                    ...publishData,
+                    publishedAt:
+                      e.target.value,
+                  })
+                }
+              />
+
+              <FiCalendar />
+
+            </div>
+
+          </div>
+
+          <div className="ppv-publish-status">
+
+            <strong>
+              ✓{" "}
+              {publishData.status}
+            </strong>
+
+            <span>
+              {publishData.status ===
+              "Published"
+                ? "Product is live on the store"
+                : "Product is not live on the store"}
+            </span>
+
+          </div>
+
+        </div>
+
+        {/* =====================================================
+            CATEGORY
+        ===================================================== */}
+
+        <div className="ppv-card ppv-card-gap">
+
+          <div className="ppv-card-heading">
+
+            <div className="ppv-card-icon ppv-icon-purple">
+              <FiFolder />
+            </div>
+
+            <h2>
+              Product Categories
+            </h2>
+
+          </div>
+
+          <div className="ppv-select-box">
+
+            <select
+              value={
+                selectedCategory
+              }
+              onChange={(e) =>
+                setSelectedCategory(
+                  e.target.value
+                )
+              }
+            >
+
+              <option value="">
+                {loadingCategories
+                  ? "Loading..."
+                  : "Select Category"}
+              </option>
+
+              {categoryList.map(
+                (category) => {
+                  const name =
+                    getCategoryName(
+                      category
+                    );
+
+                  if (!name) {
+                    return null;
+                  }
+
+                  return (
+                    <option
+                      key={
+                        category._id ||
+                        category.id ||
+                        name
+                      }
+                      value={name}
+                    >
+                      {name}
+                    </option>
+                  );
+                }
+              )}
+
+            </select>
+
+            <FiChevronDown />
+
           </div>
 
           {showAddCategory ? (
-            <form onSubmit={handleAddCategorySubmit} className="product-preview-inline-form mt-3">
+            <form
+              className="ppv-inline-form"
+              onSubmit={
+                handleAddCategorySubmit
+              }
+            >
+
               <input
                 type="text"
-                placeholder="New category name..."
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                className="product-preview-input"
-                autoFocus
+                placeholder="Category name"
+                value={
+                  newCategoryName
+                }
+                onChange={(e) =>
+                  setNewCategoryName(
+                    e.target.value
+                  )
+                }
               />
-              <button type="submit" className="product-preview-small-submit-btn">Add</button>
+
+              <button type="submit">
+                Add
+              </button>
+
             </form>
           ) : (
             <button
               type="button"
-              className="product-preview-action-btn mt-3"
-              onClick={() => setShowAddCategory(true)}
+              className="ppv-link-btn"
+              onClick={() =>
+                setShowAddCategory(
+                  true
+                )
+              }
             >
-              <FiPlus /> Add New Category
+              <FiPlus />
+
+              Add New Category
             </button>
           )}
+
         </div>
 
-        {/* Product Brands Card */}
-        <div className="product-preview-card mt-4">
-          <div className="product-preview-header">
-            <div className="product-preview-header-icon-box orange">
-              <FiBookmark className="product-preview-header-icon" />
+        {/* =====================================================
+            BRAND
+        ===================================================== */}
+
+        <div className="ppv-card ppv-card-gap">
+
+          <div className="ppv-card-heading">
+
+            <div className="ppv-card-icon ppv-icon-orange">
+              <FiBookmark />
             </div>
-            <h2 className="product-preview-header-title">Product Brands</h2>
+
+            <h2>
+              Product Brands
+            </h2>
+
           </div>
 
-          <div className="product-preview-field">
-            <div className="product-preview-select-wrapper">
-              <select
-                value={brandData.brand}
-                onChange={(e) => setBrandData({ brand: e.target.value })}
-                className="product-preview-select"
-              >
-                <option value="Nike">Nike</option>
-                <option value="Adidas">Adidas</option>
-                <option value="Puma">Puma</option>
-                <option value="ODC Handloom">ODC Handloom</option>
-              </select>
-              <FiChevronDown className="product-preview-select-arrow" />
-            </div>
+          <div className="ppv-select-box">
+
+            <select
+              value={
+                selectedBrand
+              }
+              onChange={(e) =>
+                setSelectedBrand(
+                  e.target.value
+                )
+              }
+            >
+
+              <option value="">
+                {loadingBrands
+                  ? "Loading..."
+                  : "Select Brand"}
+              </option>
+
+              {brandList.map(
+                (brand) => {
+                  const name =
+                    getBrandName(
+                      brand
+                    );
+
+                  if (!name) {
+                    return null;
+                  }
+
+                  return (
+                    <option
+                      key={
+                        brand._id ||
+                        brand.id ||
+                        name
+                      }
+                      value={name}
+                    >
+                      {name}
+                    </option>
+                  );
+                }
+              )}
+
+            </select>
+
+            <FiChevronDown />
+
           </div>
 
           {showAddBrand ? (
-            <form onSubmit={handleAddBrandSubmit} className="product-preview-inline-form mt-3">
+            <form
+              className="ppv-inline-form"
+              onSubmit={
+                handleAddBrandSubmit
+              }
+            >
+
               <input
                 type="text"
-                placeholder="New brand name..."
-                value={newBrandName}
-                onChange={(e) => setNewBrandName(e.target.value)}
-                className="product-preview-input"
-                autoFocus
+                placeholder="Brand name"
+                value={
+                  newBrandName
+                }
+                onChange={(e) =>
+                  setNewBrandName(
+                    e.target.value
+                  )
+                }
               />
-              <button type="submit" className="product-preview-small-submit-btn">Add</button>
+
+              <button type="submit">
+                Add
+              </button>
+
             </form>
           ) : (
             <button
               type="button"
-              className="product-preview-action-btn mt-3"
-              onClick={() => setShowAddBrand(true)}
+              className="ppv-link-btn"
+              onClick={() =>
+                setShowAddBrand(
+                  true
+                )
+              }
             >
-              <FiPlus /> Add New Brand
+              <FiPlus />
+
+              Add New Brand
             </button>
           )}
+
         </div>
 
-        {/* Product Tags Card */}
-        <div className="product-preview-card mt-4">
-          <div className="product-preview-header">
-            <div className="product-preview-header-icon-box red">
-              <FiTag className="product-preview-header-icon" />
+        {/* =====================================================
+            TAGS
+        ===================================================== */}
+
+        <div className="ppv-card ppv-card-gap">
+
+          <div className="ppv-card-heading">
+
+            <div className="ppv-card-icon ppv-icon-red">
+              <FiTag />
             </div>
-            <h2 className="product-preview-header-title">Product Tags</h2>
+
+            <h2>
+              Product Tags
+            </h2>
+
           </div>
 
-          <div className="product-preview-field">
-            <input
-              type="text"
-              placeholder="Add tags..."
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={handleTagKeyDown}
-              className="product-preview-input"
-            />
-          </div>
+          <input
+            className="ppv-input"
+            type="text"
+            placeholder="Add tag and press Enter"
+            value={tagInput}
+            onChange={(e) =>
+              setTagInput(
+                e.target.value
+              )
+            }
+            onKeyDown={
+              handleTagKeyDown
+            }
+          />
 
-          <div className="product-preview-tags-container mt-3">
-            {tags.map((tag, idx) => (
-              <span key={idx} className="product-preview-tag-badge">
-                {tag}
-                <button type="button" onClick={() => removeTag(tag)} className="product-preview-tag-remove">
-                  <FiX />
-                </button>
-              </span>
-            ))}
-          </div>
+          {tags.length > 0 && (
+            <div className="ppv-tags">
+
+              {tags.map(
+                (
+                  tag,
+                  index
+                ) => (
+                  <span
+                    key={index}
+                    className="ppv-tag"
+                  >
+
+                    {tag}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeTag(
+                          tag
+                        )
+                      }
+                    >
+                      <FiX />
+                    </button>
+
+                  </span>
+                )
+              )}
+
+            </div>
+          )}
+
         </div>
 
-        {/* Featured Image Card */}
-        <div className="product-preview-card mt-4">
-          <div className="product-preview-header">
-            <div className="product-preview-header-icon-box yellow">
-              <FiImage className="product-preview-header-icon" />
+        {/* =====================================================
+            FEATURED IMAGE
+        ===================================================== */}
+
+        <div className="ppv-card ppv-card-gap">
+
+          <div className="ppv-card-heading">
+
+            <div className="ppv-card-icon ppv-icon-yellow">
+              <FiImage />
             </div>
-            <h2 className="product-preview-header-title">Featured Image</h2>
+
+            <h2>
+              Featured Image
+            </h2>
+
           </div>
 
-          <div className="product-preview-image-box">
-            <img src={featuredImage} alt="Featured" className="product-preview-featured-img" />
-            <label className="product-preview-change-img-btn">
+          <div className="ppv-featured-box">
+
+            {featuredImage ? (
+              <img
+                src={getImageUrl(
+                  featuredImage
+                )}
+                alt="Featured"
+                className="ppv-featured-image"
+              />
+            ) : (
+              <div className="ppv-no-image">
+                No image selected
+              </div>
+            )}
+
+            <label className="ppv-change-image">
+
               Change Image
+
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
+                onChange={
+                  handleImageChange
+                }
               />
+
             </label>
+
           </div>
+
         </div>
+
       </div>
-    </div>
+
+      {/* =====================================================
+          PORTAL POPUP
+      ===================================================== */}
+
+      {previewPopup}
+    </>
   );
 };
 

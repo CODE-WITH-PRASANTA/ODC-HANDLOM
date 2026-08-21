@@ -59,55 +59,51 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           {/* Default Route Redirect */}
           <Route index element={<Navigate to="/dashboard" replace />} />
-
           {/* 1. Dashboard */}
           <Route path="dashboard" element={<Dashboard />} />
-
           {/* 2. Products */}
-          <Route path="products/all-products" element={<AllProduct/>}/>
-          
+          <Route path="products/all-products" element={<AllProduct />} />
           <Route path="products/preview" element={<PreviewProduct />} />
           <Route path="products/collections" element={<Collections />} />
           <Route path="products/attributes" element={<Attribute />} />
           <Route path="products/categories" element={<Categories />} />
           <Route path="products/brands" element={<Brands />} />
-
           {/* 3. Sales & Orders */}
           <Route path="sales/orders" element={<OrdersDashboard />} />
-          <Route path="sales/create-order" element={<CreateOrder />} /> {/* <-- ROUTE ADDED HERE */}
+          <Route path="sales/create-order" element={<CreateOrder />} />{" "}
+          {/* <-- ROUTE ADDED HERE */}
           <Route path="sales/refunds" element={<Refunds />} />
           <Route path="sales/new-refund" element={<NewRefund />} />
           <Route path="sales/customers" element={<SalesCostumers />} />
-         
-          
           {/* 4. Marketing */}
-         
           <Route path="marketing/banner-sliders" element={<Banner />} />
-          <Route path="marketing/flash-sale" element={<Flashsale/>}/>
-          
-          
-          
+          <Route path="marketing/flash-sale" element={<Flashsale />} />
           <Route path="marketing/newsletters" element={<Newsletters />} />
-          <Route path="marketing/push-notifications" element={<PushNotifications />} />
-
+          <Route
+            path="marketing/push-notifications"
+            element={<PushNotifications />}
+          />
           {/* 5. Reports */}
           {/* <Route path="reports/reports" element={<Page name="Reports" />} /> */}
-          <Route path="reports/sales-analytics" element={<Page name="Sales Analytics" />} />
-
+          <Route
+            path="reports/sales-analytics"
+            element={<Page name="Sales Analytics" />}
+          />
           {/* 6. Settings */}
-          
-         
-          
-          
-          <Route path="/reports/reports" element={<Reports/>}/>
-         <Route path="sales/coupons" element={<Coupons/>}/>
-         <Route path="/sales/payments" element={<Payments/>}/>
-         <Route path="/products/add-new" element={<Addproduct/>}/>
-         <Route path="/settings/store-settings" element={<StoreSettings/>}/>
-          <Route path="settings/shipping-methods" element={<ShippingMethods/>} />
-          <Route path="/settings/payment-methods" element={<Paymentmethod/>}/>
-          <Route path="/settings/users-roles" element={<Usersrole/>}/>
-          
+          <Route path="/reports/reports" element={<Reports />} />
+          <Route path="sales/coupons" element={<Coupons />} />
+          <Route path="/sales/payments" element={<Payments />} />
+          <Route path="/products/add-new" element={<Addproduct />} />
+<Route path="/products/edit/:id" element={<Addproduct />} />
+
+
+          <Route path="/settings/store-settings" element={<StoreSettings />} />
+          <Route
+            path="settings/shipping-methods"
+            element={<ShippingMethods />}
+          />
+          <Route path="/settings/payment-methods" element={<Paymentmethod />} />
+          <Route path="/settings/users-roles" element={<Usersrole />} />
         </Route>
 
         {/* Fallback 404 Route */}

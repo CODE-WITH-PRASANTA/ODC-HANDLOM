@@ -1,73 +1,185 @@
-const Banner = require('../models/Banner');
+const Banner = require("../models/Banner");
 
-// Get all banners
-exports.getBanners = async (req, res) => {
+// ======================================
+// Helper: Parse JSON FormData Fields
+// ======================================
+
+const parseJSONField = (value, fieldName) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
   try {
-    const banners = await Banner.find().sort({ createdAt: -1 });
-    res.status(200).json(banners);
+    return JSON.parse(value);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    throw new Error(`Invalid ${fieldName} JSON`);
   }
 };
 
-// Create a new banner
+// ======================================
+// Get All Banners
+// ======================================
+
+exports.getBanners = async (req, res) => {
+  try {
+    const banners = await Banner.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(banners);
+  } catch (error) {
+    console.error("GET BANNERS ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+// ======================================
+// Create Banner
+// ======================================
+
 exports.createBanner = async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Parse nested objects if sent as strings through FormData
-    if (typeof data.displaySettings === 'string') {
-      data.displaySettings = JSON.parse(data.displaySettings);
-    }
-    if (typeof data.tags === 'string') {
-      data.tags = JSON.parse(data.tags);
+    const data = {
+      ...req.body,
+    };
+
+    // Parse displaySettings
+    if (data.displaySettings) {
+      data.displaySettings = parseJSONField(
+        data.displaySettings,
+        "displaySettings"
+      );
     }
 
+    // Parse tags
+    if (data.tags) {
+      data.tags = parseJSONField(
+        data.tags,
+        "tags"
+      );
+    }
+
+    // Uploaded image
     if (req.file) {
       data.bannerImage = `/uploads/${req.file.filename}`;
     }
 
     const newBanner = new Banner(data);
+
     const savedBanner = await newBanner.save();
-    res.status(201).json(savedBanner);
+
+    res.status(201).json({
+      success: true,
+      message: "Banner created successfully",
+      banner: savedBanner,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("CREATE BANNER ERROR:", error);
+
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
   }
 };
 
-// Update an existing banner
+// ======================================
+// Update Banner
+// ======================================
+
 exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = req.body;
 
-    if (typeof data.displaySettings === 'string') {
-      data.displaySettings = JSON.parse(data.displaySettings);
-    }
-    if (typeof data.tags === 'string') {
-      data.tags = JSON.parse(data.tags);
+    const data = {
+      ...req.body,
+    };
+
+    // Parse displaySettings
+    if (data.displaySettings) {
+      data.displaySettings = parseJSONField(
+        data.displaySettings,
+        "displaySettings"
+      );
     }
 
+    // Parse tags
+    if (data.tags) {
+      data.tags = parseJSONField(
+        data.tags,
+        "tags"
+      );
+    }
+
+    // If new image uploaded
     if (req.file) {
       data.bannerImage = `/uploads/${req.file.filename}`;
     }
 
-    const updatedBanner = await Banner.findByIdAndUpdate(id, data, { new: true });
-    if (!updatedBanner) return res.status(404).json({ error: 'Banner not found' });
-    res.status(200).json(updatedBanner);
+    const updatedBanner =
+      await Banner.findByIdAndUpdate(
+        id,
+        data,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+    if (!updatedBanner) {
+      return res.status(404).json({
+        success: false,
+        error: "Banner not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Banner updated successfully",
+      banner: updatedBanner,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("UPDATE BANNER ERROR:", error);
+
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
   }
 };
 
-// Delete a banner
+// ======================================
+// Delete Banner
+// ======================================
+
 exports.deleteBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedBanner = await Banner.findByIdAndDelete(id);
-    if (!deletedBanner) return res.status(404).json({ error: 'Banner not found' });
-    res.status(200).json({ message: 'Banner deleted successfully' });
+
+    const deletedBanner =
+      await Banner.findByIdAndDelete(id);
+
+    if (!deletedBanner) {
+      return res.status(404).json({
+        success: false,
+        error: "Banner not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Banner deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("DELETE BANNER ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 };

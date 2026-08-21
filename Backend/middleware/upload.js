@@ -9,6 +9,7 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024,
   },
 
+
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
@@ -17,5 +18,6 @@ const upload = multer({
     }
   },
 });
+
 
 module.exports = upload;

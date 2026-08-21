@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
-import { FiInfo } from 'react-icons/fi';
-import './ProductInformation.css';
+import React from "react";
 
-const ProductInformation = () => {
-  const [formData, setFormData] = useState({
-    productName: "Nike Bag",
-    sku: "NKB-00125",
-    shortDescription: "Rolex's powerhouse calibre 3235 Perpetual movement. An upgrade from the calibre 3135 movement.",
-    description: "The Nike Sportswear RPM Backpack offers ample storage for your daily commute. Padded shoulder straps and a back panel help you carry your gear comfortably, while multiple pockets help you stay organized.",
-  });
+import { Editor } from "@tinymce/tinymce-react";
+import { FiInfo } from "react-icons/fi";
 
+import "./ProductInformation.css";
+
+const ProductInformation = ({
+  formData,
+  setFormData,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -30,19 +29,28 @@ const ProductInformation = () => {
     <div className="ProductInformation-container">
       <div className="ProductInformation-card">
         {/* Header Title */}
+
         <div className="ProductInformation-header">
           <span className="ProductInformation-headerIconWrapper">
             <FiInfo className="ProductInformation-headerIcon" />
           </span>
-          <h2 className="ProductInformation-title">Basic Information</h2>
+
+          <h2 className="ProductInformation-title">
+            Basic Information
+          </h2>
         </div>
 
-        {/* Row 1: Product Name & SKU */}
+        {/* Row 1 */}
+
         <div className="ProductInformation-row">
           <div className="ProductInformation-group">
             <label className="ProductInformation-label">
-              Product Name <span className="ProductInformation-required">*</span>
+              Product Name{" "}
+              <span className="ProductInformation-required">
+                *
+              </span>
             </label>
+
             <input
               type="text"
               name="productName"
@@ -56,6 +64,7 @@ const ProductInformation = () => {
             <label className="ProductInformation-label">
               SKU (Stock Keeping Unit)
             </label>
+
             <input
               type="text"
               name="sku"
@@ -66,9 +75,13 @@ const ProductInformation = () => {
           </div>
         </div>
 
-        {/* Row 2: Short Description */}
+        {/* Short Description */}
+
         <div className="ProductInformation-group">
-          <label className="ProductInformation-label">Short Description</label>
+          <label className="ProductInformation-label">
+            Short Description
+          </label>
+
           <input
             type="text"
             name="shortDescription"
@@ -78,24 +91,44 @@ const ProductInformation = () => {
           />
         </div>
 
-        {/* Row 3: Description with TinyMCE Text Editor */}
+        {/* Description */}
+
         <div className="ProductInformation-group">
-          <label className="ProductInformation-label">Description</label>
+          <label className="ProductInformation-label">
+            Description
+          </label>
+
           <div className="ProductInformation-editorWrapper">
             <Editor
-              apiKey="8hswbe7bfeeneui9eb9gjgsym8ku30nx5gwre9808ajdzniu" // Use 'no-api-key' for free local testing, or register on TinyMCE for a free key
+              apiKey="8hswbe7bfeeneui9eb9gjgsym8ku30nx5gwre9808ajdzniu"
               value={formData.description}
               onEditorChange={handleEditorChange}
               init={{
                 height: 220,
                 menubar: false,
                 plugins: [
-                  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                  'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "searchreplace",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "help",
+                  "wordcount",
                 ],
-                toolbar: 'formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1e293b; margin: 12px; }'
+                toolbar:
+                  "formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+                content_style:
+                  'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 14px; color: #1e293b; margin: 12px; }',
               }}
             />
           </div>
